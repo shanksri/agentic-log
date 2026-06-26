@@ -1,0 +1,105 @@
+{
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "root_cause_match_threshold": 0.55,
+  "cases": [
+    {
+      "id": "hyp-01",
+      "problem": "the airflow scheduler keeps restarting because of a null database id field on the task instance",
+      "source_query_id": "para-01",
+      "expected_incident_ids": ["e3bfe559-ce82-4b64-809d-ec3a098a076c"],
+      "expected_root_causes": [
+        "the scheduler crashes because the task instance's dag_version_id / task_id is null, failing UUID validation"
+      ],
+      "acceptable_alternative_root_causes": [
+        "a validation error on a UUID field that is unexpectedly None causes the scheduler to crashloop",
+        "a database migration left a null value in a column that the scheduler model requires to be a valid UUID"
+      ]
+    },
+    {
+      "id": "hyp-02",
+      "problem": "the background trigger service fails to launch after deployment",
+      "source_query_id": "para-02",
+      "expected_incident_ids": ["375a627d-3443-4231-b889-d271e4c41dc5"],
+      "expected_root_causes": [
+        "the triggerer process does not start after upgrading or deploying a new Airflow version"
+      ],
+      "acceptable_alternative_root_causes": [
+        "a startup or initialization bug in the triggerer component prevents it from running after deployment",
+        "a regression introduced in a recent release breaks the triggerer's startup sequence"
+      ]
+    },
+    {
+      "id": "hyp-03",
+      "problem": "the type checker crashes with a memory error while watching files for changes",
+      "source_query_id": "para-04",
+      "expected_incident_ids": ["a9a17361-6af2-4ab1-97b4-e7f1866e6eca"],
+      "expected_root_causes": [
+        "the TypeScript compiler segfaults / runs out of memory when run in --watch mode on large projects"
+      ],
+      "acceptable_alternative_root_causes": [
+        "watch mode causes excessive memory usage in the compiler leading to a crash",
+        "a memory leak in the incremental/watch build causes the process to run out of memory"
+      ]
+    },
+    {
+      "id": "hyp-04",
+      "problem": "node process runs out of memory when building a large bundle of files",
+      "source_query_id": "para-03",
+      "expected_incident_ids": ["b093992f-7be2-405a-9127-ea3ee4c5c382"],
+      "expected_root_causes": [
+        "the TypeScript compiler exhausts the JavaScript heap when compiling tens of megabytes of source code"
+      ],
+      "acceptable_alternative_root_causes": [
+        "compiling a large amount of source code causes the compiler to run out of heap memory",
+        "the compiler's memory usage scales poorly with project size, causing OOM on large codebases"
+      ]
+    },
+    {
+      "id": "hyp-05",
+      "problem": "the generated API docs show the same operation identifier twice for an endpoint that supports several HTTP verbs",
+      "source_query_id": "para-05",
+      "expected_incident_ids": ["5dba5df8-402b-449c-a95e-a86812d3c8d1"],
+      "expected_root_causes": [
+        "FastAPI generates a duplicate OpenAPI operationId when a single route is registered for multiple HTTP methods"
+      ],
+      "acceptable_alternative_root_causes": [
+        "the OpenAPI schema generator does not differentiate operationIds by HTTP method for multi-method routes",
+        "a route decorated for multiple methods produces colliding operation IDs in the generated docs"
+      ]
+    },
+    {
+      "id": "hyp-06",
+      "problem": "the keycloak token's audience claim is being ignored by the authentication layer",
+      "source_query_id": "para-06",
+      "expected_incident_ids": ["1c11adbe-31dd-447c-95a0-81032222e565"],
+      "expected_root_causes": [
+        "the JWTValidator does not use the configured audience setting when validating tokens issued by Keycloak"
+      ],
+      "acceptable_alternative_root_causes": [
+        "the auth manager's JWT validation logic ignores the configured jwt_audience setting",
+        "a missing audience check in the Keycloak auth manager causes tokens to be accepted/rejected incorrectly"
+      ]
+    },
+    {
+      "id": "hyp-07",
+      "problem": "type inference and switch statement narrowing bugs involving enums",
+      "source_query_id": "multi-04",
+      "expected_incident_ids": ["0c4aacbc-3946-4b03-ba85-920017ba8b48"],
+      "expected_root_causes": [
+        "the compiler fails to narrow types in a switch statement when the discriminant is an ambient/declared enum"
+      ],
+      "acceptable_alternative_root_causes": [
+        "type narrowing in switch statements does not work correctly for enums declared in ambient (.d.ts) modules",
+        "exhaustiveness checking fails for switch statements over ambient enum values"
+      ]
+    },
+    {
+      "id": "hyp-08",
+      "problem": "credit card payment processing failure in the checkout flow",
+      "source_query_id": "neg-01",
+      "expected_incident_ids": [],
+      "expected_root_causes": [],
+      "acceptable_alternative_root_causes": []
+    }
+  ]
+}

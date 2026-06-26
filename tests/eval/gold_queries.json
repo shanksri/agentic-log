@@ -1,0 +1,155 @@
+{
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "queries": [
+    {
+      "id": "lex-01",
+      "query": "scheduler crashloop ValidationError UUID dag_version_id is NULL",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["e3bfe559-ce82-4b64-809d-ec3a098a076c"]
+    },
+    {
+      "id": "lex-02",
+      "query": "triggerer not starting",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["375a627d-3443-4231-b889-d271e4c41dc5"]
+    },
+    {
+      "id": "lex-03",
+      "query": "segfault when running compiler with --d or --watch out of memory",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["a9a17361-6af2-4ab1-97b4-e7f1866e6eca"]
+    },
+    {
+      "id": "lex-04",
+      "query": "small code change causes 70% build time regression strictGenericChecks",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["ca7a06f1-aaa9-4974-89b5-332aec4fb334"]
+    },
+    {
+      "id": "lex-05",
+      "query": "JavaScript heap out of memory for 10s of MB of source",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["b093992f-7be2-405a-9127-ea3ee4c5c382"]
+    },
+    {
+      "id": "lex-06",
+      "query": "duplicated OperationID when adding route with multiple methods",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["5dba5df8-402b-449c-a95e-a86812d3c8d1"]
+    },
+    {
+      "id": "lex-07",
+      "query": "can't use Annotated with ForwardRef",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["4fc64b88-857c-44f1-9403-6c16cd176024"]
+    },
+    {
+      "id": "lex-08",
+      "query": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["1c11adbe-31dd-447c-95a0-81032222e565"]
+    },
+    {
+      "id": "lex-09",
+      "query": "module system and outFile generates wrong module names",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["90d3b04c-25ca-42b9-b9ca-3b32dbb3fdb9"]
+    },
+    {
+      "id": "lex-10",
+      "query": "narrowing in switch doesn't work with ambient enums",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": ["0c4aacbc-3946-4b03-ba85-920017ba8b48"]
+    },
+    {
+      "id": "para-01",
+      "query": "the airflow scheduler keeps restarting because of a null database id field on the task instance",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["e3bfe559-ce82-4b64-809d-ec3a098a076c"]
+    },
+    {
+      "id": "para-02",
+      "query": "the background trigger service fails to launch after deployment",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["375a627d-3443-4231-b889-d271e4c41dc5"]
+    },
+    {
+      "id": "para-03",
+      "query": "node process runs out of memory when building a large bundle of files",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["b093992f-7be2-405a-9127-ea3ee4c5c382"]
+    },
+    {
+      "id": "para-04",
+      "query": "the type checker crashes with a memory error while watching files for changes",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["a9a17361-6af2-4ab1-97b4-e7f1866e6eca"]
+    },
+    {
+      "id": "para-05",
+      "query": "the generated API docs show the same operation identifier twice for an endpoint that supports several HTTP verbs",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["5dba5df8-402b-449c-a95e-a86812d3c8d1"]
+    },
+    {
+      "id": "para-06",
+      "query": "the keycloak token's audience claim is being ignored by the authentication layer",
+      "query_type": "paraphrase",
+      "expected_incident_ids": ["1c11adbe-31dd-447c-95a0-81032222e565"]
+    },
+    {
+      "id": "multi-01",
+      "query": "memory exhaustion and crash during large file compilation in watch mode",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca"
+      ]
+    },
+    {
+      "id": "multi-02",
+      "query": "scheduler database error causing repeated crash loops in a production deployment",
+      "query_type": "multi-concept",
+      "expected_incident_ids": ["e3bfe559-ce82-4b64-809d-ec3a098a076c"]
+    },
+    {
+      "id": "multi-03",
+      "query": "duplicate operation ids and forward ref annotation handling issues in fastapi routes",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+        "4fc64b88-857c-44f1-9403-6c16cd176024"
+      ]
+    },
+    {
+      "id": "multi-04",
+      "query": "type inference and switch statement narrowing bugs involving enums",
+      "query_type": "multi-concept",
+      "expected_incident_ids": ["0c4aacbc-3946-4b03-ba85-920017ba8b48"]
+    },
+    {
+      "id": "neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": []
+    },
+    {
+      "id": "neg-02",
+      "query": "mobile app push notification delivery delay on iOS",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": []
+    },
+    {
+      "id": "neg-03",
+      "query": "spreadsheet export formatting broken when opened in Excel 2010",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": []
+    },
+    {
+      "id": "neg-04",
+      "query": "VPN connection drops for remote employees in the EU region",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": []
+    }
+  ]
+}

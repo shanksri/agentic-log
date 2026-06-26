@@ -1,0 +1,2036 @@
+{
+  "rows": [
+    {
+      "case_id": "hyp-01",
+      "rank": 1,
+      "root_cause": "Historical task instances have a NULL dag_version_id, causing validation errors.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (NULL dag_version_id) and also mentions the observable failure (validation errors).",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+      "chosen_title": "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL",
+      "chosen_score": 0.6153427244614753,
+      "gold_score": 0.6153427244614753,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6153427244614753,
+          "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+          "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL"
+        ],
+        [
+          0.4658101639501389,
+          "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+          "Scheduler crashes with InvalidStatsNameException for non-ASCII DAG/TaskGroup names when OTel metrics are enabled"
+        ],
+        [
+          0.3409009446015451,
+          "67491e2a-fe36-469a-bdd4-95cb71548887",
+          "Deferrable BeamRunPythonPipelineOperator (DataflowRunner) fails with \"400 Request must contain a job and project id\" when launcher stdout has no job-id line"
+        ],
+        [
+          0.2376320468948056,
+          "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+          "Add async task store accessors (aget/aset) for use in async tasks"
+        ],
+        [
+          0.23326083612196707,
+          "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+          "StackdriverRemoteLogIO: three bugs in AF3 supervisor context \u2014 empty labels, broken read filter, unguarded send crash"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-01",
+      "rank": 2,
+      "root_cause": "The scheduler does not handle NULL dag_version_id gracefully, leading to continuous restarts.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (the scheduler not handling NULL dag_version_id) and describes the observable outcome (continuous restarts).",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+      "chosen_title": "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL",
+      "chosen_score": 0.6683164310952224,
+      "gold_score": 0.6683164310952224,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6683164310952224,
+          "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+          "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL"
+        ],
+        [
+          0.5082843883741935,
+          "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+          "Scheduler crashes with InvalidStatsNameException for non-ASCII DAG/TaskGroup names when OTel metrics are enabled"
+        ],
+        [
+          0.253081438194115,
+          "67491e2a-fe36-469a-bdd4-95cb71548887",
+          "Deferrable BeamRunPythonPipelineOperator (DataflowRunner) fails with \"400 Request must contain a job and project id\" when launcher stdout has no job-id line"
+        ],
+        [
+          0.20686090075716654,
+          "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+          "StackdriverRemoteLogIO: three bugs in AF3 supervisor context \u2014 empty labels, broken read filter, unguarded send crash"
+        ],
+        [
+          0.13852967232670652,
+          "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+          "Add async task store accessors (aget/aset) for use in async tasks"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-01",
+      "rank": 3,
+      "root_cause": "The introduction of the dag_version table has not been fully integrated with existing task instances.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the integration of the dag_version table but does not mention any observable user-facing failure or symptom.",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": true,
+      "chosen_rid": "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+      "chosen_title": "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL",
+      "chosen_score": 0.35767281347838303,
+      "gold_score": 0.35767281347838303,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.35767281347838303,
+          "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+          "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL"
+        ],
+        [
+          0.34474911207474207,
+          "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+          "Scheduler crashes with InvalidStatsNameException for non-ASCII DAG/TaskGroup names when OTel metrics are enabled"
+        ],
+        [
+          0.22416010714127302,
+          "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+          "Add async task store accessors (aget/aset) for use in async tasks"
+        ],
+        [
+          0.2108467773945556,
+          "67491e2a-fe36-469a-bdd4-95cb71548887",
+          "Deferrable BeamRunPythonPipelineOperator (DataflowRunner) fails with \"400 Request must contain a job and project id\" when launcher stdout has no job-id line"
+        ],
+        [
+          0.15511399375467846,
+          "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+          "StackdriverRemoteLogIO: three bugs in AF3 supervisor context \u2014 empty labels, broken read filter, unguarded send crash"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-01",
+      "rank": 4,
+      "root_cause": "The scheduler's validation logic does not account for historical task instances with missing fields.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the scheduler's validation logic but does not mention any observable user-facing failure or symptom resulting from this issue.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+      "chosen_title": "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL",
+      "chosen_score": 0.4964446852836254,
+      "gold_score": 0.4964446852836254,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.4964446852836254,
+          "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+          "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL"
+        ],
+        [
+          0.42989760180876313,
+          "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+          "Scheduler crashes with InvalidStatsNameException for non-ASCII DAG/TaskGroup names when OTel metrics are enabled"
+        ],
+        [
+          0.31119062402544173,
+          "67491e2a-fe36-469a-bdd4-95cb71548887",
+          "Deferrable BeamRunPythonPipelineOperator (DataflowRunner) fails with \"400 Request must contain a job and project id\" when launcher stdout has no job-id line"
+        ],
+        [
+          0.24093878327331322,
+          "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+          "Add async task store accessors (aget/aset) for use in async tasks"
+        ],
+        [
+          0.19155578538916615,
+          "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+          "StackdriverRemoteLogIO: three bugs in AF3 supervisor context \u2014 empty labels, broken read filter, unguarded send crash"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-01",
+      "rank": 5,
+      "root_cause": "Lack of fallback mechanisms for NULL dag_version_id in the scheduler's context construction.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the absence of fallback mechanisms for NULL dag_version_id but does not mention any observable user-facing failure or symptom.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+      "chosen_title": "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL",
+      "chosen_score": 0.6020810584783851,
+      "gold_score": 0.6020810584783851,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6020810584783851,
+          "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+          "Scheduler crashloops with `ValidationError: UUID input should be a string` when `task_instance.dag_version_id` is NULL"
+        ],
+        [
+          0.49813379682515274,
+          "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+          "Scheduler crashes with InvalidStatsNameException for non-ASCII DAG/TaskGroup names when OTel metrics are enabled"
+        ],
+        [
+          0.2526038821998015,
+          "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+          "Add async task store accessors (aget/aset) for use in async tasks"
+        ],
+        [
+          0.2520092264981373,
+          "67491e2a-fe36-469a-bdd4-95cb71548887",
+          "Deferrable BeamRunPythonPipelineOperator (DataflowRunner) fails with \"400 Request must contain a job and project id\" when launcher stdout has no job-id line"
+        ],
+        [
+          0.2350115565943811,
+          "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+          "StackdriverRemoteLogIO: three bugs in AF3 supervisor context \u2014 empty labels, broken read filter, unguarded send crash"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 1,
+      "root_cause": "Synchronous startup of the Execution API lifespan is causing initialization failures.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific mechanism (synchronous startup of the Execution API lifespan) that may be causing an issue, but it does not specify what the observable failure or symptom is (e.g., what kind of initialization failures are occurring).",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": true,
+      "chosen_rid": "375a627d-3443-4231-b889-d271e4c41dc5",
+      "chosen_title": "Triggerer not starting",
+      "chosen_score": 0.285373228471335,
+      "gold_score": 0.285373228471335,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.285373228471335,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          0.23765317868167762,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.18489948379877985,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.1573167068488395,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ],
+        [
+          0.14198776602938395,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 2,
+      "root_cause": "Missing connection ID for Azure Blob storage is preventing log shipping.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (missing connection ID for Azure Blob storage) and also describes the observable failure (preventing log shipping).",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": false,
+      "chosen_rid": "69347f56-50e2-476a-97bb-8c435181b23a",
+      "chosen_title": "Triggerer unable to ship logs to remote azure blob connection",
+      "chosen_score": 0.7232838208409513,
+      "gold_score": 0.018630429870620153,
+      "gap": 0.7046533909703312,
+      "all_scores": [
+        [
+          0.7232838208409513,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.25193473995768606,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.022243694694759703,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ],
+        [
+          0.018630429870620153,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          -0.0784920762205115,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 3,
+      "root_cause": "Remote logging configuration is not enabled, leading to warnings and potential failures.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (remote logging configuration not enabled) and also mentions the observable outcome (warnings and potential failures).",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": false,
+      "chosen_rid": "91d96912-b27a-421c-932a-2d462d6643c9",
+      "chosen_title": "Triggerer warning about remote logging but not enabled",
+      "chosen_score": 0.7500087097345196,
+      "gold_score": 0.1485151700610733,
+      "gap": 0.6014935396734463,
+      "all_scores": [
+        [
+          0.7500087097345196,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.4391138081022772,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.1485151700610733,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          0.08845679721824579,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ],
+        [
+          0.01597643360132431,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 4,
+      "root_cause": "Inadequate error handling during the triggerer's startup process.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to inadequate error handling during the startup process but does not mention any observable user-facing failure or symptom.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "375a627d-3443-4231-b889-d271e4c41dc5",
+      "chosen_title": "Triggerer not starting",
+      "chosen_score": 0.7284534750347955,
+      "gold_score": 0.7284534750347955,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.7284534750347955,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          0.5238463105380239,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.4432712600338168,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ],
+        [
+          0.42341911612996175,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.12035227939561907,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 5,
+      "root_cause": "Issues with the triggerer's cleanup process affecting its ability to initialize.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the triggerer's cleanup process but does not mention any observable user-facing failure or symptom.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "375a627d-3443-4231-b889-d271e4c41dc5",
+      "chosen_title": "Triggerer not starting",
+      "chosen_score": 0.6553630172326003,
+      "gold_score": 0.6553630172326003,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6553630172326003,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          0.5963558474798571,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ],
+        [
+          0.41739175060019573,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.29692588192346286,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.11889704086986781,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 1,
+      "root_cause": "Memory leak in the type checker when using --watch flag",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause (memory leak in the type checker) but does not mention any observable user-facing failure or symptom.",
+      "is_match": true,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+      "chosen_title": "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)",
+      "chosen_score": 0.5392255108785753,
+      "gold_score": 0.5392255108785753,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.5392255108785753,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.38095553891982686,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ],
+        [
+          0.32666630622920495,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.27021235282856576,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.20705545353977614,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 2,
+      "root_cause": "Inefficient memory management in the type checker for large source files",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause (inefficient memory management in the type checker) but does not mention any observable user-facing failure or symptom that results from this issue.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": true,
+      "chosen_rid": "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+      "chosen_title": "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)",
+      "chosen_score": 0.35265157234455063,
+      "gold_score": 0.35265157234455063,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.35265157234455063,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.3465240671935099,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.23316282903050434,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.2031343053095098,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ],
+        [
+          0.12476061411044322,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 3,
+      "root_cause": "Recursive function calls leading to stack overflow",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies the mechanism (recursive function calls) that leads to a specific issue (stack overflow) but does not specify an observable user-facing failure such as an error message or crash.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+      "chosen_title": "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers",
+      "chosen_score": 0.3332856013146506,
+      "gold_score": 0.22577948216192692,
+      "gap": 0.1075061191527237,
+      "all_scores": [
+        [
+          0.3332856013146506,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ],
+        [
+          0.22577948216192692,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.21418332816807067,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.174341059517319,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          -0.028902400102911313,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 4,
+      "root_cause": "Incompatibility or bugs introduced in recent TypeScript versions",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a particular observable failure or a specific code-level cause. It mentions 'incompatibility or bugs' but does not clarify what the user-facing issue is.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+      "chosen_title": "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3",
+      "chosen_score": 0.5592253748088181,
+      "gold_score": 0.185054700994958,
+      "gap": 0.37417067381386004,
+      "all_scores": [
+        [
+          0.5592253748088181,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ],
+        [
+          0.3272950623545983,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.185054700994958,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.1732942683478142,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.13995088728450653,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 5,
+      "root_cause": "Improper handling of file watching events leading to excessive resource usage",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause (improper handling of file watching events) but does not mention any observable user-facing failure or symptom.",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+      "chosen_title": "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)",
+      "chosen_score": 0.2979687403812381,
+      "gold_score": 0.2979687403812381,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.2979687403812381,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.2828679935235504,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ],
+        [
+          0.26790903684018824,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.19970087328776848,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ],
+        [
+          0.07528112713909124,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 1,
+      "root_cause": "Insufficient memory allocation for large bundles",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to memory allocation but does not mention any observable user-facing failure or symptom.",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "b093992f-7be2-405a-9127-ea3ee4c5c382",
+      "chosen_title": "JavaScript heap out of memory for 10s of MB of source",
+      "chosen_score": 0.4708763703807824,
+      "gold_score": 0.4708763703807824,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.4708763703807824,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.42359644239221833,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.3972673191978143,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.35234570967446815,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.19017744316073984,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 2,
+      "root_cause": "Inefficient memory management in the TypeScript compiler",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause (inefficient memory management) but does not mention any observable user-facing failure or symptom resulting from this issue.",
+      "is_match": true,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": true,
+      "chosen_rid": "b093992f-7be2-405a-9127-ea3ee4c5c382",
+      "chosen_title": "JavaScript heap out of memory for 10s of MB of source",
+      "chosen_score": 0.46523778780757485,
+      "gold_score": 0.46523778780757485,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.46523778780757485,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.411887359008623,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.36848215044183646,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.36680966010853444,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.1571225720132832,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 3,
+      "root_cause": "Concurrent tasks causing memory pressure",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific mechanism (concurrent tasks causing memory pressure) but does not mention any observable user-facing failure or symptom resulting from this mechanism.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+      "chosen_title": "Fetching of blocks of cache table may cause high memory pressure",
+      "chosen_score": 0.5457766755094658,
+      "gold_score": 0.28707422426116164,
+      "gap": 0.2587024512483042,
+      "all_scores": [
+        [
+          0.5457766755094658,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.28707422426116164,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.25209434349423326,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.24568626863192877,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ],
+        [
+          0.08082176100282017,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 4,
+      "root_cause": "Memory leaks in the application code",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level issue (memory leaks) but does not mention any observable user-facing failure or symptom resulting from that issue.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+      "chosen_title": "Fetching of blocks of cache table may cause high memory pressure",
+      "chosen_score": 0.4554246436347403,
+      "gold_score": 0.44036692688408213,
+      "gap": 0.015057716750658146,
+      "all_scores": [
+        [
+          0.4554246436347403,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.44036692688408213,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.354903641189109,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.1623528051731163,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.08329127052989684,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 5,
+      "root_cause": "Incompatibility with specific TypeScript versions",
+      "classification": "neither",
+      "rationale": "The hypothesis is too vague and does not specify an observable failure or a specific code-level cause. It mentions incompatibility but does not indicate what the user-facing issue is or the exact mechanism causing the problem.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+      "chosen_title": "Compiler hang when importing big JS file with --allowJs",
+      "chosen_score": 0.3898721976988895,
+      "gold_score": 0.13711917742857047,
+      "gap": 0.252753020270319,
+      "all_scores": [
+        [
+          0.3898721976988895,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.16509036008246697,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.13711917742857047,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.09826573420679287,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ],
+        [
+          -0.031056618383998685,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 1,
+      "root_cause": "Improper use of the `@router.api_route()` method for defining multiple HTTP methods on the same endpoint.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the improper use of a method but does not mention any observable user-facing failure or error.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+      "chosen_title": "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`",
+      "chosen_score": 0.5004403974151301,
+      "gold_score": 0.4682352959245856,
+      "gap": 0.03220510149054451,
+      "all_scores": [
+        [
+          0.5004403974151301,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.4682352959245856,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.3642951172086016,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ],
+        [
+          0.279199535188192,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ],
+        [
+          0.25193907805512555,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 2,
+      "root_cause": "Lack of clear documentation on the proper methods to use for defining routes in FastAPI.",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a clear observable failure or a specific code-level cause related to the lack of documentation.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+      "chosen_title": "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`",
+      "chosen_score": 0.4274468645826087,
+      "gold_score": 0.3510044506867941,
+      "gap": 0.07644241389581463,
+      "all_scores": [
+        [
+          0.4274468645826087,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.3510044506867941,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.27068440166679364,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ],
+        [
+          0.26405715239184024,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.2181951520505354,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 3,
+      "root_cause": "The design of FastAPI allowing multiple methods in a single route definition without adequate restrictions.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific design feature of FastAPI (multiple methods in a single route definition) but does not mention any observable user-facing failure or error that results from this design.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+      "chosen_title": "Duplicated OperationID when adding route with multiple methods",
+      "chosen_score": 0.41239866541558895,
+      "gold_score": 0.41239866541558895,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.41239866541558895,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.2899860119141078,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.18348877285638365,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.1476278013586727,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ],
+        [
+          0.11003323118829908,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 4,
+      "root_cause": "Inconsistent handling of operation IDs when using semi-internal methods like `api_route` and `add_api_route`.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the handling of operation IDs but does not mention any observable user-facing failure or error.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+      "chosen_title": "Duplicated OperationID when adding route with multiple methods",
+      "chosen_score": 0.7193735441202993,
+      "gold_score": 0.7193735441202993,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.7193735441202993,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.4775304884876367,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.27830132381996825,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.2739177127534202,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ],
+        [
+          0.2587840163294484,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 5,
+      "root_cause": "Potential oversight in the implementation of the FastAPI framework regarding route definitions and operation ID uniqueness.",
+      "classification": "mechanism_only",
+      "rationale": "The hypothesis identifies a potential oversight in the implementation of the FastAPI framework related to route definitions and operation ID uniqueness, which points to a specific mechanism or cause. However, it does not mention any observable user-facing failure or symptom resulting from this oversight.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+      "chosen_title": "Duplicated OperationID when adding route with multiple methods",
+      "chosen_score": 0.4901115188575078,
+      "gold_score": 0.4901115188575078,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.4901115188575078,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.3308597783466632,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.17714851103738488,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ],
+        [
+          0.17079651569054594,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.14444807688425665,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-06",
+      "rank": 1,
+      "root_cause": "Misconfiguration of JWT audience settings in the authentication layer.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the misconfiguration of JWT audience settings but does not mention any observable user-facing failure or symptom.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "1c11adbe-31dd-447c-95a0-81032222e565",
+      "chosen_title": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "chosen_score": 0.6964156965508272,
+      "gold_score": 0.6964156965508272,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6964156965508272,
+          "1c11adbe-31dd-447c-95a0-81032222e565",
+          "JWTValidator does not use the configured audience with KeycloakAuthManager"
+        ],
+        [
+          0.24461872565711396,
+          "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+          "[Airflow 3.2.2] api-server: Azure OAuth button not shown at /auth/login/"
+        ],
+        [
+          0.23062903413371041,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.22848353462273083,
+          "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+          "AzureOpenAI with AAD bearer token passed via api_key works in 2.33.0 but returns 401 in 2.34.0 and after"
+        ],
+        [
+          0.09503204801441768,
+          "78d24aee-6301-47ce-8dc2-e28102c67768",
+          "`trim_messages` and `ChatAnthropic` token counter with tools"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-06",
+      "rank": 2,
+      "root_cause": "Changes in the authentication library version affecting audience claim handling.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific change in the authentication library version as a potential root cause but does not mention any observable user-facing failure or symptom resulting from this change.",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "1c11adbe-31dd-447c-95a0-81032222e565",
+      "chosen_title": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "chosen_score": 0.3375140815425613,
+      "gold_score": 0.3375140815425613,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.3375140815425613,
+          "1c11adbe-31dd-447c-95a0-81032222e565",
+          "JWTValidator does not use the configured audience with KeycloakAuthManager"
+        ],
+        [
+          0.2688758596770458,
+          "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+          "AzureOpenAI with AAD bearer token passed via api_key works in 2.33.0 but returns 401 in 2.34.0 and after"
+        ],
+        [
+          0.23684814912486774,
+          "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+          "[Airflow 3.2.2] api-server: Azure OAuth button not shown at /auth/login/"
+        ],
+        [
+          0.2123258030572507,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.13155042987360507,
+          "78d24aee-6301-47ce-8dc2-e28102c67768",
+          "`trim_messages` and `ChatAnthropic` token counter with tools"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-06",
+      "rank": 3,
+      "root_cause": "Inconsistent handling of audience claims across different components of the system.",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a clear mechanism or a specific observable symptom. It mentions 'inconsistent handling' but does not identify a root cause or a user-facing failure.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "1c11adbe-31dd-447c-95a0-81032222e565",
+      "chosen_title": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "chosen_score": 0.2048905364126832,
+      "gold_score": 0.2048905364126832,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.2048905364126832,
+          "1c11adbe-31dd-447c-95a0-81032222e565",
+          "JWTValidator does not use the configured audience with KeycloakAuthManager"
+        ],
+        [
+          0.08676646784460933,
+          "78d24aee-6301-47ce-8dc2-e28102c67768",
+          "`trim_messages` and `ChatAnthropic` token counter with tools"
+        ],
+        [
+          0.04025308779357426,
+          "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+          "AzureOpenAI with AAD bearer token passed via api_key works in 2.33.0 but returns 401 in 2.34.0 and after"
+        ],
+        [
+          -0.006461294201959631,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          -0.039352907823246255,
+          "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+          "[Airflow 3.2.2] api-server: Azure OAuth button not shown at /auth/login/"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-06",
+      "rank": 4,
+      "root_cause": "Lack of proper validation checks for audience claims in the authentication layer.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause (lack of proper validation checks) but does not mention any observable user-facing failure or symptom resulting from this issue.",
+      "is_match": false,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "1c11adbe-31dd-447c-95a0-81032222e565",
+      "chosen_title": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "chosen_score": 0.42107215119633334,
+      "gold_score": 0.42107215119633334,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.42107215119633334,
+          "1c11adbe-31dd-447c-95a0-81032222e565",
+          "JWTValidator does not use the configured audience with KeycloakAuthManager"
+        ],
+        [
+          0.23896309236551988,
+          "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+          "AzureOpenAI with AAD bearer token passed via api_key works in 2.33.0 but returns 401 in 2.34.0 and after"
+        ],
+        [
+          0.22917625241261858,
+          "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+          "[Airflow 3.2.2] api-server: Azure OAuth button not shown at /auth/login/"
+        ],
+        [
+          0.1734447951373829,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.11780084796992951,
+          "78d24aee-6301-47ce-8dc2-e28102c67768",
+          "`trim_messages` and `ChatAnthropic` token counter with tools"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-06",
+      "rank": 5,
+      "root_cause": "Potential bugs in the JWT validation logic that bypass audience checks.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a potential issue in the JWT validation logic related to audience checks, which indicates a specific code-level cause. However, it does not mention any observable user-facing failure or symptom resulting from this issue.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "1c11adbe-31dd-447c-95a0-81032222e565",
+      "chosen_title": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "chosen_score": 0.588238590082537,
+      "gold_score": 0.588238590082537,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.588238590082537,
+          "1c11adbe-31dd-447c-95a0-81032222e565",
+          "JWTValidator does not use the configured audience with KeycloakAuthManager"
+        ],
+        [
+          0.13374161060572937,
+          "78d24aee-6301-47ce-8dc2-e28102c67768",
+          "`trim_messages` and `ChatAnthropic` token counter with tools"
+        ],
+        [
+          0.10365573282044163,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.04408695570733058,
+          "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+          "AzureOpenAI with AAD bearer token passed via api_key works in 2.33.0 but returns 401 in 2.34.0 and after"
+        ],
+        [
+          0.0035341441862244837,
+          "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+          "[Airflow 3.2.2] api-server: Azure OAuth button not shown at /auth/login/"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 1,
+      "root_cause": "Type inference issues with ambient enums in switch statements.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level issue (type inference issues with ambient enums in switch statements) but does not mention any observable user-facing failure or error.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+      "chosen_title": "narrowing in switch doesn't work with ambient enums",
+      "chosen_score": 0.7447363135659167,
+      "gold_score": 0.7447363135659167,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.7447363135659167,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.505591502723767,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ],
+        [
+          0.44003662579893715,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.42659598834459267,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.23037151565406788,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 2,
+      "root_cause": "Compiler limitations in handling numeric enums in switch cases.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific issue related to compiler limitations and numeric enums but does not mention any observable user-facing failure or error.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+      "chosen_title": "narrowing in switch doesn't work with ambient enums",
+      "chosen_score": 0.5519057929567546,
+      "gold_score": 0.5519057929567546,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.5519057929567546,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.47330958255455224,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ],
+        [
+          0.20214926083519572,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.14353894045253274,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.010143446748789817,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 3,
+      "root_cause": "Inconsistent behavior of type narrowing across different enum types.",
+      "classification": "neither",
+      "rationale": "The statement discusses inconsistent behavior related to type narrowing and enum types but does not specify an observable failure or a specific code-level cause.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": true,
+      "chose_gold": true,
+      "chosen_rid": "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+      "chosen_title": "narrowing in switch doesn't work with ambient enums",
+      "chosen_score": 0.6791917033223152,
+      "gold_score": 0.6791917033223152,
+      "gap": 0.0,
+      "all_scores": [
+        [
+          0.6791917033223152,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.5347581158723551,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ],
+        [
+          0.3253983416853188,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.26066155163233096,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.021855569288235895,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 4,
+      "root_cause": "Issues with the TypeScript compiler's handling of closures and block scoping.",
+      "classification": "neither",
+      "rationale": "The statement discusses issues with the TypeScript compiler but does not specify an observable user-facing failure or a specific code-level cause. It is too vague to classify as mechanism_only, symptom_only, or mechanism_symptom.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+      "chosen_title": "Enum not block-scoped given closure and --target es5",
+      "chosen_score": 0.47418549131135024,
+      "gold_score": 0.26534987688544126,
+      "gap": 0.20883561442590898,
+      "all_scores": [
+        [
+          0.47418549131135024,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ],
+        [
+          0.4414866956638015,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.2714721031412543,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.26534987688544126,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.03930177643676138,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 5,
+      "root_cause": "Nondeterministic type inference behavior in complex callback scenarios.",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a clear observable failure or a specific code-level cause. It discusses a behavior but does not indicate what the user-facing failure is or a concrete mechanism.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+      "chosen_title": "Inference fails nondeterministic when callback gets a `typeof` in an object",
+      "chosen_score": 0.769042418109222,
+      "gold_score": 0.18887753869107654,
+      "gap": 0.5801648794181455,
+      "all_scores": [
+        [
+          0.769042418109222,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.40720119915421676,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.26931218769062304,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ],
+        [
+          0.18887753869107654,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.18617458116540445,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ]
+      ]
+    }
+  ],
+  "cat_stats": {
+    "mechanism_only": {
+      "n": 24,
+      "correct_rc": 14,
+      "kw_ok_a": 18,
+      "kw_ok_c": 16,
+      "chose_gold": 20,
+      "kw_a_denom": 24,
+      "kw_c_denom": 24
+    },
+    "symptom_only": {
+      "n": 0,
+      "correct_rc": 0,
+      "kw_ok_a": 0,
+      "kw_ok_c": 0,
+      "chose_gold": 0,
+      "kw_a_denom": 0,
+      "kw_c_denom": 0
+    },
+    "mechanism_symptom": {
+      "n": 4,
+      "correct_rc": 2,
+      "kw_ok_a": 2,
+      "kw_ok_c": 4,
+      "chose_gold": 2,
+      "kw_a_denom": 4,
+      "kw_c_denom": 4
+    },
+    "neither": {
+      "n": 7,
+      "correct_rc": 2,
+      "kw_ok_a": 2,
+      "kw_ok_c": 2,
+      "chose_gold": 2,
+      "kw_a_denom": 7,
+      "kw_c_denom": 7
+    }
+  },
+  "fisher_gold_p": 1.0,
+  "fisher_rc_p": 1.0,
+  "contingency_gold": {
+    "ms_gold": 2,
+    "ms_not": 2,
+    "other_gold": 22,
+    "other_not": 9
+  },
+  "contingency_rc": {
+    "ms_ok": 2,
+    "ms_no": 2,
+    "ot_ok": 16,
+    "ot_no": 15
+  },
+  "sibling_mismatches": [
+    {
+      "case_id": "hyp-02",
+      "rank": 2,
+      "root_cause": "Missing connection ID for Azure Blob storage is preventing log shipping.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (missing connection ID for Azure Blob storage) and also describes the observable failure (preventing log shipping).",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": false,
+      "chosen_rid": "69347f56-50e2-476a-97bb-8c435181b23a",
+      "chosen_title": "Triggerer unable to ship logs to remote azure blob connection",
+      "chosen_score": 0.7232838208409513,
+      "gold_score": 0.018630429870620153,
+      "gap": 0.7046533909703312,
+      "all_scores": [
+        [
+          0.7232838208409513,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.25193473995768606,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.022243694694759703,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ],
+        [
+          0.018630429870620153,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          -0.0784920762205115,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-02",
+      "rank": 3,
+      "root_cause": "Remote logging configuration is not enabled, leading to warnings and potential failures.",
+      "classification": "mechanism_symptom",
+      "rationale": "The statement identifies a specific code-level cause (remote logging configuration not enabled) and also mentions the observable outcome (warnings and potential failures).",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": true,
+      "chose_gold": false,
+      "chosen_rid": "91d96912-b27a-421c-932a-2d462d6643c9",
+      "chosen_title": "Triggerer warning about remote logging but not enabled",
+      "chosen_score": 0.7500087097345196,
+      "gold_score": 0.1485151700610733,
+      "gap": 0.6014935396734463,
+      "all_scores": [
+        [
+          0.7500087097345196,
+          "91d96912-b27a-421c-932a-2d462d6643c9",
+          "Triggerer warning about remote logging but not enabled"
+        ],
+        [
+          0.4391138081022772,
+          "69347f56-50e2-476a-97bb-8c435181b23a",
+          "Triggerer unable to ship logs to remote azure blob connection"
+        ],
+        [
+          0.1485151700610733,
+          "375a627d-3443-4231-b889-d271e4c41dc5",
+          "Triggerer not starting"
+        ],
+        [
+          0.08845679721824579,
+          "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+          "Add built-in job queue and background task management with monitoring dashboard"
+        ],
+        [
+          0.01597643360132431,
+          "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+          "Batch the triggerer's Trigger.clean_unused() cleanup deletes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 3,
+      "root_cause": "Recursive function calls leading to stack overflow",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies the mechanism (recursive function calls) that leads to a specific issue (stack overflow) but does not specify an observable user-facing failure such as an error message or crash.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+      "chosen_title": "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers",
+      "chosen_score": 0.3332856013146506,
+      "gold_score": 0.22577948216192692,
+      "gap": 0.1075061191527237,
+      "all_scores": [
+        [
+          0.3332856013146506,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ],
+        [
+          0.22577948216192692,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.21418332816807067,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.174341059517319,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          -0.028902400102911313,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-03",
+      "rank": 4,
+      "root_cause": "Incompatibility or bugs introduced in recent TypeScript versions",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a particular observable failure or a specific code-level cause. It mentions 'incompatibility or bugs' but does not clarify what the user-facing issue is.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+      "chosen_title": "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3",
+      "chosen_score": 0.5592253748088181,
+      "gold_score": 0.185054700994958,
+      "gap": 0.37417067381386004,
+      "all_scores": [
+        [
+          0.5592253748088181,
+          "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+          "[tsserver] \"Error processing request. watch  ENOENT\" with TypeScript 1.7.3"
+        ],
+        [
+          0.3272950623545983,
+          "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+          "Crash: RangeError: Maximum call stack size exceeded in addTypesToUnion when using incomplete keyof type annotation on object destructuring"
+        ],
+        [
+          0.185054700994958,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.1732942683478142,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.13995088728450653,
+          "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+          "Crash: RangeError: Maximum call stack size exceeded in isReachableFlowNodeWorker with complex for loop headers"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 3,
+      "root_cause": "Concurrent tasks causing memory pressure",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific mechanism (concurrent tasks causing memory pressure) but does not mention any observable user-facing failure or symptom resulting from this mechanism.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+      "chosen_title": "Fetching of blocks of cache table may cause high memory pressure",
+      "chosen_score": 0.5457766755094658,
+      "gold_score": 0.28707422426116164,
+      "gap": 0.2587024512483042,
+      "all_scores": [
+        [
+          0.5457766755094658,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.28707422426116164,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.25209434349423326,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.24568626863192877,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ],
+        [
+          0.08082176100282017,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 4,
+      "root_cause": "Memory leaks in the application code",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level issue (memory leaks) but does not mention any observable user-facing failure or symptom resulting from that issue.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+      "chosen_title": "Fetching of blocks of cache table may cause high memory pressure",
+      "chosen_score": 0.4554246436347403,
+      "gold_score": 0.44036692688408213,
+      "gap": 0.015057716750658146,
+      "all_scores": [
+        [
+          0.4554246436347403,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ],
+        [
+          0.44036692688408213,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.354903641189109,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.1623528051731163,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.08329127052989684,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-04",
+      "rank": 5,
+      "root_cause": "Incompatibility with specific TypeScript versions",
+      "classification": "neither",
+      "rationale": "The hypothesis is too vague and does not specify an observable failure or a specific code-level cause. It mentions incompatibility but does not indicate what the user-facing issue is or the exact mechanism causing the problem.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+      "chosen_title": "Compiler hang when importing big JS file with --allowJs",
+      "chosen_score": 0.3898721976988895,
+      "gold_score": 0.13711917742857047,
+      "gap": 0.252753020270319,
+      "all_scores": [
+        [
+          0.3898721976988895,
+          "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+          "Compiler hang when importing big JS file with --allowJs"
+        ],
+        [
+          0.16509036008246697,
+          "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+          "[2.8.0-rc] Segfault when running compiler with --d or --watch (out of memory)"
+        ],
+        [
+          0.13711917742857047,
+          "b093992f-7be2-405a-9127-ea3ee4c5c382",
+          "JavaScript heap out of memory for 10s of MB of source"
+        ],
+        [
+          0.09826573420679287,
+          "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+          "Document ingestion into VectorDB does not complete when running inside Celery task"
+        ],
+        [
+          -0.031056618383998685,
+          "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+          "Fetching of blocks of cache table may cause high memory pressure"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 1,
+      "root_cause": "Improper use of the `@router.api_route()` method for defining multiple HTTP methods on the same endpoint.",
+      "classification": "mechanism_only",
+      "rationale": "The statement identifies a specific code-level cause related to the improper use of a method but does not mention any observable user-facing failure or error.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+      "chosen_title": "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`",
+      "chosen_score": 0.5004403974151301,
+      "gold_score": 0.4682352959245856,
+      "gap": 0.03220510149054451,
+      "all_scores": [
+        [
+          0.5004403974151301,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.4682352959245856,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.3642951172086016,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ],
+        [
+          0.279199535188192,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ],
+        [
+          0.25193907805512555,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-05",
+      "rank": 2,
+      "root_cause": "Lack of clear documentation on the proper methods to use for defining routes in FastAPI.",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a clear observable failure or a specific code-level cause related to the lack of documentation.",
+      "is_match": true,
+      "kw_recall_a": true,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+      "chosen_title": "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`",
+      "chosen_score": 0.4274468645826087,
+      "gold_score": 0.3510044506867941,
+      "gap": 0.07644241389581463,
+      "all_scores": [
+        [
+          0.4274468645826087,
+          "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+          "SSE `stream_item_type` not propagated through `APIRouter` + `include_router`"
+        ],
+        [
+          0.3510044506867941,
+          "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+          "Duplicated OperationID when adding route with multiple methods"
+        ],
+        [
+          0.27068440166679364,
+          "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+          "`ActionSearchSource.type` is claimed to be always be `'url'`, but can be `'api'`"
+        ],
+        [
+          0.26405715239184024,
+          "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+          "Add support to lazy initialize `OAuth2` classes"
+        ],
+        [
+          0.2181951520505354,
+          "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+          "Responses API: parsed_arguments leaks from ParsedResponseFunctionToolCall into AIMessage content, breaking the next turn"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 4,
+      "root_cause": "Issues with the TypeScript compiler's handling of closures and block scoping.",
+      "classification": "neither",
+      "rationale": "The statement discusses issues with the TypeScript compiler but does not specify an observable user-facing failure or a specific code-level cause. It is too vague to classify as mechanism_only, symptom_only, or mechanism_symptom.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+      "chosen_title": "Enum not block-scoped given closure and --target es5",
+      "chosen_score": 0.47418549131135024,
+      "gold_score": 0.26534987688544126,
+      "gap": 0.20883561442590898,
+      "all_scores": [
+        [
+          0.47418549131135024,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ],
+        [
+          0.4414866956638015,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.2714721031412543,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.26534987688544126,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.03930177643676138,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ]
+      ]
+    },
+    {
+      "case_id": "hyp-07",
+      "rank": 5,
+      "root_cause": "Nondeterministic type inference behavior in complex callback scenarios.",
+      "classification": "neither",
+      "rationale": "The statement is too vague and does not specify a clear observable failure or a specific code-level cause. It discusses a behavior but does not indicate what the user-facing failure is or a concrete mechanism.",
+      "is_match": false,
+      "kw_recall_a": false,
+      "kw_recall_c": false,
+      "chose_gold": false,
+      "chosen_rid": "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+      "chosen_title": "Inference fails nondeterministic when callback gets a `typeof` in an object",
+      "chosen_score": 0.769042418109222,
+      "gold_score": 0.18887753869107654,
+      "gap": 0.5801648794181455,
+      "all_scores": [
+        [
+          0.769042418109222,
+          "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+          "Inference fails nondeterministic when callback gets a `typeof` in an object"
+        ],
+        [
+          0.40720119915421676,
+          "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+          "Incorrect type inference for array rest assignment and inability to add annotation"
+        ],
+        [
+          0.26931218769062304,
+          "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+          "Inference problem"
+        ],
+        [
+          0.18887753869107654,
+          "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+          "narrowing in switch doesn't work with ambient enums"
+        ],
+        [
+          0.18617458116540445,
+          "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+          "Enum not block-scoped given closure and --target es5"
+        ]
+      ]
+    }
+  ]
+}

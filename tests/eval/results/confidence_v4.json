@@ -1,0 +1,349 @@
+{
+  "generated_at": "2026-06-16T03:11:44.723894+00:00",
+  "thresholds": {
+    "low_confidence_threshold": 0.4,
+    "high_confidence_threshold": 0.55
+  },
+  "score_distributions": {
+    "match": {
+      "count": 20,
+      "min": 0.4222567081451416,
+      "max": 0.8371663093566895
+    },
+    "no_match": {
+      "count": 4,
+      "min": 0.23239983723164614,
+      "max": 0.34431397914886475
+    }
+  },
+  "confidence_level_breakdown": {
+    "MATCH": {
+      "HIGH": 16,
+      "MEDIUM": 4
+    },
+    "NO_MATCH": {
+      "LOW": 4
+    }
+  },
+  "candidate_threshold_confusion_matrices": [
+    {
+      "threshold": 0.3,
+      "tp": 20,
+      "fp": 1,
+      "tn": 3,
+      "fn": 0,
+      "precision": 0.9523809523809523,
+      "recall": 1.0,
+      "false_positive_rate": 0.25,
+      "false_negative_rate": 0.0
+    },
+    {
+      "threshold": 0.35,
+      "tp": 20,
+      "fp": 0,
+      "tn": 4,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    {
+      "threshold": 0.4,
+      "tp": 20,
+      "fp": 0,
+      "tn": 4,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    {
+      "threshold": 0.42,
+      "tp": 20,
+      "fp": 0,
+      "tn": 4,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0
+    },
+    {
+      "threshold": 0.45,
+      "tp": 19,
+      "fp": 0,
+      "tn": 4,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.95,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.05
+    },
+    {
+      "threshold": 0.55,
+      "tp": 16,
+      "fp": 0,
+      "tn": 4,
+      "fn": 4,
+      "precision": 1.0,
+      "recall": 0.8,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.2
+    },
+    {
+      "threshold": 0.6,
+      "tp": 13,
+      "fp": 0,
+      "tn": 4,
+      "fn": 7,
+      "precision": 1.0,
+      "recall": 0.65,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.35
+    }
+  ],
+  "rows": [
+    {
+      "id": "lex-01",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.7815005704163145,
+      "top2_score": 0.5929921754607987,
+      "top5_mean_score": 0.548181837997266,
+      "top1_minus_top2": 0.18850839495551575,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-02",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.6165698995250535,
+      "top2_score": 0.3569824184785838,
+      "top5_mean_score": 0.37061832722316285,
+      "top1_minus_top2": 0.25958748104646967,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-03",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.6648045382020165,
+      "top2_score": 0.43982435583544865,
+      "top5_mean_score": 0.45199273419100783,
+      "top1_minus_top2": 0.2249801823665678,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-04",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.7165907959233766,
+      "top2_score": 0.45945200807428266,
+      "top5_mean_score": 0.48520721373472053,
+      "top1_minus_top2": 0.25713878784909394,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-05",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.7137062124189024,
+      "top2_score": 0.41419694339055235,
+      "top5_mean_score": 0.44538789324955647,
+      "top1_minus_top2": 0.29950926902835007,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-06",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.77416641866169,
+      "top2_score": 0.3836025963066467,
+      "top5_mean_score": 0.4362008750960884,
+      "top1_minus_top2": 0.3905638223550433,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-07",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.6598073244094849,
+      "top2_score": 0.2908790111541748,
+      "top5_mean_score": 0.35713483510933697,
+      "top1_minus_top2": 0.36892831325531006,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-08",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.8129396065545551,
+      "top2_score": 0.3228008554696533,
+      "top5_mean_score": 0.3869573801528505,
+      "top1_minus_top2": 0.4901387510849018,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-09",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.5837537224219361,
+      "top2_score": 0.3624093532562256,
+      "top5_mean_score": 0.38893363636125977,
+      "top1_minus_top2": 0.22134436916571054,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "lex-10",
+      "query_type": "lexical-overlap",
+      "is_match": true,
+      "top1_score": 0.8371663093566895,
+      "top2_score": 0.4998852312633266,
+      "top5_mean_score": 0.4486120251822713,
+      "top1_minus_top2": 0.33728107809336283,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "para-01",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.6301464471090106,
+      "top2_score": 0.5510150358383371,
+      "top5_mean_score": 0.5240062726290315,
+      "top1_minus_top2": 0.07913141127067347,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "para-02",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.5266562700271606,
+      "top2_score": 0.46104127168655396,
+      "top5_mean_score": 0.42233511953188874,
+      "top1_minus_top2": 0.06561499834060669,
+      "confidence_level": "MEDIUM"
+    },
+    {
+      "id": "para-03",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.4222567081451416,
+      "top2_score": 0.41959020495414734,
+      "top5_mean_score": 0.3854614888171181,
+      "top1_minus_top2": 0.0026665031909942627,
+      "confidence_level": "MEDIUM"
+    },
+    {
+      "id": "para-04",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.46315968036651944,
+      "top2_score": 0.4314896423512491,
+      "top5_mean_score": 0.4212568300142833,
+      "top1_minus_top2": 0.03167003801527035,
+      "confidence_level": "MEDIUM"
+    },
+    {
+      "id": "para-05",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.4517929553985628,
+      "top2_score": 0.4212968600569291,
+      "top5_mean_score": 0.4094809269210226,
+      "top1_minus_top2": 0.030496095341633667,
+      "confidence_level": "MEDIUM"
+    },
+    {
+      "id": "para-06",
+      "query_type": "paraphrase",
+      "is_match": true,
+      "top1_score": 0.5830534001525164,
+      "top2_score": 0.4483796450412916,
+      "top5_mean_score": 0.4257637113196351,
+      "top1_minus_top2": 0.1346737551112248,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "multi-01",
+      "query_type": "multi-concept",
+      "is_match": true,
+      "top1_score": 0.6012660144250376,
+      "top2_score": 0.49589841080014874,
+      "top5_mean_score": 0.45229840385859815,
+      "top1_minus_top2": 0.10536760362488884,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "multi-02",
+      "query_type": "multi-concept",
+      "is_match": true,
+      "top1_score": 0.5788843286702448,
+      "top2_score": 0.5647492590994978,
+      "top5_mean_score": 0.4584659168502327,
+      "top1_minus_top2": 0.01413506957074695,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "multi-03",
+      "query_type": "multi-concept",
+      "is_match": true,
+      "top1_score": 0.7602799677681955,
+      "top2_score": 0.5522714853286743,
+      "top5_mean_score": 0.5571276759149233,
+      "top1_minus_top2": 0.2080084824395212,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "multi-04",
+      "query_type": "multi-concept",
+      "is_match": true,
+      "top1_score": 0.7308296182998905,
+      "top2_score": 0.5738992520004756,
+      "top5_mean_score": 0.5533931347066766,
+      "top1_minus_top2": 0.15693036629941481,
+      "confidence_level": "HIGH"
+    },
+    {
+      "id": "neg-01",
+      "query_type": "no-match-expected",
+      "is_match": false,
+      "top1_score": 0.2950909259861161,
+      "top2_score": 0.2849750518798828,
+      "top5_mean_score": 0.28429596936235046,
+      "top1_minus_top2": 0.010115874106233269,
+      "confidence_level": "LOW"
+    },
+    {
+      "id": "neg-02",
+      "query_type": "no-match-expected",
+      "is_match": false,
+      "top1_score": 0.2411248098463047,
+      "top2_score": 0.23597362721123571,
+      "top5_mean_score": 0.2218340099678741,
+      "top1_minus_top2": 0.005151182635068974,
+      "confidence_level": "LOW"
+    },
+    {
+      "id": "neg-03",
+      "query_type": "no-match-expected",
+      "is_match": false,
+      "top1_score": 0.34431397914886475,
+      "top2_score": 0.34420108795166016,
+      "top5_mean_score": 0.31799590370172165,
+      "top1_minus_top2": 0.00011289119720458984,
+      "confidence_level": "LOW"
+    },
+    {
+      "id": "neg-04",
+      "query_type": "no-match-expected",
+      "is_match": false,
+      "top1_score": 0.23239983723164614,
+      "top2_score": 0.2262894376343828,
+      "top5_mean_score": 0.219937975180372,
+      "top1_minus_top2": 0.0061103995972633385,
+      "confidence_level": "LOW"
+    }
+  ]
+}

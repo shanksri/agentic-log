@@ -1,0 +1,1187 @@
+{
+  "generated_at": "2026-06-18T09:19:54.685829+00:00",
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm_model_name": "gpt-4o-mini",
+  "root_cause_match_threshold": 0.55,
+  "overall": {
+    "retrieval_recall_at_5": 1.0,
+    "root_cause_recall_at_1": 0.7142857142857143,
+    "root_cause_recall_at_3": 0.8571428571428571,
+    "root_cause_mrr": 0.8214285714285714,
+    "keyword_strategy_a": {
+      "case_level_recall_at_5": 0.7142857142857143,
+      "per_hypothesis_recall": 0.6285714285714286
+    },
+    "keyword_strategy_c": {
+      "case_level_recall_at_5": 0.7142857142857143,
+      "per_hypothesis_recall": 0.6285714285714286
+    }
+  },
+  "latency": {
+    "evidence_keyword_derivation_mean_s": 0.2424182249999376,
+    "evidence_keyword_derivation_total_s": 1.9393457999995007,
+    "per_case_s": {
+      "hyp-01": 0.20754529999976512,
+      "hyp-02": 0.21678269999938493,
+      "hyp-03": 0.27562610000131826,
+      "hyp-04": 0.21548909999910393,
+      "hyp-05": 0.2686353999997664,
+      "hyp-06": 0.18904459999976098,
+      "hyp-07": 0.36144160000003467,
+      "hyp-08": 0.20478100000036648
+    }
+  },
+  "confidence_correlation": {
+    "n_hypotheses": 35,
+    "raw_confidence": {
+      "n_correct": 18,
+      "n_incorrect": 17,
+      "mean_confidence_correct": 0.7083333333333334,
+      "mean_confidence_incorrect": 0.6470588235294118,
+      "point_biserial_correlation": 0.2509048893449063
+    },
+    "composite_confidence": {
+      "n_correct": 18,
+      "n_incorrect": 17,
+      "mean_confidence_correct": 0.6176111111111111,
+      "mean_confidence_incorrect": 0.45638235294117646,
+      "point_biserial_correlation": 0.4164701657850292
+    }
+  },
+  "failure_breakdown": {
+    "pass": 4,
+    "hypothesis_failure": 1,
+    "validation_keyword_failure": 2,
+    "negative_case": 1
+  },
+  "cases": [
+    {
+      "id": "hyp-01",
+      "problem": "the airflow scheduler keeps restarting because of a null database id field on the task instance",
+      "source_query_id": "para-01",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.6301464471090106,
+      "initial_confidence_level": "HIGH",
+      "retrieved_top5_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+        "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+        "67491e2a-fe36-469a-bdd4-95cb71548887",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Historical task instances have a NULL dag_version_id, causing validation errors.",
+          "raw_confidence_score": 0.9,
+          "validation_keywords_a": [
+            "NULL dag_version_id",
+            "scheduler crashloops",
+            "ValidationError"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "ValidationError: UUID input should be a string",
+            "task_instance.dag_version_id",
+            "NULL",
+            "crashloops",
+            "Scheduler"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.9,
+          "best_root_cause_similarity": 0.6720887633063137,
+          "is_match": true
+        },
+        {
+          "rank": 2,
+          "root_cause": "The scheduler does not handle NULL dag_version_id gracefully, leading to continuous restarts.",
+          "raw_confidence_score": 0.85,
+          "validation_keywords_a": [
+            "scheduler crashloops",
+            "NULL handling",
+            "dag_version_id"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "ValidationError: UUID input should be a string",
+            "task_instance.dag_version_id",
+            "NULL",
+            "crashloops",
+            "Scheduler"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.85,
+          "best_root_cause_similarity": 0.7009494329060463,
+          "is_match": true
+        },
+        {
+          "rank": 3,
+          "root_cause": "The introduction of the dag_version table has not been fully integrated with existing task instances.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "dag_version table",
+            "migration",
+            "task_instance"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "-version",
+            "-enable",
+            "-108",
+            "coordinator",
+            "Processor"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.48,
+          "best_root_cause_similarity": 0.4288939195583127,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "The scheduler's validation logic does not account for historical task instances with missing fields.",
+          "raw_confidence_score": 0.75,
+          "validation_keywords_a": [
+            "validation logic",
+            "historical task instances",
+            "missing fields"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "ValidationError: UUID input should be a string",
+            "task_instance.dag_version_id",
+            "NULL",
+            "crashloops",
+            "Scheduler"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.75,
+          "best_root_cause_similarity": 0.5563379744924289,
+          "is_match": true
+        },
+        {
+          "rank": 5,
+          "root_cause": "Lack of fallback mechanisms for NULL dag_version_id in the scheduler's context construction.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "fallback mechanism",
+            "dag_version_id",
+            "context construction"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "ValidationError: UUID input should be a string",
+            "task_instance.dag_version_id",
+            "NULL",
+            "crashloops",
+            "Scheduler"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.7,
+          "best_root_cause_similarity": 0.6367410233930078,
+          "is_match": true
+        }
+      ],
+      "root_cause_recall_at_1": 1.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 1.0,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "NULL dag_version_id scheduler crashloops ValidationError",
+        "recall_at_5": 1.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "ValidationError: UUID input should be a string task_instance.dag_version_id NULL crashloops Scheduler",
+        "recall_at_5": 1.0
+      },
+      "evidence_keyword_latency_s": 0.20754529999976512,
+      "failure_stage": "pass"
+    },
+    {
+      "id": "hyp-02",
+      "problem": "the background trigger service fails to launch after deployment",
+      "source_query_id": "para-02",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.5266562700271606,
+      "initial_confidence_level": "MEDIUM",
+      "retrieved_top5_ids": [
+        "375a627d-3443-4231-b889-d271e4c41dc5",
+        "69347f56-50e2-476a-97bb-8c435181b23a",
+        "91d96912-b27a-421c-932a-2d462d6643c9",
+        "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+        "90e69e94-c5f7-4e3f-80c7-2f542e956e71"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Synchronous startup of the Execution API lifespan is causing initialization failures.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "synchronous startup",
+            "Execution API",
+            "initialization failure"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "containerStatuses",
+            "started",
+            "restart",
+            "ready",
+            "stays"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.40800000000000003,
+          "best_root_cause_similarity": 0.5252595883646812,
+          "is_match": false
+        },
+        {
+          "rank": 2,
+          "root_cause": "Missing connection ID for Azure Blob storage is preventing log shipping.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "AirflowNotFoundException",
+            "conn_id",
+            "logs_to_azure_blob"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "connection",
+            "Triggerer",
+            "unable",
+            "remote",
+            "azure"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.595,
+          "best_root_cause_similarity": 0.14858637911335534,
+          "is_match": false
+        },
+        {
+          "rank": 3,
+          "root_cause": "Remote logging configuration is not enabled, leading to warnings and potential failures.",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "remote logging",
+            "not enabled",
+            "warnings"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "Triggerer",
+            "warning",
+            "logging",
+            "enabled",
+            "remote"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.51,
+          "best_root_cause_similarity": 0.24549725773959022,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "Inadequate error handling during the triggerer's startup process.",
+          "raw_confidence_score": 0.65,
+          "validation_keywords_a": [
+            "error handling",
+            "startup process",
+            "triggerer"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "Triggerer",
+            "starting"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.5525,
+          "best_root_cause_similarity": 0.7245303483750343,
+          "is_match": true
+        },
+        {
+          "rank": 5,
+          "root_cause": "Issues with the triggerer's cleanup process affecting its ability to initialize.",
+          "raw_confidence_score": 0.5,
+          "validation_keywords_a": [
+            "Trigger.clean_unused()",
+            "cleanup process",
+            "initialization"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "Triggerer",
+            "starting"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.425,
+          "best_root_cause_similarity": 0.7034749976396849,
+          "is_match": true
+        }
+      ],
+      "root_cause_recall_at_1": 0.0,
+      "root_cause_recall_at_3": 0.0,
+      "root_cause_mrr": 0.25,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 4,
+        "query": "error handling startup process triggerer",
+        "recall_at_5": 1.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 4,
+        "query": "Triggerer starting",
+        "recall_at_5": 1.0
+      },
+      "evidence_keyword_latency_s": 0.21678269999938493,
+      "failure_stage": "hypothesis_failure"
+    },
+    {
+      "id": "hyp-03",
+      "problem": "the type checker crashes with a memory error while watching files for changes",
+      "source_query_id": "para-04",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.46315968036651944,
+      "initial_confidence_level": "MEDIUM",
+      "retrieved_top5_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+        "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+        "f350c637-b9df-4f3a-b4b5-df0532e03be8"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Memory leak in the type checker when using --watch flag",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "out of memory",
+            "--watch",
+            "memory leak"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "--watch",
+            "-rc",
+            "--d",
+            "Segfault",
+            "compiler"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.68,
+          "best_root_cause_similarity": 0.6919132745528667,
+          "is_match": true
+        },
+        {
+          "rank": 2,
+          "root_cause": "Inefficient memory management in the type checker for large source files",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "JavaScript heap out of memory",
+            "large source files",
+            "memory management"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "intersections",
+            "calculate",
+            "recursive",
+            "memory",
+            "highly"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.357,
+          "best_root_cause_similarity": 0.49244342221271953,
+          "is_match": false
+        },
+        {
+          "rank": 3,
+          "root_cause": "Recursive function calls leading to stack overflow",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "Maximum call stack size exceeded",
+            "recursive function",
+            "stack overflow"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "RangeError",
+            "serialization",
+            "distributive",
+            "recursive",
+            "exceeded"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.306,
+          "best_root_cause_similarity": 0.18897903740440908,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "Incompatibility or bugs introduced in recent TypeScript versions",
+          "raw_confidence_score": 0.5,
+          "validation_keywords_a": [
+            "TypeScript version",
+            "bugs",
+            "incompatibility"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "[tsserver]",
+            "ENOENT",
+            "TypeScript",
+            "processing",
+            "request"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.255,
+          "best_root_cause_similarity": 0.5338995569804936,
+          "is_match": false
+        },
+        {
+          "rank": 5,
+          "root_cause": "Improper handling of file watching events leading to excessive resource usage",
+          "raw_confidence_score": 0.65,
+          "validation_keywords_a": [
+            "file watching",
+            "resource usage",
+            "event handling"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "WatchList",
+            "collection",
+            "consistent",
+            "fallback",
+            "large"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.5525,
+          "best_root_cause_similarity": 0.4519120597117619,
+          "is_match": false
+        }
+      ],
+      "root_cause_recall_at_1": 1.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 1.0,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "out of memory --watch memory leak",
+        "recall_at_5": 0.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "--watch -rc --d Segfault compiler",
+        "recall_at_5": 1.0
+      },
+      "evidence_keyword_latency_s": 0.27562610000131826,
+      "failure_stage": "pass"
+    },
+    {
+      "id": "hyp-04",
+      "problem": "node process runs out of memory when building a large bundle of files",
+      "source_query_id": "para-03",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.4222567081451416,
+      "initial_confidence_level": "MEDIUM",
+      "retrieved_top5_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+        "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+        "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Insufficient memory allocation for large bundles",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "JavaScript heap out of memory",
+            "allocation failure",
+            "large bundle"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "JavaScript",
+            "memory",
+            "source"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.68,
+          "best_root_cause_similarity": 0.5308585719322345,
+          "is_match": false
+        },
+        {
+          "rank": 2,
+          "root_cause": "Inefficient memory management in the TypeScript compiler",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "compiler hang",
+            "maximum call stack size exceeded",
+            "TypeScript"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "-threaded",
+            "Unrestricted",
+            "generated",
+            "caching",
+            "regimes"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.357,
+          "best_root_cause_similarity": 0.7139911974502877,
+          "is_match": true
+        },
+        {
+          "rank": 3,
+          "root_cause": "Concurrent tasks causing memory pressure",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "high memory pressure",
+            "concurrent tasks",
+            "Celery"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "Fetching",
+            "pressure",
+            "blocks",
+            "memory",
+            "cache"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.306,
+          "best_root_cause_similarity": 0.3385204268725503,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "Memory leaks in the application code",
+          "raw_confidence_score": 0.5,
+          "validation_keywords_a": [
+            "segfault",
+            "out of memory",
+            "memory leaks"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "-threaded",
+            "Unrestricted",
+            "generated",
+            "caching",
+            "regimes"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.255,
+          "best_root_cause_similarity": 0.516254616567956,
+          "is_match": false
+        },
+        {
+          "rank": 5,
+          "root_cause": "Incompatibility with specific TypeScript versions",
+          "raw_confidence_score": 0.4,
+          "validation_keywords_a": [
+            "TypeScript version",
+            "fixed in TS7",
+            "compiler issues"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "--allowJs",
+            "importing",
+            "Compiler"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.20400000000000001,
+          "best_root_cause_similarity": 0.4871398764593685,
+          "is_match": false
+        }
+      ],
+      "root_cause_recall_at_1": 0.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 0.5,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 2,
+        "query": "compiler hang maximum call stack size exceeded TypeScript",
+        "recall_at_5": 0.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 2,
+        "query": "-threaded Unrestricted generated caching regimes",
+        "recall_at_5": 0.0
+      },
+      "evidence_keyword_latency_s": 0.21548909999910393,
+      "failure_stage": "validation_keyword_failure"
+    },
+    {
+      "id": "hyp-05",
+      "problem": "the generated API docs show the same operation identifier twice for an endpoint that supports several HTTP verbs",
+      "source_query_id": "para-05",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.4517929553985628,
+      "initial_confidence_level": "MEDIUM",
+      "retrieved_top5_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+        "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+        "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+        "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+        "de1208c6-b280-42f1-bee4-83e003a8b9a7"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Improper use of the `@router.api_route()` method for defining multiple HTTP methods on the same endpoint.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "Duplicated OperationID",
+            "multiple methods",
+            "api_route"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "stream_item_type",
+            "include_router",
+            "APIRouter",
+            "propagated",
+            "through"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.40800000000000003,
+          "best_root_cause_similarity": 0.5738225449491378,
+          "is_match": true
+        },
+        {
+          "rank": 2,
+          "root_cause": "Lack of clear documentation on the proper methods to use for defining routes in FastAPI.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "documentation",
+            "FastAPI features",
+            "operation IDs"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "stream_item_type",
+            "include_router",
+            "APIRouter",
+            "propagated",
+            "through"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.357,
+          "best_root_cause_similarity": 0.5981038677055059,
+          "is_match": true
+        },
+        {
+          "rank": 3,
+          "root_cause": "The design of FastAPI allowing multiple methods in a single route definition without adequate restrictions.",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "design flaw",
+            "multiple methods",
+            "FastAPI"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "OperationID",
+            "Duplicated",
+            "multiple",
+            "methods",
+            "adding"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.51,
+          "best_root_cause_similarity": 0.5992806373594053,
+          "is_match": true
+        },
+        {
+          "rank": 4,
+          "root_cause": "Inconsistent handling of operation IDs when using semi-internal methods like `api_route` and `add_api_route`.",
+          "raw_confidence_score": 0.65,
+          "validation_keywords_a": [
+            "operation IDs",
+            "api_route",
+            "add_api_route"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "OperationID",
+            "Duplicated",
+            "multiple",
+            "methods",
+            "adding"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.5525,
+          "best_root_cause_similarity": 0.7698037207424735,
+          "is_match": true
+        },
+        {
+          "rank": 5,
+          "root_cause": "Potential oversight in the implementation of the FastAPI framework regarding route definitions and operation ID uniqueness.",
+          "raw_confidence_score": 0.5,
+          "validation_keywords_a": [
+            "implementation oversight",
+            "route definitions",
+            "operation ID uniqueness"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "OperationID",
+            "Duplicated",
+            "multiple",
+            "methods",
+            "adding"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.425,
+          "best_root_cause_similarity": 0.6572619204381893,
+          "is_match": true
+        }
+      ],
+      "root_cause_recall_at_1": 1.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 1.0,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "Duplicated OperationID multiple methods api_route",
+        "recall_at_5": 1.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "stream_item_type include_router APIRouter propagated through",
+        "recall_at_5": 0.0
+      },
+      "evidence_keyword_latency_s": 0.2686353999997664,
+      "failure_stage": "validation_keyword_failure"
+    },
+    {
+      "id": "hyp-06",
+      "problem": "the keycloak token's audience claim is being ignored by the authentication layer",
+      "source_query_id": "para-06",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.5830534001525164,
+      "initial_confidence_level": "HIGH",
+      "retrieved_top5_ids": [
+        "1c11adbe-31dd-447c-95a0-81032222e565",
+        "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+        "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+        "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+        "78d24aee-6301-47ce-8dc2-e28102c67768"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Misconfiguration of JWT audience settings in the authentication layer.",
+          "raw_confidence_score": 0.9,
+          "validation_keywords_a": [
+            "jwt_audience",
+            "configuration",
+            "KeycloakAuthManager"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "KeycloakAuthManager",
+            "JWTValidator",
+            "configured",
+            "audience"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.9,
+          "best_root_cause_similarity": 0.779335821999122,
+          "is_match": true
+        },
+        {
+          "rank": 2,
+          "root_cause": "Changes in the authentication library version affecting audience claim handling.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "version change",
+            "authentication library",
+            "audience claim"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "KeycloakAuthManager",
+            "JWTValidator",
+            "configured",
+            "audience"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.8,
+          "best_root_cause_similarity": 0.4285233064688065,
+          "is_match": false
+        },
+        {
+          "rank": 3,
+          "root_cause": "Inconsistent handling of audience claims across different components of the system.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "audience claims",
+            "inconsistent handling",
+            "system components"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "KeycloakAuthManager",
+            "JWTValidator",
+            "configured",
+            "audience"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.7,
+          "best_root_cause_similarity": 0.2858400628106683,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "Lack of proper validation checks for audience claims in the authentication layer.",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "validation checks",
+            "audience claims",
+            "authentication layer"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "KeycloakAuthManager",
+            "JWTValidator",
+            "configured",
+            "audience"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.6,
+          "best_root_cause_similarity": 0.5358228105989435,
+          "is_match": false
+        },
+        {
+          "rank": 5,
+          "root_cause": "Potential bugs in the JWT validation logic that bypass audience checks.",
+          "raw_confidence_score": 0.5,
+          "validation_keywords_a": [
+            "JWT validation",
+            "bugs",
+            "audience checks"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "KeycloakAuthManager",
+            "JWTValidator",
+            "configured",
+            "audience"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.5,
+          "best_root_cause_similarity": 0.7131290396516029,
+          "is_match": true
+        }
+      ],
+      "root_cause_recall_at_1": 1.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 1.0,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "jwt_audience configuration KeycloakAuthManager",
+        "recall_at_5": 1.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "KeycloakAuthManager JWTValidator configured audience",
+        "recall_at_5": 1.0
+      },
+      "evidence_keyword_latency_s": 0.18904459999976098,
+      "failure_stage": "pass"
+    },
+    {
+      "id": "hyp-07",
+      "problem": "type inference and switch statement narrowing bugs involving enums",
+      "source_query_id": "multi-04",
+      "is_negative_case": false,
+      "retrieval_ok": true,
+      "initial_top1_score": 0.7308296182998905,
+      "initial_confidence_level": "HIGH",
+      "retrieved_top5_ids": [
+        "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+        "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+        "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+        "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+        "d7257140-4ca9-45f4-b0ea-1a6fde890bb9"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Type inference issues with ambient enums in switch statements.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "ambient enums",
+            "switch statement",
+            "type inference"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "narrowing",
+            "ambient",
+            "switch",
+            "doesn",
+            "enums"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.8,
+          "best_root_cause_similarity": 0.8413707088790279,
+          "is_match": true
+        },
+        {
+          "rank": 2,
+          "root_cause": "Compiler limitations in handling numeric enums in switch cases.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "numeric enums",
+            "compiler limitations",
+            "switch cases"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "narrowing",
+            "ambient",
+            "switch",
+            "doesn",
+            "enums"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.7,
+          "best_root_cause_similarity": 0.7015291126960101,
+          "is_match": true
+        },
+        {
+          "rank": 3,
+          "root_cause": "Inconsistent behavior of type narrowing across different enum types.",
+          "raw_confidence_score": 0.75,
+          "validation_keywords_a": [
+            "type narrowing",
+            "enum types",
+            "inconsistent behavior"
+          ],
+          "validation_keyword_recall_ok_a": true,
+          "validation_keywords_c": [
+            "narrowing",
+            "ambient",
+            "switch",
+            "doesn",
+            "enums"
+          ],
+          "validation_keyword_recall_ok_c": true,
+          "composite_confidence_score": 0.75,
+          "best_root_cause_similarity": 0.7234746695497689,
+          "is_match": true
+        },
+        {
+          "rank": 4,
+          "root_cause": "Issues with the TypeScript compiler's handling of closures and block scoping.",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "block scoping",
+            "closures",
+            "TypeScript compiler"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "--target",
+            "-scoped",
+            "closure",
+            "given"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.36,
+          "best_root_cause_similarity": 0.44770971817828725,
+          "is_match": false
+        },
+        {
+          "rank": 5,
+          "root_cause": "Nondeterministic type inference behavior in complex callback scenarios.",
+          "raw_confidence_score": 0.65,
+          "validation_keywords_a": [
+            "nondeterministic behavior",
+            "callback",
+            "type inference"
+          ],
+          "validation_keyword_recall_ok_a": false,
+          "validation_keywords_c": [
+            "typeof",
+            "nondeterministic",
+            "Inference",
+            "callback",
+            "object"
+          ],
+          "validation_keyword_recall_ok_c": false,
+          "composite_confidence_score": 0.39,
+          "best_root_cause_similarity": 0.33685726132363414,
+          "is_match": false
+        }
+      ],
+      "root_cause_recall_at_1": 1.0,
+      "root_cause_recall_at_3": 1.0,
+      "root_cause_mrr": 1.0,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "ambient enums switch statement type inference",
+        "recall_at_5": 1.0
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "narrowing ambient switch doesn enums",
+        "recall_at_5": 1.0
+      },
+      "evidence_keyword_latency_s": 0.36144160000003467,
+      "failure_stage": "pass"
+    },
+    {
+      "id": "hyp-08",
+      "problem": "credit card payment processing failure in the checkout flow",
+      "source_query_id": "neg-01",
+      "is_negative_case": true,
+      "retrieval_ok": null,
+      "initial_top1_score": 0.2950909259861161,
+      "initial_confidence_level": "LOW",
+      "retrieved_top5_ids": [
+        "8bd2c1b7-11b0-4e59-a6ff-9d41d8fd4b65",
+        "e913aaed-3e2a-4847-86bf-88e332b4bf88",
+        "b82cce78-6451-4244-8557-f7acad10ee3a",
+        "2d3df417-853a-4248-8f00-d4b383ebd7a5",
+        "9a095791-59e9-4955-b2b2-ba2b1d950b30"
+      ],
+      "hypotheses": [
+        {
+          "rank": 1,
+          "root_cause": "Inadequate error handling in the payment processing SDK.",
+          "raw_confidence_score": 0.8,
+          "validation_keywords_a": [
+            "error handling",
+            "payment processing",
+            "SDK"
+          ],
+          "validation_keyword_recall_ok_a": null,
+          "validation_keywords_c": [
+            "-mode",
+            "-108",
+            "UP_FOR_RETRY",
+            "transition",
+            "failures"
+          ],
+          "validation_keyword_recall_ok_c": null,
+          "composite_confidence_score": 0.24,
+          "best_root_cause_similarity": 0.0,
+          "is_match": false
+        },
+        {
+          "rank": 2,
+          "root_cause": "Incomplete response parsing leading to validation errors.",
+          "raw_confidence_score": 0.75,
+          "validation_keywords_a": [
+            "incomplete response",
+            "validation error",
+            "parse_response"
+          ],
+          "validation_keyword_recall_ok_a": null,
+          "validation_keywords_c": [
+            "parse_response",
+            "Incomplete",
+            "Structured",
+            "responses",
+            "handled"
+          ],
+          "validation_keyword_recall_ok_c": null,
+          "composite_confidence_score": 0.22499999999999998,
+          "best_root_cause_similarity": 0.0,
+          "is_match": false
+        },
+        {
+          "rank": 3,
+          "root_cause": "Failure to transition task states correctly in the SDK.",
+          "raw_confidence_score": 0.7,
+          "validation_keywords_a": [
+            "task state",
+            "UP_FOR_RETRY",
+            "FAILED"
+          ],
+          "validation_keyword_recall_ok_a": null,
+          "validation_keywords_c": [
+            "-mode",
+            "-108",
+            "UP_FOR_RETRY",
+            "transition",
+            "failures"
+          ],
+          "validation_keyword_recall_ok_c": null,
+          "composite_confidence_score": 0.21,
+          "best_root_cause_similarity": 0.0,
+          "is_match": false
+        },
+        {
+          "rank": 4,
+          "root_cause": "Improper configuration of retry logic in the payment processing system.",
+          "raw_confidence_score": 0.65,
+          "validation_keywords_a": [
+            "retry logic",
+            "configuration",
+            "payment processing"
+          ],
+          "validation_keyword_recall_ok_a": null,
+          "validation_keywords_c": [
+            "-mode",
+            "-108",
+            "UP_FOR_RETRY",
+            "transition",
+            "failures"
+          ],
+          "validation_keyword_recall_ok_c": null,
+          "composite_confidence_score": 0.195,
+          "best_root_cause_similarity": 0.0,
+          "is_match": false
+        },
+        {
+          "rank": 5,
+          "root_cause": "Schema versioning issues affecting payment processing.",
+          "raw_confidence_score": 0.6,
+          "validation_keywords_a": [
+            "schema versioning",
+            "payment processing",
+            "version pinning"
+          ],
+          "validation_keyword_recall_ok_a": null,
+          "validation_keywords_c": [
+            "-version",
+            "-enable",
+            "-108",
+            "coordinator",
+            "Processor"
+          ],
+          "validation_keyword_recall_ok_c": null,
+          "composite_confidence_score": 0.18,
+          "best_root_cause_similarity": 0.0,
+          "is_match": false
+        }
+      ],
+      "root_cause_recall_at_1": null,
+      "root_cause_recall_at_3": null,
+      "root_cause_mrr": null,
+      "validation_keyword_eval_a": {
+        "source_hypothesis_rank": 1,
+        "query": "error handling payment processing SDK",
+        "recall_at_5": null
+      },
+      "validation_keyword_eval_c": {
+        "source_hypothesis_rank": 1,
+        "query": "-mode -108 UP_FOR_RETRY transition failures",
+        "recall_at_5": null
+      },
+      "evidence_keyword_latency_s": 0.20478100000036648,
+      "failure_stage": "negative_case"
+    }
+  ]
+}

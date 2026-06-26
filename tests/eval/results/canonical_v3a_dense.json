@@ -1,0 +1,678 @@
+{
+  "generated_at": "2026-06-13T20:50:33.112173+00:00",
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "search_config": {
+    "expansion": false,
+    "reranking": false,
+    "hybrid": false,
+    "label": "canonical-v3a-dense"
+  },
+  "gold_queries_file": "D:\\projects\\agentic log\\tests\\eval\\gold_queries.json",
+  "overall": {
+    "count": 24,
+    "recall_at_5": 1.0,
+    "recall_at_10": 1.0,
+    "mrr": 0.975,
+    "ndcg_at_10": 0.9754072534454753,
+    "top1_score_mean": 0.5842608475193846,
+    "top5_mean_score_mean": 0.4155366707113854
+  },
+  "by_query_type": {
+    "lexical-overlap": {
+      "count": 10,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score_mean": 0.7161005397890019,
+      "top5_mean_score_mean": 0.431922675829752
+    },
+    "paraphrase": {
+      "count": 6,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score_mean": 0.5128442435331518,
+      "top5_mean_score_mean": 0.4313840582054966
+    },
+    "multi-concept": {
+      "count": 4,
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.875,
+      "ndcg_at_10": 0.8770362672273767,
+      "top1_score_mean": 0.6678149822908421,
+      "top5_mean_score_mean": 0.5053212828326077
+    },
+    "no-match-expected": {
+      "count": 4,
+      "recall_at_5": null,
+      "recall_at_10": null,
+      "mrr": null,
+      "ndcg_at_10": null,
+      "top1_score_mean": 0.2782323880532329,
+      "top5_mean_score_mean": 0.26101596455307957
+    }
+  },
+  "queries": [
+    {
+      "id": "lex-01",
+      "query": "scheduler crashloop ValidationError UUID dag_version_id is NULL",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c"
+      ],
+      "retrieved_incident_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+        "75bc0b20-ae47-4353-a941-b0523cd1ed7c",
+        "177f19d2-c9d7-4baa-af4c-ed97dba993d7",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+        "176e05af-bf4f-45e1-9f32-efa77c3d30c8",
+        "8bd2c1b7-11b0-4e59-a6ff-9d41d8fd4b65",
+        "6f30bc8d-c352-490e-8af2-f7d1b904d0bd",
+        "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+        "5884579a-0ad6-457c-b890-4b7507cf7bbb"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.7815005704163145,
+      "top5_mean_score": 0.548181837997266
+    },
+    {
+      "id": "lex-02",
+      "query": "triggerer not starting",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "375a627d-3443-4231-b889-d271e4c41dc5"
+      ],
+      "retrieved_incident_ids": [
+        "375a627d-3443-4231-b889-d271e4c41dc5",
+        "91d96912-b27a-421c-932a-2d462d6643c9",
+        "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+        "50b93e24-62be-4e08-a3dd-33f647bbb15c",
+        "69347f56-50e2-476a-97bb-8c435181b23a",
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "b2f85623-8d2b-46ca-b6b9-7876bb59babf",
+        "17244774-96f0-40b3-a233-d422e7dee2f1",
+        "8ffac98b-d24c-4541-ac58-d8ceb408d840",
+        "80c8e906-2740-40ba-bcf5-36a3a1bf1719"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.6165698995250535,
+      "top5_mean_score": 0.37061832722316285
+    },
+    {
+      "id": "lex-03",
+      "query": "segfault when running compiler with --d or --watch out of memory",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca"
+      ],
+      "retrieved_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "214d9bed-613a-4d24-9172-8c18c12980ae",
+        "45ce549a-38d9-45a0-8dfc-e2f8e7a460f4",
+        "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+        "b654576e-28ec-4f39-b343-92504bc613df",
+        "6f30bc8d-c352-490e-8af2-f7d1b904d0bd",
+        "411ac24a-b8d1-4060-aea9-af2b4c985617",
+        "8dd2a352-3033-4529-bc78-c84aead2f2bc",
+        "e1da6866-9403-4940-b0b4-2b4838c21a20",
+        "5b155d0c-f2fa-4470-8e71-75185dcc4b3d"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.6648045382020165,
+      "top5_mean_score": 0.45199273419100783
+    },
+    {
+      "id": "lex-04",
+      "query": "small code change causes 70% build time regression strictGenericChecks",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "ca7a06f1-aaa9-4974-89b5-332aec4fb334"
+      ],
+      "retrieved_incident_ids": [
+        "ca7a06f1-aaa9-4974-89b5-332aec4fb334",
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "5f8ecf0d-a0c7-4886-bd3a-cbf3a9174da7",
+        "71c2b3a4-9d83-4ee4-92d4-4c2dd88ddb8c",
+        "80bbe647-5db7-49e8-861a-6eac5c5379f3",
+        "faae98bc-a393-4f59-86fe-40371de2c4b1",
+        "83839fde-8961-4b6b-88ec-aceefe2d871f",
+        "68910930-5566-4f04-a7a8-d5d1307bab12",
+        "8dd2a352-3033-4529-bc78-c84aead2f2bc",
+        "411ac24a-b8d1-4060-aea9-af2b4c985617"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.7165907959233766,
+      "top5_mean_score": 0.48520721373472053
+    },
+    {
+      "id": "lex-05",
+      "query": "JavaScript heap out of memory for 10s of MB of source",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382"
+      ],
+      "retrieved_incident_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+        "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+        "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+        "214d9bed-613a-4d24-9172-8c18c12980ae",
+        "ca7a06f1-aaa9-4974-89b5-332aec4fb334",
+        "4066fcee-7a5e-48a8-9742-fdac384a521f",
+        "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+        "8dd2a352-3033-4529-bc78-c84aead2f2bc",
+        "0a562870-396a-49a6-9535-8fe0ff88088e"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.7137062124189024,
+      "top5_mean_score": 0.44538789324955647
+    },
+    {
+      "id": "lex-06",
+      "query": "duplicated OperationID when adding route with multiple methods",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1"
+      ],
+      "retrieved_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+        "eb894ba0-714f-4d95-9ef8-a98f6d349e46",
+        "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+        "481069ab-d2e9-4907-b9e2-457397201423",
+        "ae35b343-dc48-4e93-8600-684f52e83b1e",
+        "64dd225b-cf55-4b5a-8a8e-ed5efed4cd76",
+        "fe9c0ec3-a7f8-476e-99fa-ed783e90c6c4",
+        "9793077a-02f8-444c-8b61-06ab52048069",
+        "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.77416641866169,
+      "top5_mean_score": 0.4362008750960884
+    },
+    {
+      "id": "lex-07",
+      "query": "can't use Annotated with ForwardRef",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "4fc64b88-857c-44f1-9403-6c16cd176024"
+      ],
+      "retrieved_incident_ids": [
+        "4fc64b88-857c-44f1-9403-6c16cd176024",
+        "5884579a-0ad6-457c-b890-4b7507cf7bbb",
+        "7bb548fd-e34d-4d1d-8f26-01643e33b623",
+        "e07417c2-c4fd-4748-8fee-3730439beabd",
+        "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+        "d5ff674f-f393-48a6-90ee-d2c91ca0369b",
+        "4aa88777-241f-4333-86a5-75bbe652990b",
+        "de34f567-4689-43e8-bf29-93c80973e031",
+        "d2b91f42-2787-4cae-b74e-31ec582be1fc",
+        "0ead027f-7529-4c99-b421-88a9d705b5b1"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.6598073244094849,
+      "top5_mean_score": 0.35713483510933697
+    },
+    {
+      "id": "lex-08",
+      "query": "JWTValidator does not use the configured audience with KeycloakAuthManager",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "1c11adbe-31dd-447c-95a0-81032222e565"
+      ],
+      "retrieved_incident_ids": [
+        "1c11adbe-31dd-447c-95a0-81032222e565",
+        "fb7d63b9-8de1-41d6-b5d8-8708256204c9",
+        "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+        "4f564295-c40b-49f7-917e-5546d26bb472",
+        "0e5355d3-5276-4d1e-a7be-d2317cf06d9a",
+        "6043c392-39ea-4110-8545-b9dc9b426740",
+        "ccb9d237-69b8-42ca-b80c-46986f1c3110",
+        "bd9e604b-99e7-471b-9b40-03debab0db56",
+        "bf4e9a92-1366-44aa-927c-cc7f84145486",
+        "b5000647-5e62-4fb0-bac9-67ff9ab942c2"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.8129396065545551,
+      "top5_mean_score": 0.3869573801528505
+    },
+    {
+      "id": "lex-09",
+      "query": "module system and outFile generates wrong module names",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "90d3b04c-25ca-42b9-b9ca-3b32dbb3fdb9"
+      ],
+      "retrieved_incident_ids": [
+        "90d3b04c-25ca-42b9-b9ca-3b32dbb3fdb9",
+        "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+        "6f30bc8d-c352-490e-8af2-f7d1b904d0bd",
+        "abb313c9-2e69-4dcb-a1ed-7d8c905aad6c",
+        "ec7129c4-b8f5-4a43-8be6-b5ca1bda4311",
+        "8eb68b07-e62e-48e0-8881-1dee5e8723fc",
+        "df14e108-d5a8-429e-b353-7448bfce33f8",
+        "030cd056-ee9a-40a4-805e-22b60bcf9749",
+        "2d9b13c2-0c65-4026-be6a-542c0b477351",
+        "256701ba-81df-436f-bf09-a6215e1c6785"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.5837537224219361,
+      "top5_mean_score": 0.38893363636125977
+    },
+    {
+      "id": "lex-10",
+      "query": "narrowing in switch doesn't work with ambient enums",
+      "query_type": "lexical-overlap",
+      "expected_incident_ids": [
+        "0c4aacbc-3946-4b03-ba85-920017ba8b48"
+      ],
+      "retrieved_incident_ids": [
+        "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+        "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+        "885c6544-8b8c-48e7-9d72-939e0625335f",
+        "6771488c-09c5-4213-a5ad-095bf1fb5d25",
+        "7fb37c52-18e6-4011-90d9-7f5a2afd3e82",
+        "55712f88-037c-4aec-94bf-9964cd8b5a0e",
+        "147fe45d-9e19-4689-bd29-09ea0067ba17",
+        "b5000647-5e62-4fb0-bac9-67ff9ab942c2",
+        "75fa0671-6276-46f4-a68c-aa2298257505",
+        "5497ce0e-ec95-4046-be4b-12801d9d4e2c"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.8371663093566895,
+      "top5_mean_score": 0.4486120251822713
+    },
+    {
+      "id": "para-01",
+      "query": "the airflow scheduler keeps restarting because of a null database id field on the task instance",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c"
+      ],
+      "retrieved_incident_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+        "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+        "67491e2a-fe36-469a-bdd4-95cb71548887",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+        "a04f8f29-21e6-4ceb-8b10-d1f64a22e920",
+        "e913aaed-3e2a-4847-86bf-88e332b4bf88",
+        "75bc0b20-ae47-4353-a941-b0523cd1ed7c",
+        "8bd2c1b7-11b0-4e59-a6ff-9d41d8fd4b65",
+        "f56543e2-3b36-45d6-bb7b-89ec634296d1"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.6301464471090106,
+      "top5_mean_score": 0.5240062726290315
+    },
+    {
+      "id": "para-02",
+      "query": "the background trigger service fails to launch after deployment",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "375a627d-3443-4231-b889-d271e4c41dc5"
+      ],
+      "retrieved_incident_ids": [
+        "375a627d-3443-4231-b889-d271e4c41dc5",
+        "69347f56-50e2-476a-97bb-8c435181b23a",
+        "91d96912-b27a-421c-932a-2d462d6643c9",
+        "a08fde27-e47c-46c2-8ac5-28563625ec5a",
+        "90e69e94-c5f7-4e3f-80c7-2f542e956e71",
+        "67491e2a-fe36-469a-bdd4-95cb71548887",
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "50b93e24-62be-4e08-a3dd-33f647bbb15c",
+        "fb72b24f-60a3-4ab3-bee0-06094df8da68",
+        "fb7d63b9-8de1-41d6-b5d8-8708256204c9"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.5266562700271606,
+      "top5_mean_score": 0.42233511953188874
+    },
+    {
+      "id": "para-03",
+      "query": "node process runs out of memory when building a large bundle of files",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382"
+      ],
+      "retrieved_incident_ids": [
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "5b155d0c-f2fa-4470-8e71-75185dcc4b3d",
+        "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+        "053dc4ca-0304-47ac-bc87-67dba7c92eff",
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "214d9bed-613a-4d24-9172-8c18c12980ae",
+        "c799ddf5-b556-488d-882f-d2e938e8cfe0",
+        "9c8eac12-4136-47ea-8d45-e08c34695c7e",
+        "8dd2a352-3033-4529-bc78-c84aead2f2bc",
+        "3616b5a2-fd8a-4b73-87f8-4e8cbea5c27c"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.4222567081451416,
+      "top5_mean_score": 0.3854614888171181
+    },
+    {
+      "id": "para-04",
+      "query": "the type checker crashes with a memory error while watching files for changes",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca"
+      ],
+      "retrieved_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "5e2254b0-b31b-47d3-99fe-70a7944d0dca",
+        "5497ce0e-ec95-4046-be4b-12801d9d4e2c",
+        "f350c637-b9df-4f3a-b4b5-df0532e03be8",
+        "ca7a06f1-aaa9-4974-89b5-332aec4fb334",
+        "6f30bc8d-c352-490e-8af2-f7d1b904d0bd",
+        "214d9bed-613a-4d24-9172-8c18c12980ae",
+        "0aabf550-755a-4654-ac42-a84c901e51ff",
+        "7bc74b8a-0723-4529-8b12-433d26dbe3ac"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.46315968036651944,
+      "top5_mean_score": 0.4212568300142833
+    },
+    {
+      "id": "para-05",
+      "query": "the generated API docs show the same operation identifier twice for an endpoint that supports several HTTP verbs",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1"
+      ],
+      "retrieved_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+        "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+        "e1f61e5b-a504-4e89-9a78-aa0950a0d4b2",
+        "539b17a1-2ae9-4f68-9f1f-c1e3414907f2",
+        "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+        "3de642c9-e387-4754-a01d-30623f6b2267",
+        "b74479a8-6f02-427b-b72f-9c746228c9b5",
+        "0cdec2a4-8694-4acc-b38f-5ca605b00957",
+        "fe9c0ec3-a7f8-476e-99fa-ed783e90c6c4",
+        "ccb9d237-69b8-42ca-b80c-46986f1c3110"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.4517929553985628,
+      "top5_mean_score": 0.4094809269210226
+    },
+    {
+      "id": "para-06",
+      "query": "the keycloak token's audience claim is being ignored by the authentication layer",
+      "query_type": "paraphrase",
+      "expected_incident_ids": [
+        "1c11adbe-31dd-447c-95a0-81032222e565"
+      ],
+      "retrieved_incident_ids": [
+        "1c11adbe-31dd-447c-95a0-81032222e565",
+        "608271f5-440b-4df8-9f5a-fb4bd55b16a6",
+        "1b2c535b-6d2e-49ea-8c42-7a9423637df1",
+        "0ee80306-108c-42b7-855a-6f9b8ca3fe37",
+        "78d24aee-6301-47ce-8dc2-e28102c67768",
+        "fce49d21-430c-41f1-b79e-7de55c757e9e",
+        "7bf21c12-c00d-4216-a08f-859bdcad50a3",
+        "e45c8d3b-ab46-4890-9aa4-ef7abfc9906a",
+        "23f0a9ee-44af-4baf-b95c-fd41008f23df",
+        "59de43d3-2870-447d-8b30-050f39890e1a"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.5830534001525164,
+      "top5_mean_score": 0.4257637113196351
+    },
+    {
+      "id": "multi-01",
+      "query": "memory exhaustion and crash during large file compilation in watch mode",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "b093992f-7be2-405a-9127-ea3ee4c5c382"
+      ],
+      "retrieved_incident_ids": [
+        "a9a17361-6af2-4ab1-97b4-e7f1866e6eca",
+        "7bc74b8a-0723-4529-8b12-433d26dbe3ac",
+        "8dd2a352-3033-4529-bc78-c84aead2f2bc",
+        "b093992f-7be2-405a-9127-ea3ee4c5c382",
+        "a562aa3c-b845-4c33-8ba5-efa2ae49232e",
+        "214d9bed-613a-4d24-9172-8c18c12980ae",
+        "6f68df8c-d943-4d0c-94b1-bc0113c7c3b9",
+        "80bbe647-5db7-49e8-861a-6eac5c5379f3",
+        "bd178951-553f-4496-a71b-941a84288498",
+        "ca7a06f1-aaa9-4974-89b5-332aec4fb334"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 0.8772153153380493,
+      "top1_score": 0.6012660144250376,
+      "top5_mean_score": 0.45229840385859815
+    },
+    {
+      "id": "multi-02",
+      "query": "scheduler database error causing repeated crash loops in a production deployment",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c"
+      ],
+      "retrieved_incident_ids": [
+        "fd6ae144-76d5-4bdb-bb18-1ab7647d08b1",
+        "e3bfe559-ce82-4b64-809d-ec3a098a076c",
+        "75bc0b20-ae47-4353-a941-b0523cd1ed7c",
+        "270fea7f-46e2-40bb-85b4-071839f8be84",
+        "3616b5a2-fd8a-4b73-87f8-4e8cbea5c27c",
+        "177f19d2-c9d7-4baa-af4c-ed97dba993d7",
+        "d3cf37fd-9714-4ac9-8110-a53ea931a036",
+        "2e3f3373-e830-4090-bd94-2bc6d50490a1",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32",
+        "5e2254b0-b31b-47d3-99fe-70a7944d0dca"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 0.5,
+      "ndcg_at_10": 0.6309297535714575,
+      "top1_score": 0.5788843286702448,
+      "top5_mean_score": 0.4584659168502327
+    },
+    {
+      "id": "multi-03",
+      "query": "duplicate operation ids and forward ref annotation handling issues in fastapi routes",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "4fc64b88-857c-44f1-9403-6c16cd176024",
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1"
+      ],
+      "retrieved_incident_ids": [
+        "5dba5df8-402b-449c-a95e-a86812d3c8d1",
+        "4fc64b88-857c-44f1-9403-6c16cd176024",
+        "de1208c6-b280-42f1-bee4-83e003a8b9a7",
+        "fe9c0ec3-a7f8-476e-99fa-ed783e90c6c4",
+        "481069ab-d2e9-4907-b9e2-457397201423",
+        "ae35b343-dc48-4e93-8600-684f52e83b1e",
+        "bd379dbc-65cd-46ab-a8dd-4934ef034f3b",
+        "8954e2b7-2fed-4a95-bcd4-9d1af40a0945",
+        "22b93326-a69c-4684-9edc-e859e642a04c",
+        "5029c88e-8415-4582-b24b-adb7d8ad1492"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.7602799677681955,
+      "top5_mean_score": 0.5571276759149233
+    },
+    {
+      "id": "multi-04",
+      "query": "type inference and switch statement narrowing bugs involving enums",
+      "query_type": "multi-concept",
+      "expected_incident_ids": [
+        "0c4aacbc-3946-4b03-ba85-920017ba8b48"
+      ],
+      "retrieved_incident_ids": [
+        "0c4aacbc-3946-4b03-ba85-920017ba8b48",
+        "f5f33b02-91a9-4bfe-a393-2a638c62243c",
+        "a21be2b7-ad06-4edd-8bc8-67522d7da6bc",
+        "923c5ef6-484f-4424-9827-09eaf53ebbdc",
+        "d7257140-4ca9-45f4-b0ea-1a6fde890bb9",
+        "1527ce12-3a9a-40e5-a9c3-e8c58760c913",
+        "b8ac6202-ee43-4948-b6bc-76e2ad068b25",
+        "147fe45d-9e19-4689-bd29-09ea0067ba17",
+        "6771488c-09c5-4213-a5ad-095bf1fb5d25",
+        "12b055b4-0090-4adb-a92f-4a48797b51d4"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_10": 1.0,
+      "top1_score": 0.7308296182998905,
+      "top5_mean_score": 0.5533931347066766
+    },
+    {
+      "id": "neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": [],
+      "retrieved_incident_ids": [
+        "8bd2c1b7-11b0-4e59-a6ff-9d41d8fd4b65",
+        "e913aaed-3e2a-4847-86bf-88e332b4bf88",
+        "b82cce78-6451-4244-8557-f7acad10ee3a",
+        "2d3df417-853a-4248-8f00-d4b383ebd7a5",
+        "9a095791-59e9-4955-b2b2-ba2b1d950b30",
+        "177f19d2-c9d7-4baa-af4c-ed97dba993d7",
+        "3df597fb-7a8f-4aff-a062-56ded9514871",
+        "874aff46-c0e4-4fe9-aff6-69ef77480e5f",
+        "752714ca-dcfb-4ac9-9e61-42739a3407de",
+        "d5226bf7-ff25-491f-9b64-4f05cc9c0a32"
+      ],
+      "recall_at_5": null,
+      "recall_at_10": null,
+      "mrr": null,
+      "ndcg_at_10": null,
+      "top1_score": 0.2950909259861161,
+      "top5_mean_score": 0.28429596936235046
+    },
+    {
+      "id": "neg-02",
+      "query": "mobile app push notification delivery delay on iOS",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": [],
+      "retrieved_incident_ids": [
+        "8df79887-a962-42cc-a881-a189b5f64c88",
+        "69347f56-50e2-476a-97bb-8c435181b23a",
+        "847b5ab5-2378-45b4-a05e-dd43ed4aa4fa",
+        "2b62ec7a-6891-4c9f-ae2e-f90f4a4a2fdd",
+        "6083d06b-d909-4c79-bbfd-d1986f95fc85",
+        "50b93e24-62be-4e08-a3dd-33f647bbb15c",
+        "e6d2a033-a783-4d79-a8c5-6fb092e1c5ad",
+        "ed105dd3-1149-401a-9333-7cb2923ebf8b",
+        "4f564295-c40b-49f7-917e-5546d26bb472",
+        "bd9e604b-99e7-471b-9b40-03debab0db56"
+      ],
+      "recall_at_5": null,
+      "recall_at_10": null,
+      "mrr": null,
+      "ndcg_at_10": null,
+      "top1_score": 0.2411248098463047,
+      "top5_mean_score": 0.2218340099678741
+    },
+    {
+      "id": "neg-03",
+      "query": "spreadsheet export formatting broken when opened in Excel 2010",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": [],
+      "retrieved_incident_ids": [
+        "2854cf45-137c-4e4e-b276-e4d2ec9ba56c",
+        "1f086ad3-13c4-4ee9-ae0e-c070095e7e65",
+        "d5f31f28-ff8a-498a-b982-de4528469b95",
+        "3402ee64-8185-469a-8eac-9acb73022da0",
+        "bed5e583-527e-46e4-8b36-f9af20078f4e",
+        "c07ca6b8-d113-4819-b154-e67378fcb8a0",
+        "b654576e-28ec-4f39-b343-92504bc613df",
+        "030cd056-ee9a-40a4-805e-22b60bcf9749",
+        "752714ca-dcfb-4ac9-9e61-42739a3407de",
+        "62b302d3-baad-494d-b5ff-bd953270e7f5"
+      ],
+      "recall_at_5": null,
+      "recall_at_10": null,
+      "mrr": null,
+      "ndcg_at_10": null,
+      "top1_score": 0.34431397914886475,
+      "top5_mean_score": 0.31799590370172165
+    },
+    {
+      "id": "neg-04",
+      "query": "VPN connection drops for remote employees in the EU region",
+      "query_type": "no-match-expected",
+      "expected_incident_ids": [],
+      "retrieved_incident_ids": [
+        "dcfac55a-6f60-4325-b38b-02e221ef420f",
+        "e6d2a033-a783-4d79-a8c5-6fb092e1c5ad",
+        "4066fcee-7a5e-48a8-9742-fdac384a521f",
+        "424bfd60-8771-47ba-99ff-2e054b850d57",
+        "ac37f2e4-32fa-4f1f-9ee4-a43db5149ca7",
+        "6e265166-5e91-4aeb-8615-a363b42f49fa",
+        "0373b1ac-ec47-4f0f-ba54-a6e1e2b9515d",
+        "faae98bc-a393-4f59-86fe-40371de2c4b1",
+        "67bc43ea-a614-41f9-a852-b6a196336b50",
+        "7e54b55e-07c6-475c-80aa-8ff0ad9761e3"
+      ],
+      "recall_at_5": null,
+      "recall_at_10": null,
+      "mrr": null,
+      "ndcg_at_10": null,
+      "top1_score": 0.23239983723164614,
+      "top5_mean_score": 0.219937975180372
+    }
+  ]
+}

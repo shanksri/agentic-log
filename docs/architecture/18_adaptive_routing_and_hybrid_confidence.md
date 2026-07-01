@@ -1,15 +1,18 @@
-# 18 — Adaptive Routing, Hybrid Retrieval &amp; Confidence Normalization (Phases 17A–17B, 18A–18D)
+# 18 — Adaptive Routing, Hybrid Retrieval & Confidence Normalization (Phases 17A–18E)
 
-This document covers six phases that, together, replace dense-only retrieval with a
-strategy-aware system: **17A** builds an independent BM25 lexical retriever, **17B** fuses it
-with dense retrieval via Reciprocal Rank Fusion, **18A** builds a deterministic query router that
-picks a strategy per query, **18B** wires that router into a production-facing service, **18C**
-normalizes each strategy's native score onto a common `[0, 1]` scale before classification, and
-**18D** benchmarks all of it against the live corpus. Phases 17A/17B predate 18A–18D and are
-technically outside the audited 18A–21H range, but no architecture doc has ever covered them
-either, and 18A–18D cannot be explained without them — they are included here as the natural
-home. **None of 18A/18B/18C is wired into any API route** — `app/api/routes/search.py` still only
-imports `IncidentSearchService`; this is a fully-built, tested, but not-yet-adopted subsystem.
+This document covers seven phases that, together, replace dense-only retrieval with a
+strategy-aware system now serving production traffic: **17A** builds an independent BM25 lexical
+retriever, **17B** fuses it with dense retrieval via Reciprocal Rank Fusion, **18A** builds a
+deterministic query router that picks a strategy per query, **18B** wires that router into a
+production-facing service, **18C** normalizes each strategy's native score onto a common `[0, 1]`
+scale before classification, **18D** benchmarks all of it against the live corpus, and **18E**
+wires the whole stack into `/search/incidents`, `/search/debug`, and the investigation
+orchestrator's default construction — the production adoption pass. Phases 17A/17B predate 18A–18D
+and are technically outside the audited 18A–21H range, but no architecture doc has ever covered
+them either, and 18A–18D cannot be explained without them — they are included here as the natural
+home. **Adaptive routing is now the production retrieval engine** for `/search/*` and the
+investigation orchestrator (Phase 18E) — not an evaluation-only subsystem — though it stays
+behaviorally dense-only by default (`routing_enabled=False`) until explicitly opted in.
 
 ---
 
@@ -678,17 +681,168 @@ backoff) will fail the benchmark run outright.
 
 ### Future work
 
-Results from this benchmark are meant to inform whether adaptive routing should be
-productionalized, whether the routing thresholds (3/12 tokens) need tuning, and — if confidence
+This benchmark's original open question — whether adaptive routing should be productionalized —
+has been resolved: it now is (see "Integration status" below). What remains open: whether the
+routing thresholds (3/12 tokens) need tuning against production traffic, and — if confidence
 normalization doesn't show the expected correlation with retrieval quality — whether a future
 calibration phase should implement statistical fitting per doc 18C's registry extension point.
 
 ---
 
+## Phase 18E — Production Adoption
+
+### Goal
+
+Wire `RoutedSearchService` into the actual production request path — `/search/incidents`,
+`/search/debug`, and `MultiAgentInvestigationOrchestrator`'s default construction — so adaptive
+routing is the retrieval engine those callers use, not a parallel, evaluation-only path sitting
+next to it.
+
+### Motivation
+
+Every phase through 18D shipped a fully-built, fully-tested `RoutedSearchService` that nothing in
+production ever called — see this document's original "Integration status," which stated flatly
+that no file under `app/api/routes/` imported `routing`, `routed_search`, `hybrid_search`, or
+`bm25_search`. This phase closes that gap without introducing a new algorithm: it is entirely
+construction and wiring, reusing Phase 18B's `RoutedSearchService.retrieve()` and the shared
+`app.services.candidate_pipeline.CandidatePipeline` (doc-adjacent simplification pass) exactly as
+they were.
+
+### Architecture
+
+```python
+# app/services/search_factory.py — the single production construction point
+DEFAULT_CANDIDATE_LIMIT  # (unrelated; see app.services.candidate_pipeline)
+
+_bm25_cache: BM25Retriever | None   # process-local, lazily built, thread-safe (double-checked lock)
+
+get_bm25_retriever(db) -> BM25Retriever        # builds once per process, reuses thereafter
+build_routed_search_service(db, *, llm_service=None) -> RoutedSearchService
+    # dense = IncidentSearchService(db, llm_service=llm_service)
+    # bm25  = get_bm25_retriever(db)              (cached)
+    # hybrid = HybridRetriever(dense, bm25)
+    # config = RoutedSearchConfig(routing_enabled=settings.search_routing_enabled)
+```
+
+```python
+# app/core/config.py
+Settings.search_routing_enabled: bool = False   # env var SEARCH_ROUTING_ENABLED; opt-in switch
+```
+
+Two methods were added to `RoutedSearchService` itself (`app/services/routed_search.py`) to make it
+a drop-in replacement for every call shape `IncidentSearchService` previously supported:
+
+```python
+RoutedSearchService.search(query, *, limit=10, source_type=None, ..., call_site=None)
+    -> list[IncidentSearchResult]
+    # delegates to self.retrieve(..., expand=False, rerank=False) — already documented (Phase 18B)
+    # as behaviorally identical to a plain search for whichever strategy is selected.
+
+RoutedSearchService.search_debug(query, *, owner=None, repo=None, source=None, state=None,
+                                  call_site=None) -> list[IncidentSearchResult]
+    # delegates to self.retrieve(query, limit=5, expand=True, rerank=True, ...) — the same
+    # "canonical pipeline, 5 results" alias IncidentSearchService.search_debug() already was.
+```
+
+### Lifecycle
+
+**`/search/incidents`** and **`/search/debug`** (`app/api/routes/search.py`): construct
+`build_routed_search_service(db)` (optionally with an `LLMService()` for `/debug`'s
+expand+rerank), then call `.search(...)` / `.search_debug(...)` exactly where they previously
+called the same-named methods on a plain `IncidentSearchService`. No new endpoints; no change to
+either route's request/response schema.
+
+**`MultiAgentInvestigationOrchestrator`** (Phase 19D, `app/services/investigation_orchestrator.py`):
+its `__init__` now defaults `search_service` to `build_routed_search_service(db,
+llm_service=self.llm_service)` instead of a plain `IncidentSearchService(db)`, when no explicit
+`search_service` is passed. Since `HypothesisEvaluator` (Phase 19A) is constructed from
+`self.search_service` and calls `.search()` on it for each hypothesis's evidence lookup, **both**
+the orchestrator's initial `.retrieve()` call and every per-hypothesis evidence `.search()` call
+now go through routing when enabled — investigations, not just top-level search, benefit
+adaptively. A caller that passes its own `search_service` explicitly (e.g.
+`app/api/routes/evaluation.py`'s `_build_orchestrator`, which pins a plain dense
+`IncidentSearchService` for reproducible benchmarking) is unaffected — this only changes the
+*default*.
+
+**BM25 index lifecycle**: `get_bm25_retriever` builds the index once, lazily, on the first call
+that needs it in a given process, and reuses the same immutable `BM25Retriever` for every
+subsequent call — building it per-request would make every search O(corpus size) regardless of
+which strategy the router picks (see `bm25_search`'s own docstring: indexing is a one-shot,
+whole-corpus operation). Consequence: newly-ingested incidents are not lexically searchable via
+BM25/Hybrid until the process restarts; dense search is unaffected (it reads the database on every
+call). `reset_bm25_cache()` exists for tests; there is no automatic production invalidation trigger
+yet (see Future work).
+
+### Design decisions
+
+- **`routing_enabled` defaults to `False`, sourced from `Settings.search_routing_enabled`
+  (env var `SEARCH_ROUTING_ENABLED`)** — preserves dense-only behavior exactly, out of the box,
+  until an operator explicitly opts in. This satisfies the same "purely additive" guarantee Phase
+  18B's own config already established, now actually exercised in production.
+- **One shared construction point (`build_routed_search_service`), not duplicated per caller** —
+  `/search/incidents`, `/search/debug`, and the orchestrator's default all call the same factory
+  function, so "how do we build Dense+BM25+Hybrid+routing" exists in exactly one place.
+- **`.search()`/`.search_debug()` added to `RoutedSearchService` rather than inlining the
+  expand=False/rerank=False call at each call site** — keeps `RoutedSearchService` a complete,
+  symmetric replacement for `IncidentSearchService`'s public surface, and keeps
+  `HypothesisEvaluator` (which calls `.search()`, never `.retrieve()`, by Phase 19A's own design)
+  working unmodified against either backend.
+- **BM25 caching is process-local and lazy, not eager-at-startup** — avoids paying the full-corpus
+  indexing cost for processes that never receive a request needing it (e.g. a worker that only
+  handles ingestion), and avoids blocking application startup on a database read.
+- **Filters still force dense, unconditionally** — Phase 18B's own rule (BM25/Hybrid don't support
+  `source_type`/`tags`/`owner`/`repo`/`source`/`state`) is unchanged and unconditionally still
+  applies through `/search/incidents`' filter parameters.
+
+### Interfaces
+
+New module: `app/services/search_factory.py`, importing `app.core.config`, `app.db.models`,
+`app.services.bm25_search`, `app.services.hybrid_search`, `app.services.llm_service`,
+`app.services.routed_search`, `app.services.routing`, `app.services.search`. Consumed by
+`app/api/routes/search.py` and `app/services/investigation_orchestrator.py`. `RoutedSearchService`
+gained `.search()`/`.search_debug()` (no new imports needed — both delegate to the existing
+`.retrieve()`).
+
+### Testing
+
+`tests/api/test_search_api.py` (new): routing-disabled parity for both `/search/incidents` and
+`/search/debug` (dense called with the expected `expand`/`rerank` flags, BM25/Hybrid never
+touched, response body matches the dense backend's canned results exactly); filters forcing dense
+even with `routing_enabled=True`; routing-enabled tests proving a short query is actually routed to
+and executed by BM25 (dense never called) and a long query to Hybrid, in both cases asserting
+`RoutedSearchService.last_observation` reflects the real decision. `tests/unit/test_investigation_orchestrator.py`
+(extended): the orchestrator's default `search_service` is a real `RoutedSearchService` instance,
+not a plain `IncidentSearchService`; an explicitly-passed `search_service` bypasses the routed
+default entirely (proving the evaluation platform's pinned-dense callers are unaffected); and an
+end-to-end test showing both the initial `retrieve()` and a hypothesis's evidence `search()` route
+to BM25 for a short problem statement, with `last_observation` populated accordingly.
+
+### Risks
+
+- BM25 index staleness after ingestion (see Lifecycle) is a known, accepted limitation, not yet
+  mitigated by any invalidation hook.
+- The first request in a process that needs BM25/Hybrid pays the full corpus-indexing cost
+  synchronously (inside that request's handling), not amortized at startup — a cold-start latency
+  spike on whichever request happens to trigger it first.
+- `search_routing_enabled` is a single global switch — no per-request or per-tenant override exists;
+  enabling it affects every `/search` and orchestrator call in the process at once.
+
+### Future work
+
+A cache-invalidation/rebuild hook for the BM25 index (on ingestion completion, or on a schedule);
+pre-warming the index at application startup instead of on first request; per-request or gradual
+(percentage-based) rollout of `routing_enabled` instead of a single global switch.
+
+---
+
 ## Integration status
 
-Confirmed by grep: no file under `app/api/routes/` imports `routing`, `routed_search`,
-`hybrid_search`, or `bm25_search`. `app/api/routes/search.py` imports only `IncidentSearchService`
-(dense). Every phase in this document (17A, 17B, 18A, 18B, 18C) is fully built and unit-tested but
-reachable only as a library, evaluated so far exclusively through Phase 18D's benchmark script.
+Adaptive routing is now the production retrieval engine for `/search/incidents`, `/search/debug`,
+and the investigation orchestrator's default construction (Phase 18E, above) — not a parallel,
+evaluation-only path. `routing_enabled` defaults to `False` (`Settings.search_routing_enabled`),
+so out-of-the-box behavior is unchanged from dense-only retrieval until explicitly opted in via the
+`SEARCH_ROUTING_ENABLED` environment variable. `scripts/run_phase18d_benchmark.py` and the
+evaluation-only adapters in `app/evaluation/{overlap_analysis,production_pipeline,retrieval_strategies}.py`
+remain separate, additional consumers of the same underlying classes, used for benchmarking rather
+than serving requests.
 </content>

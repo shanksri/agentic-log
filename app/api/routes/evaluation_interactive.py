@@ -45,9 +45,8 @@ dict per test.
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -55,9 +54,8 @@ from pydantic import BaseModel, Field
 from app.api.dependencies import DbSession
 from app.api.routes.evaluation import (
     QueryEvalResponse,
-    RetrievedIncidentItem,
     _build_search_service,
-    _to_dict,
+    _score_query_against_expected,
 )
 
 router = APIRouter(prefix="/evaluation", tags=["evaluation"])
@@ -190,145 +188,17 @@ def _score_hits_against(
     query: str,
 ) -> QueryEvalResponse:
     """Compute metrics for ``hits`` vs ``expected_uuids`` without re-running
-    retrieval.  Builds a synthetic ``ResolvedGoldQuery`` and calls
-    ``score_query`` from Phase 16C — identical to what Phase 21G does.
+    retrieval. Delegates to Phase 21G's shared
+    ``_score_query_against_expected`` (identical synthetic-``GoldQuery``
+    scoring glue built once, not duplicated per phase).
     """
-    from app.evaluation.failure_analysis import analyze_retrieval_failures
-    from app.evaluation.gold_dataset import (
-        RELEVANCE_MAX,
-        CorpusFingerprintPlaceholder,
-        ExpectedIncident,
-        GoldQuery,
-    )
-    from app.evaluation.gold_loader import (
-        GoldDatasetResolutionSummary,
-        ResolvedExpectedIncident,
-        ResolvedGoldQuery,
-        ResolvedIdentity,
-    )
-    from app.evaluation.harness import (
-        AggregateMetrics,
-        CoverageBreakdown,
-        EvaluationConfig,
-        EvaluationDatasetInfo,
-        EvaluationReport,
-        CorpusStatistics,
-        QueryEvaluationOutcome,
-    )
-    from app.evaluation.metrics import score_query
-
-    expected_set = set(expected_uuids)
-    retrieved_uuids = [uuid.UUID(h.incident_id) for h in hits]
-
-    expected_incidents = tuple(
-        ExpectedIncident(
-            source_type="api",
-            source_external_id=str(uid),
-            relevance=RELEVANCE_MAX,
-        )
-        for uid in expected_uuids
-    )
-    gold_q = GoldQuery(
-        id="interactive-session",
-        query=query,
-        category="lexical-overlap" if expected_incidents else "no-match-expected",
-        difficulty="medium",
-        expected_incidents=expected_incidents,
-    )
-    resolved_incidents = tuple(
-        ResolvedExpectedIncident(
-            expected=ei,
-            resolved=ResolvedIdentity(
-                source_type="api",
-                source_external_id=str(uid),
-                incident_id=uid,
-            ),
-        )
-        for ei, uid in zip(expected_incidents, expected_uuids)
-    )
-    resolved_q = ResolvedGoldQuery(query=gold_q, resolved_incidents=resolved_incidents)
-    metric = score_query(retrieved_uuids, resolved_q, k=k)
-
-    # Rank of first expected (1-indexed)
-    rank_of_first: int | None = None
-    for i, h in enumerate(hits):
-        if uuid.UUID(h.incident_id) in expected_set:
-            rank_of_first = i + 1
-            break
-
-    # Retrieved items for the response
-    retrieved_items = [
-        RetrievedIncidentItem(
-            incident_id=h.incident_id,
-            title=h.title,
-            similarity_score=h.similarity_score,
-            rank=h.rank,
-            is_expected=uuid.UUID(h.incident_id) in expected_set,
-        )
-        for h in hits
-    ]
-
-    # Best-effort failure analysis
-    failures: list[dict[str, Any]] = []
-    if metric is not None and metric.recall_at_k is not None and metric.recall_at_k < 1.0:
-        try:
-            corpus_fp = CorpusFingerprintPlaceholder()
-            agg = AggregateMetrics(
-                num_queries=1,
-                mean_recall_at_k=metric.recall_at_k,
-                mean_reciprocal_rank=metric.reciprocal_rank,
-                mean_ndcg_at_k=metric.ndcg_at_k,
-                resolution_coverage=1.0,
-                queries_with_unresolved_incidents=0,
-            )
-            outcome = QueryEvaluationOutcome(
-                query_id="interactive-session",
-                category=gold_q.category,
-                difficulty=gold_q.difficulty,
-                num_relevant=len(expected_uuids),
-                num_unresolved_expected=0,
-                skipped=False,
-                skip_reason=None,
-                metric=metric,
-            )
-            mini_report = EvaluationReport(
-                dataset=EvaluationDatasetInfo(
-                    version="api", description="Interactive session",
-                    created_at="", author=None, corpus_fingerprint=corpus_fp,
-                ),
-                config=EvaluationConfig(k=k, expand=False, rerank=False),
-                corpus_statistics=CorpusStatistics(
-                    corpus_fingerprint=corpus_fp,
-                    distinct_retrieved_incident_count=len(hits),
-                ),
-                num_evaluated=1, num_skipped=0, aggregate_metrics=agg,
-                per_query=(outcome,),
-                coverage=CoverageBreakdown(
-                    total_queries=1, no_match_expected_queries=0,
-                    fully_resolved_queries=0, partially_resolved_queries=1,
-                    fully_unresolved_queries=0,
-                ),
-                resolution_summary=GoldDatasetResolutionSummary(
-                    total_expected_incidents=len(expected_uuids),
-                    resolved_count=len(expected_uuids),
-                    unresolved_identities=(),
-                ),
-                category_breakdown={}, difficulty_breakdown={},
-                started_at="", finished_at="", duration_seconds=0.0,
-            )
-            failures = [_to_dict(f) for f in analyze_retrieval_failures(mini_report)]
-        except Exception:  # noqa: BLE001
-            pass
-
-    return QueryEvalResponse(
+    retrieved = [(uuid.UUID(h.incident_id), h.title, h.similarity_score) for h in hits]
+    return _score_query_against_expected(
+        query_id="interactive-session",
         query=query,
         k=k,
-        retrieved=retrieved_items,
-        recall_at_k=metric.recall_at_k if metric else None,
-        reciprocal_rank=metric.reciprocal_rank if metric else None,
-        ndcg_at_k=metric.ndcg_at_k if metric else None,
-        rank_of_first_expected=rank_of_first,
-        failures=failures,
+        retrieved=retrieved,
+        expected_uuids=expected_uuids,
     )
 
 

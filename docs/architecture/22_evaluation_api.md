@@ -200,14 +200,23 @@ produced upstream by Phase 21A/21B/21F machinery, not recomputed here).
 Depends on (imports from): `app.evaluation.experiment_tracking` (`ExperimentRepository`,
 `_to_jsonable`), `.gold_loader`, `.gold_dataset`, `.harness`, `.metrics`, `.failure_analysis`,
 `.reasoning_dataset`, `.reasoning_harness`, `.reasoning_benchmark`, `.judge_benchmark`,
-`.rule_judge`, `.evaluation_pipeline`, `.regression` (imported but never called — see Risks),
-`.benchmark` (`InMemoryBenchmarkRepository`), `app.services.search`, `app.services.embedding_service`,
-`app.services.investigation_orchestrator`, `app.services.llm_service`. Public surface: the router
-object `evaluation.router`, plus module-level helpers re-imported by Phase 21H
-(`_build_search_service`, `_to_dict`, `QueryEvalResponse`, `RetrievedIncidentItem`) — Phase 21H
-explicitly reuses rather than reimplements these. Not imported by, nor importing, `app.services.routing`,
-`.routed_search`, `.confidence_normalization`, `.planner_agent`, `.critic_agent`, or
-`.hypothesis_investigation` — none of docs 18/19's components are reachable through this API.
+`.rule_judge`, `.evaluation_pipeline`, `.benchmark` (`InMemoryBenchmarkRepository`),
+`app.services.search`, `app.services.embedding_service`, `app.services.investigation_orchestrator`,
+`app.services.llm_service`. Public surface: the router object `evaluation.router`, plus
+module-level helpers re-imported by Phase 21H (`_build_search_service`, `_to_dict`,
+`QueryEvalResponse`, `RetrievedIncidentItem`) — Phase 21H explicitly reuses rather than
+reimplements these.
+
+**Update (Phase 18E):** `app.services.investigation_orchestrator` now imports
+`app.services.routed_search`/`.search_factory` at module level (for its own default
+`search_service` construction, doc 18/19), so importing it here transitively imports doc 18's
+routing stack too — the "not imported by, nor importing, routing/routed_search" claim this section
+previously made no longer holds at the *import* level. Functionally, though, `_build_orchestrator`
+(above) still explicitly constructs and passes its own plain dense `IncidentSearchService` as
+`search_service`, which short-circuits the orchestrator's routed default — so `/evaluation/reasoning`
+and `/evaluation/full` still evaluate against dense-only retrieval in practice, deliberately, for
+reproducible benchmarking. Only `/search/incidents`, `/search/debug`, and
+`/agent/investigate-orchestrated` actually execute routing/BM25/Hybrid.
 
 ### Testing
 
@@ -225,16 +234,15 @@ OpenAPI schema, and all 11 expected routes are registered.
 
 ### Risks
 
-- **`regression_report` is dead weight on two of four POST endpoints.** `/reasoning` hardcodes
-  `None`; `/retrieval` only ever appends a warning and also returns `None`. The field exists in
-  both response models but is never populated by this API — regression tracking (Phase 16E/20A)
-  is only reachable via the CLI (`scripts/run_full_evaluation.py`), not via HTTP.
+- **`/retrieval` and `/reasoning` have no regression comparison at all.** A prior "dead
+  `regression_report` field" was removed (it was always `None` on both endpoints); regression
+  tracking (Phase 16E/20A) remains reachable only via the CLI (`scripts/run_full_evaluation.py`),
+  not via HTTP. `/full`'s `retrieval_regression`/`reasoning_regression` fields are a separate,
+  still-live mechanism (see below).
 - **Inconsistent error handling for persistence across endpoints.** `/retrieval` and `/reasoning`
   append a persistence failure to `errors`; `/full` swallows it with a bare `pass` and reports
   nothing to the caller. A client polling `/full` with `persist=True` has no way to know
   persistence silently failed.
-- **`app.evaluation.regression.compare` is imported in `/retrieval` but never called** — dead
-  import left over from an incomplete regression-wiring attempt.
 - **No authentication, no rate limiting.** Any caller can trigger a full pipeline run (LLM calls
   included) or read the entire experiment history.
 - **Synchronous, blocking handlers.** A `/full` call with both datasets and an LLM judge runs
@@ -244,8 +252,8 @@ OpenAPI schema, and all 11 expected routes are registered.
 ### Future work
 
 No "future phase" language appears in this module's docstring; the only forward-looking note is
-the runtime warning on `/retrieval` pointing at the CLI as the current recommended path for
-regression tracking, implying API-level regression support is intended but not yet built.
+that `/retrieval`'s response still points a caller at the CLI as the current recommended path for
+regression tracking, implying API-level regression support may be built in a future phase.
 
 ---
 

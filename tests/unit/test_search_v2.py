@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 from types import SimpleNamespace
 
+from app.services.candidate_pipeline import CandidatePipeline
 from app.services.search import IncidentSearchResult, IncidentSearchService
 
 
@@ -57,6 +58,7 @@ class FakeLLMService:
 class FakeSearchService(IncidentSearchService):
     def __init__(self, llm_service: FakeLLMService) -> None:
         self.llm_service = llm_service
+        self._pipeline = CandidatePipeline(llm_service=llm_service)
         self.calls: list[dict] = []
         duplicate_id = uuid.uuid4()
         self.results_by_query = {

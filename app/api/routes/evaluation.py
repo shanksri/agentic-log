@@ -123,7 +123,6 @@ class RetrievalBenchmarkResponse(BaseModel):
     run_id: str | None
     experiment_name: str
     evaluation_report: dict[str, Any]
-    regression_report: dict[str, Any] | None
     warnings: list[str]
     errors: list[str]
 
@@ -133,7 +132,6 @@ class ReasoningBenchmarkResponse(BaseModel):
     experiment_name: str
     reasoning_report: dict[str, Any]
     judge_aggregate: dict[str, Any] | None
-    regression_report: dict[str, Any] | None
     warnings: list[str]
     errors: list[str]
 
@@ -270,7 +268,7 @@ def _build_orchestrator(db):
 
         search = IncidentSearchService(db=db, embedding_service=EmbeddingService())
         llm = LLMService()
-        return MultiAgentInvestigationOrchestrator(search, llm)
+        return MultiAgentInvestigationOrchestrator(db, search_service=search, llm_service=llm)
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(
             status_code=503,
@@ -287,25 +285,36 @@ def _build_judge(judge_arg: str):
     raise HTTPException(status_code=400, detail=f"Unknown judge: {judge_arg!r}")
 
 
-# ── POST /evaluation/query ────────────────────────────────────────────────────
+# ── Shared scoring helper ────────────────────────────────────────────────────
+#
+# Both this endpoint and Phase 21H's session-based /evaluate and /by-title
+# endpoints need to score an already-retrieved, rank-ordered result set
+# against a set of expected incident UUIDs. Both independently built the same
+# synthetic GoldQuery/ResolvedGoldQuery glue to reuse Phase 16C's score_query
+# — this is that logic, written once and shared via
+# app.api.routes.evaluation_interactive's import of this function.
 
 
-@router.post("/query", response_model=QueryEvalResponse)
-def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalResponse:
-    """Evaluate a single retrieval query against expected incident IDs.
-
-    Runs live retrieval and scores against the supplied expected incidents.
-    No persistence — purely a diagnostic endpoint.
+def _score_query_against_expected(
+    *,
+    query_id: str,
+    query: str,
+    k: int,
+    retrieved: list[tuple[uuid.UUID, str, float]],
+    expected_uuids: list[uuid.UUID],
+) -> QueryEvalResponse:
+    """Score ``retrieved`` (rank-ordered ``(incident_id, title,
+    similarity_score)`` triples) against ``expected_uuids``. ``query_id`` is
+    the synthetic ``GoldQuery.id`` used for this one-off scoring call — it
+    surfaces in any resulting failure records' ``subject_id``, so distinct
+    call sites should pass distinct ids (e.g. ``"api-single-query"`` vs.
+    ``"interactive-session"``).
     """
-    from app.evaluation.failure_analysis import (
-        analyze_retrieval_failures,
-        cluster_failures,
-    )
+    from app.evaluation.failure_analysis import analyze_retrieval_failures
     from app.evaluation.gold_dataset import (
         RELEVANCE_MAX,
         CorpusFingerprintPlaceholder,
         ExpectedIncident,
-        GoldDataset,
         GoldQuery,
     )
     from app.evaluation.gold_loader import (
@@ -325,26 +334,6 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
     )
     from app.evaluation.metrics import score_query
 
-    search_service = _build_search_service(db)
-
-    # Run retrieval
-    try:
-        results = search_service.search(
-            request.query, limit=request.k, call_site="evaluation_api"
-        )
-    except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
-
-    retrieved_ids = [r.incident.id for r in results]
-    expected_uuids: list[uuid.UUID] = []
-    for eid in request.expected_incident_ids:
-        try:
-            expected_uuids.append(uuid.UUID(eid))
-        except ValueError:
-            raise HTTPException(
-                status_code=422, detail=f"Invalid UUID in expected_incident_ids: {eid!r}"
-            )
-
     # Build a synthetic ResolvedGoldQuery so we can reuse score_query directly
     expected_incidents = tuple(
         ExpectedIncident(
@@ -355,8 +344,8 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
         for uid in expected_uuids
     )
     gold_q = GoldQuery(
-        id="api-single-query",
-        query=request.query,
+        id=query_id,
+        query=query,
         category="lexical-overlap" if expected_incidents else "no-match-expected",
         difficulty="medium",
         expected_incidents=expected_incidents,
@@ -374,25 +363,26 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
     )
     resolved_q = ResolvedGoldQuery(query=gold_q, resolved_incidents=resolved_incidents)
 
-    metric = score_query(retrieved_ids, resolved_q, k=request.k)
+    retrieved_ids = [incident_id for incident_id, _title, _score in retrieved]
+    metric = score_query(retrieved_ids, resolved_q, k=k)
 
     # Build retrieved items list
     expected_set = set(expected_uuids)
     retrieved_items = [
         RetrievedIncidentItem(
-            incident_id=str(r.incident.id),
-            title=r.incident.title,
-            similarity_score=r.similarity_score,
+            incident_id=str(incident_id),
+            title=title,
+            similarity_score=similarity_score,
             rank=i + 1,
-            is_expected=r.incident.id in expected_set,
+            is_expected=incident_id in expected_set,
         )
-        for i, r in enumerate(results)
+        for i, (incident_id, title, similarity_score) in enumerate(retrieved)
     ]
 
     # Rank of first expected incident (1-indexed, or None)
     rank_of_first: int | None = None
-    for i, r in enumerate(results):
-        if r.incident.id in expected_set:
+    for i, (incident_id, _title, _score) in enumerate(retrieved):
+        if incident_id in expected_set:
             rank_of_first = i + 1
             break
 
@@ -401,7 +391,7 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
     if metric is not None and metric.recall_at_k is not None and metric.recall_at_k < 1.0:
         try:
             outcome = QueryEvaluationOutcome(
-                query_id="api-single-query",
+                query_id=query_id,
                 category=gold_q.category,
                 difficulty=gold_q.difficulty,
                 num_relevant=len(expected_uuids),
@@ -427,7 +417,7 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
                     author=None,
                     corpus_fingerprint=corpus_fp,
                 ),
-                config=EvaluationConfig(k=request.k, expand=False, rerank=False),
+                config=EvaluationConfig(k=k, expand=False, rerank=False),
                 corpus_statistics=CorpusStatistics(
                     corpus_fingerprint=corpus_fp,
                     distinct_retrieved_incident_count=len(retrieved_ids),
@@ -460,14 +450,52 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
             pass  # failure analysis is best-effort for single-query mode
 
     return QueryEvalResponse(
-        query=request.query,
-        k=request.k,
+        query=query,
+        k=k,
         retrieved=retrieved_items,
         recall_at_k=metric.recall_at_k if metric else None,
         reciprocal_rank=metric.reciprocal_rank if metric else None,
         ndcg_at_k=metric.ndcg_at_k if metric else None,
         rank_of_first_expected=rank_of_first,
         failures=failures,
+    )
+
+
+# ── POST /evaluation/query ────────────────────────────────────────────────────
+
+
+@router.post("/query", response_model=QueryEvalResponse)
+def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalResponse:
+    """Evaluate a single retrieval query against expected incident IDs.
+
+    Runs live retrieval and scores against the supplied expected incidents.
+    No persistence — purely a diagnostic endpoint.
+    """
+    search_service = _build_search_service(db)
+
+    try:
+        results = search_service.search(
+            request.query, limit=request.k, call_site="evaluation_api"
+        )
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+
+    expected_uuids: list[uuid.UUID] = []
+    for eid in request.expected_incident_ids:
+        try:
+            expected_uuids.append(uuid.UUID(eid))
+        except ValueError:
+            raise HTTPException(
+                status_code=422, detail=f"Invalid UUID in expected_incident_ids: {eid!r}"
+            )
+
+    retrieved = [(r.incident.id, r.incident.title, r.similarity_score) for r in results]
+    return _score_query_against_expected(
+        query_id="api-single-query",
+        query=request.query,
+        k=request.k,
+        retrieved=retrieved,
+        expected_uuids=expected_uuids,
     )
 
 
@@ -480,10 +508,14 @@ def run_retrieval_benchmark(
     db: DbSession,
     repo: ExperimentRepository = ExperimentRepo,
 ) -> RetrievalBenchmarkResponse:
-    """Run a full retrieval benchmark against a Gold Dataset JSON file."""
-    from app.evaluation.benchmark import InMemoryBenchmarkRepository, create_benchmark_run
+    """Run a full retrieval benchmark against a Gold Dataset JSON file.
+
+    Regression comparison against a prior run is not available through this
+    endpoint (persisted runs are stored as plain dicts, not typed
+    ``EvaluationReport``s) — use the full pipeline CLI
+    (``scripts/run_full_evaluation.py``) for regression tracking.
+    """
     from app.evaluation.harness import evaluate
-    from app.evaluation.regression import compare
 
     dataset = _load_gold_dataset(request.dataset_path)
     search_service = _build_search_service(db)
@@ -500,20 +532,7 @@ def run_retrieval_benchmark(
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"Retrieval evaluation failed: {exc}") from exc
 
-    # Regression: check if a prior run exists in the experiment repository
-    regression = None
     run_id: str | None = None
-    try:
-        latest_run = repo.latest()
-        if latest_run is not None and latest_run.retrieval_report is not None:
-            # We have a previous run but only as a dict; skip typed regression for now
-            warnings.append(
-                "Regression comparison against file-persisted runs not supported "
-                "via API; run the full pipeline CLI for regression tracking."
-            )
-    except Exception:  # noqa: BLE001
-        pass
-
     if request.persist:
         try:
             run_id = repo.save(
@@ -527,7 +546,6 @@ def run_retrieval_benchmark(
         run_id=run_id,
         experiment_name=request.experiment_name,
         evaluation_report=_to_dict(report),
-        regression_report=_to_dict(regression) if regression else None,
         warnings=warnings,
         errors=errors,
     )
@@ -597,7 +615,6 @@ def run_reasoning_benchmark(
         experiment_name=request.experiment_name,
         reasoning_report=_to_dict(report),
         judge_aggregate=judge_aggregate,
-        regression_report=None,
         warnings=warnings,
         errors=errors,
     )

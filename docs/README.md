@@ -67,10 +67,17 @@ component.
 
 ## Status: what's built vs. what's wired
 
-Docs 18 and 19 describe fully-built, unit-tested library code (adaptive routing, hybrid retrieval,
-confidence normalization, and a four-agent investigation framework) that **is not reachable through
-any API route** — `app/api/routes/search.py` and `app/api/routes/agent.py` still only call the
-dense-only, single-shot-agent code path docs 01–17 describe. Docs 20–21's evaluation platform is
-similarly only reachable through the REST API in doc 22 or the CLI scripts in `scripts/`, not
-through automatic CI. Treat "documented" and "in production" as separate questions when reading
-docs 18–22.
+**Updated.** Doc 18's adaptive routing (Dense/BM25/Hybrid) is now the production retrieval engine
+behind `app/api/routes/search.py`'s `/search/incidents` and `/search/debug`, and behind the
+investigation orchestrator's default construction (`app/services/investigation_orchestrator.py`,
+Phase 19D) — see doc 18's "Phase 18E — Production Adoption" section. It ships with
+`routing_enabled=False` by default (`Settings.search_routing_enabled`, env var
+`SEARCH_ROUTING_ENABLED`), so out-of-the-box behavior is unchanged from dense-only retrieval until
+an operator opts in. Doc 19's three narrower single-purpose agents
+(`HypothesisDrivenInvestigationAgent`/`PlannedInvestigationAgent`/`CriticReviewedInvestigationAgent`)
+remain unwired — only the full Phase 19D orchestrator (reachable via `POST
+/agent/investigate-orchestrated`) was adopted. Docs 20–21's evaluation platform is still only
+reachable through the REST API in doc 22 or the CLI scripts in `scripts/`, not through automatic
+CI, and `/evaluation/*`'s own orchestrator construction (`_build_orchestrator`) still deliberately
+pins a plain dense `IncidentSearchService` for reproducible benchmarking, unaffected by the routed
+default. Treat "documented" and "in production" as separate questions when reading docs 20–22.

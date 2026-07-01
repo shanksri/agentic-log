@@ -63,6 +63,7 @@ class FakeSearchService:
     def __init__(self, *, retrieve_response=None, search_responses=None):
         self._retrieve_response = retrieve_response or []
         self._search_responses = search_responses or {}
+        self.llm_service = None  # RoutedSearchService reads dense.llm_service at construction
 
     def retrieve(self, query, *, limit=10, expand=False, rerank=False, call_site=None):
         return self._retrieve_response
@@ -507,3 +508,139 @@ def test_orchestrator_accepts_injected_planner_and_critic() -> None:
 
     assert session.stopping_reason == StoppingReason.CRITIC_APPROVED
     assert session.total_iterations == 1
+
+
+# ── Adaptive routing adoption (RoutedSearchService default) ─────────────────
+#
+# Requirement 6: MultiAgentInvestigationOrchestrator's default search_service
+# is now a fully-wired RoutedSearchService, not a plain dense-only
+# IncidentSearchService, when no explicit search_service is passed. A caller
+# that DOES pass its own search_service (every other test in this file) is
+# unaffected -- these tests cover only the default-construction path.
+
+
+def test_default_search_service_is_a_routed_search_service(monkeypatch) -> None:
+    import app.services.investigation_orchestrator as orch_mod
+    from app.services.routed_search import RoutedSearchConfig, RoutedSearchService
+
+    fake_dense = FakeSearchService(retrieve_response=[])
+    fake_routed = RoutedSearchService(
+        fake_dense, config=RoutedSearchConfig(routing_enabled=False)
+    )
+    monkeypatch.setattr(
+        orch_mod, "build_routed_search_service", lambda db, **kw: fake_routed
+    )
+    llm = FakeLLMService([[{
+        "root_cause": "x", "confidence_score": 0.9,
+        "validation_keywords": [], "rationale": "",
+    }]])
+
+    orchestrator = MultiAgentInvestigationOrchestrator(db=None, llm_service=llm)
+
+    assert orchestrator.search_service is fake_routed
+    assert isinstance(orchestrator.search_service, RoutedSearchService)
+
+
+def test_explicit_search_service_override_bypasses_routed_default(monkeypatch) -> None:
+    """A caller passing its own search_service (e.g. evaluation.py's
+    _build_orchestrator, which pins dense-only retrieval) is unaffected by
+    the routed default -- proves backward compatibility for existing
+    explicit-override callers.
+    """
+    import app.services.investigation_orchestrator as orch_mod
+
+    build_calls: list[object] = []
+    monkeypatch.setattr(
+        orch_mod, "build_routed_search_service",
+        lambda db, **kw: build_calls.append(db) or None,
+    )
+    explicit_dense = FakeSearchService(retrieve_response=[])
+    llm = FakeLLMService([[{
+        "root_cause": "x", "confidence_score": 0.9,
+        "validation_keywords": [], "rationale": "",
+    }]])
+
+    orchestrator = MultiAgentInvestigationOrchestrator(
+        db=None, search_service=explicit_dense, llm_service=llm
+    )
+
+    assert orchestrator.search_service is explicit_dense
+    assert build_calls == []  # the routed factory was never even called
+
+
+def test_routing_enabled_executes_bm25_for_initial_retrieval_and_evidence_search(
+    monkeypatch,
+) -> None:
+    """End-to-end: with a real RoutedSearchService/RoutingEngine wired as
+    the orchestrator's default, a short problem statement (<=3 tokens, no
+    filters) is routed to BM25 for BOTH the initial retrieve() call and each
+    hypothesis's evidence search() call -- proving investigations genuinely
+    execute adaptive retrieval, not just construct a RoutedSearchService
+    that happens to default to dense.
+    """
+    import uuid
+
+    import app.services.investigation_orchestrator as orch_mod
+    from app.services.routed_search import RoutedSearchConfig, RoutedSearchService
+    from app.services.routing import DefaultRuleBasedRoutingPolicy, RoutingEngine
+
+    class _FakeDense:
+        def __init__(self):
+            self.db = SimpleNamespace(get=lambda model, iid: None)
+            self.llm_service = None
+            self.retrieve_calls: list[dict] = []
+
+        def retrieve(self, query, **kwargs):
+            self.retrieve_calls.append({"query": query, **kwargs})
+            return []
+
+    class _FakeBM25:
+        def __init__(self):
+            self.calls: list[str] = []
+
+        def retrieve(self, query, *, limit=10):
+            self.calls.append(query)
+            incident = SimpleNamespace(
+                id=uuid.uuid4(), title="db pool exhausted", symptoms=[],
+            )
+            return [SimpleNamespace(document_id=str(incident.id), score=3.0, _incident=incident)]
+
+    fake_dense = _FakeDense()
+    fake_bm25 = _FakeBM25()
+    # RoutedSearchService resolves BM25 hits via dense.db.get(Incident, id) --
+    # wire it to return the same incident the fake BM25 retriever reports.
+    returned_incidents: dict = {}
+
+    def _bm25_retrieve(query, *, limit=10):
+        fake_bm25.calls.append(query)
+        incident = SimpleNamespace(id=uuid.uuid4(), title="db pool exhausted", symptoms=[])
+        returned_incidents[str(incident.id)] = incident
+        return [SimpleNamespace(document_id=str(incident.id), score=3.0)]
+
+    fake_bm25.retrieve = _bm25_retrieve
+    fake_dense.db = SimpleNamespace(get=lambda model, iid: returned_incidents.get(str(iid)))
+
+    routed = RoutedSearchService(
+        fake_dense, bm25=fake_bm25,
+        routing_engine=RoutingEngine(DefaultRuleBasedRoutingPolicy()),
+        config=RoutedSearchConfig(routing_enabled=True),
+    )
+    monkeypatch.setattr(orch_mod, "build_routed_search_service", lambda db, **kw: routed)
+
+    llm = FakeLLMService([[{
+        "root_cause": "db pool exhausted", "confidence_score": 0.9,
+        "validation_keywords": ["db"], "rationale": "matches evidence",
+    }]])
+
+    orchestrator = MultiAgentInvestigationOrchestrator(db=None, llm_service=llm)
+    session = orchestrator.investigate("db slow", n_hypotheses=1)
+
+    # Initial retrieve() (problem="db slow", 2 tokens) and the hypothesis's
+    # evidence search() (query="db", 1 token) both route to BM25 -- neither
+    # ever reached dense.retrieve().
+    assert fake_dense.retrieve_calls == []
+    assert fake_bm25.calls == ["db slow", "db"]
+    assert routed.last_observation.effective_strategy.value == "bm25"
+    assert routed.last_observation.routing_enabled is True
+    assert session.final_report.investigation.selected_hypothesis is not None
+    assert session.final_report.investigation.selected_hypothesis.root_cause == "db pool exhausted"

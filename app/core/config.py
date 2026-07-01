@@ -18,6 +18,15 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
     log_level: str = "INFO"
+    search_routing_enabled: bool = Field(
+        default=False,
+        description=(
+            "Opt-in switch for adaptive retrieval routing (Phase 18A-18C) in "
+            "production /search and the investigation orchestrator. False "
+            "preserves dense-only behavior exactly "
+            "(see RoutedSearchConfig.routing_enabled)."
+        ),
+    )
 
 
 @lru_cache

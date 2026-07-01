@@ -7,8 +7,12 @@
 > routing/hybrid retrieval/confidence normalization, [doc 19](19_multi_agent_investigation.md) for
 > the four-agent investigation framework that now exists alongside the single-shot agent described
 > here, and [docs 20](20_reasoning_evaluation_and_judges.md)–[22](22_evaluation_api.md) for the
-> full evaluation platform. None of docs 18/19 is wired into an API route yet — the read path
-> described below remains what's actually reachable over HTTP today.
+> full evaluation platform. **Update:** adaptive routing (doc 18) is now wired into
+> `/search/incidents`, `/search/debug`, and the investigation orchestrator's default construction
+> (Phase 18E) — the read path below (dense-only, single-shot agent) is the *default behavior*
+> (`routing_enabled=False` out of the box) but no longer the *only* code path those endpoints can
+> execute. Doc 19's orchestrator is also now reachable via `POST /agent/investigate-orchestrated`.
+> See doc 18's "Integration status" and doc 19's "Integration status" for the current picture.
 
 # Purpose
 

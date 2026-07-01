@@ -5,10 +5,8 @@ from pathlib import Path
 import pytest
 
 from app.evaluation.reasoning_benchmark import (
-    CombinedBenchmarkRun,
     FileReasoningBenchmarkRepository,
     InMemoryReasoningBenchmarkRepository,
-    combine_benchmark_runs,
     compare_reasoning_runs,
     create_reasoning_benchmark_run,
     reasoning_regression_history,
@@ -190,15 +188,3 @@ def test_reasoning_regression_history_compares_consecutive_runs() -> None:
     assert history[1].planner.verdict.value == "unchanged"
 
 
-def test_combine_benchmark_runs_requires_at_least_one_side() -> None:
-    with pytest.raises(ValueError):
-        combine_benchmark_runs(experiment_name="exp")
-
-
-def test_combine_benchmark_runs_with_reasoning_only() -> None:
-    reasoning = create_reasoning_benchmark_run(experiment_name="exp", report=_report())
-    combined = combine_benchmark_runs(experiment_name="exp", reasoning=reasoning)
-
-    assert isinstance(combined, CombinedBenchmarkRun)
-    assert combined.retrieval is None
-    assert combined.reasoning is reasoning

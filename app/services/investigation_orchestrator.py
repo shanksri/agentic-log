@@ -307,7 +307,9 @@ from app.services.planner_agent import (
     RuleBasedPlanner,
     plan_then_generate_hypotheses,
 )
+from app.services.routed_search import RoutedSearchService
 from app.services.search import IncidentSearchService
+from app.services.search_factory import build_routed_search_service
 
 # Bounds the per-investigation LLM-call budget (one HypothesisGenerator
 # call per iteration) to a small, fixed number, in the same spirit as
@@ -460,12 +462,21 @@ class MultiAgentInvestigationOrchestrator:
         config: OrchestratorConfig | None = None,
         planner: PlannerAgent | None = None,
         critic: CriticAgent | None = None,
-        search_service: IncidentSearchService | None = None,
+        search_service: IncidentSearchService | RoutedSearchService | None = None,
         llm_service: LLMService | None = None,
     ) -> None:
         self.config = config or OrchestratorConfig()
-        self.search_service = search_service or IncidentSearchService(db)
         self.llm_service = llm_service or LLMService()
+        # Defaults to the production-adopted RoutedSearchService (Dense/BM25/
+        # Hybrid, routed per Settings.search_routing_enabled — see
+        # app.services.search_factory) rather than a plain dense
+        # IncidentSearchService, so investigations benefit from adaptive
+        # retrieval the same way /search/incidents and /search/debug do. A
+        # caller passing its own search_service (e.g. for a pinned dense-only
+        # evaluation) is unaffected — this only changes the default.
+        self.search_service = search_service or build_routed_search_service(
+            db, llm_service=self.llm_service
+        )
         self._planner = planner or RuleBasedPlanner()
         self._critic = critic or HeuristicCriticAgent()
         self._generator = HypothesisGenerator(self.llm_service)

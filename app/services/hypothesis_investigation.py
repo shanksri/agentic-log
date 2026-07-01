@@ -279,6 +279,7 @@ from app.services.confidence import (
     composite_hypothesis_confidence,
 )
 from app.services.llm_service import LLMService
+from app.services.routed_search import RoutedSearchService
 from app.services.search import IncidentSearchResult, IncidentSearchService
 
 DEFAULT_HYPOTHESIS_COUNT = 3
@@ -425,11 +426,16 @@ class HypothesisGenerator:
 class HypothesisEvaluator:
     """Evaluates ONE hypothesis at a time against retrieved evidence — see
     module docstring's "Evidence evaluation workflow". No LLM call; reuses
-    the existing ``IncidentSearchService.search()`` (never ``.retrieve()``)
-    and the existing confidence-classification machinery.
+    ``search_service.search()`` (never ``.retrieve()``) and the existing
+    confidence-classification machinery. ``search_service`` may be a plain
+    ``IncidentSearchService`` (dense-only) or a ``RoutedSearchService``
+    (Phase 18B, production default since the orchestrator's adoption pass —
+    see ``MultiAgentInvestigationOrchestrator``) — both expose the same
+    ``.search()`` contract, so evidence search benefits from adaptive
+    routing automatically when the latter is used.
     """
 
-    def __init__(self, search_service: IncidentSearchService) -> None:
+    def __init__(self, search_service: IncidentSearchService | RoutedSearchService) -> None:
         self._search_service = search_service
 
     def evaluate(

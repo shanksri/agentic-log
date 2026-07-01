@@ -12,14 +12,15 @@ from app.api.schemas import (
     SearchResult,
 )
 from app.services.llm_service import LLMService
-from app.services.search import IncidentSearchService
+from app.services.routed_search import RoutedSearchService
+from app.services.search_factory import build_routed_search_service
 
 router = APIRouter(prefix="/search", tags=["search"])
 
 
 @router.post("/incidents", response_model=SearchResponse)
 def search_incidents(request: SearchRequest, db: DbSession) -> SearchResponse:
-    results = IncidentSearchService(db).search(
+    results = build_routed_search_service(db).search(
         request.query,
         limit=request.limit,
         source_type=request.source_type,
@@ -29,7 +30,7 @@ def search_incidents(request: SearchRequest, db: DbSession) -> SearchResponse:
         source=request.source,
         state=request.state,
     )
-    top1_score, confidence_level = IncidentSearchService.confidence_for(results)
+    top1_score, confidence_level = RoutedSearchService.confidence_for(results)
     return SearchResponse(
         query=request.query,
         results=[
@@ -47,14 +48,14 @@ def search_incidents(request: SearchRequest, db: DbSession) -> SearchResponse:
 
 @router.post("/debug", response_model=SearchDebugResponse)
 def search_debug(request: SearchDebugRequest, db: DbSession) -> SearchDebugResponse:
-    results = IncidentSearchService(db, llm_service=LLMService()).search_debug(
+    results = build_routed_search_service(db, llm_service=LLMService()).search_debug(
         request.query,
         owner=request.owner,
         repo=request.repo,
         source=request.source,
         state=request.state,
     )
-    top1_score, confidence_level = IncidentSearchService.confidence_for(results)
+    top1_score, confidence_level = RoutedSearchService.confidence_for(results)
     return SearchDebugResponse(
         query=request.query,
         filters={

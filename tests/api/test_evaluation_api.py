@@ -846,3 +846,20 @@ def test_all_expected_routes_registered() -> None:
             assert path in paths, f"Missing route: {path}"
     finally:
         app.dependency_overrides.clear()
+
+
+def test_build_orchestrator_constructs_without_typeerror() -> None:
+    """Regression test: every other test exercising ``/evaluation/reasoning``
+    and ``/evaluation/full`` monkeypatches ``_build_orchestrator`` entirely,
+    which previously hid a constructor-arity bug (``MultiAgentInvestigationOrchestrator``
+    takes ``db`` positionally and ``search_service``/``llm_service`` as
+    keyword-only args; this helper was calling it with two bare positional
+    args and always raising ``TypeError``, silently converted into a 503 by
+    the surrounding ``except Exception``). This test calls the real,
+    unpatched helper to make sure construction actually succeeds.
+    """
+    from app.api.routes.evaluation import _build_orchestrator
+    from app.services.investigation_orchestrator import MultiAgentInvestigationOrchestrator
+
+    orchestrator = _build_orchestrator(None)
+    assert isinstance(orchestrator, MultiAgentInvestigationOrchestrator)

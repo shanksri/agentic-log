@@ -63,28 +63,24 @@ methods) was built to preserve.
 # Serialization
 
 ``FileJudgedReasoningBenchmarkRepository`` reuses the same generic
-dataclass<->JSON conversion Phase 16F/20A already established
-(``_to_jsonable``/``_from_jsonable``, duplicated here for the same reason
-Phase 20A duplicates Phase 16F's: no shared base class exists to extend
-without modifying an earlier phase).
+dataclass<->JSON conversion Phase 16F/20A already established, via the
+shared ``app.evaluation.serialization``/``app.evaluation.run_repository``
+modules (moved there to remove what were three duplicated copies of this
+logic; see those modules' docstrings).
 """
 
 from __future__ import annotations
 
-import json
-import types
-import typing
 import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from dataclasses import dataclass, fields, is_dataclass
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any
 
 from app.evaluation.judge import JudgeEvaluation
 from app.evaluation.reasoning_benchmark import ReasoningBenchmarkRun
+from app.evaluation.run_repository import FileRunRepositoryMixin, InMemoryRunRepositoryMixin
 
 EPSILON = 1e-9
 
@@ -196,117 +192,25 @@ class JudgedReasoningBenchmarkRepository(ABC):
     def delete(self, run_id: str) -> bool: ...
 
 
-class InMemoryJudgedReasoningBenchmarkRepository(JudgedReasoningBenchmarkRepository):
-    def __init__(self) -> None:
-        self._runs: dict[str, JudgedReasoningBenchmarkRun] = {}
-
-    def save(self, run: JudgedReasoningBenchmarkRun) -> None:
-        if run.run_id in self._runs:
-            raise ValueError(f"a run with id {run.run_id!r} already exists")
-        self._runs[run.run_id] = run
-
-    def get(self, run_id: str) -> JudgedReasoningBenchmarkRun | None:
-        return self._runs.get(run_id)
-
-    def list_runs(
-        self, *, experiment_name: str | None = None
-    ) -> tuple[JudgedReasoningBenchmarkRun, ...]:
-        runs = self._runs.values()
-        if experiment_name is not None:
-            runs = (run for run in runs if run.experiment_name == experiment_name)
-        return tuple(sorted(runs, key=lambda run: run.timestamp))
-
-    def latest(
-        self, *, experiment_name: str | None = None
-    ) -> JudgedReasoningBenchmarkRun | None:
-        runs = self.list_runs(experiment_name=experiment_name)
-        return runs[-1] if runs else None
-
-    def delete(self, run_id: str) -> bool:
-        return self._runs.pop(run_id, None) is not None
+class InMemoryJudgedReasoningBenchmarkRepository(
+    InMemoryRunRepositoryMixin, JudgedReasoningBenchmarkRepository
+):
+    """Process-local, non-persistent ``JudgedReasoningBenchmarkRepository``.
+    Method bodies live on ``InMemoryRunRepositoryMixin`` (see
+    ``app.evaluation.run_repository``), shared with Phase 16F/20A's
+    equivalent repositories.
+    """
 
 
-class FileJudgedReasoningBenchmarkRepository(JudgedReasoningBenchmarkRepository):
-    def __init__(self, directory: Path) -> None:
-        self._directory = Path(directory)
-        self._directory.mkdir(parents=True, exist_ok=True)
+class FileJudgedReasoningBenchmarkRepository(
+    FileRunRepositoryMixin, JudgedReasoningBenchmarkRepository
+):
+    """JSON-file-backed ``JudgedReasoningBenchmarkRepository``. Method
+    bodies live on ``FileRunRepositoryMixin``, shared with Phase 16F/20A's
+    equivalent repositories.
+    """
 
-    def _path_for(self, run_id: str) -> Path:
-        return self._directory / f"{run_id}.json"
-
-    def save(self, run: JudgedReasoningBenchmarkRun) -> None:
-        path = self._path_for(run.run_id)
-        if path.exists():
-            raise ValueError(f"a run with id {run.run_id!r} already exists")
-        path.write_text(json.dumps(_to_jsonable(run), indent=2), encoding="utf-8")
-
-    def get(self, run_id: str) -> JudgedReasoningBenchmarkRun | None:
-        path = self._path_for(run_id)
-        if not path.exists():
-            return None
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return _from_jsonable(data, JudgedReasoningBenchmarkRun)
-
-    def list_runs(
-        self, *, experiment_name: str | None = None
-    ) -> tuple[JudgedReasoningBenchmarkRun, ...]:
-        runs = [self.get(path.stem) for path in self._directory.glob("*.json")]
-        present = [run for run in runs if run is not None]
-        if experiment_name is not None:
-            present = [run for run in present if run.experiment_name == experiment_name]
-        return tuple(sorted(present, key=lambda run: run.timestamp))
-
-    def latest(
-        self, *, experiment_name: str | None = None
-    ) -> JudgedReasoningBenchmarkRun | None:
-        runs = self.list_runs(experiment_name=experiment_name)
-        return runs[-1] if runs else None
-
-    def delete(self, run_id: str) -> bool:
-        path = self._path_for(run_id)
-        if path.exists():
-            path.unlink()
-            return True
-        return False
-
-
-# ── Generic dataclass <-> JSON-safe conversion (mirrors 16F/20A) ──────────────
-
-
-def _to_jsonable(value: Any) -> Any:
-    if isinstance(value, Enum):
-        return value.value
-    if is_dataclass(value) and not isinstance(value, type):
-        return {f.name: _to_jsonable(getattr(value, f.name)) for f in fields(value)}
-    if isinstance(value, (tuple, list)):
-        return [_to_jsonable(item) for item in value]
-    if isinstance(value, dict):
-        return {key: _to_jsonable(item) for key, item in value.items()}
-    return value
-
-
-def _from_jsonable(data: Any, target_type: Any) -> Any:
-    if data is None:
-        return None
-    origin = typing.get_origin(target_type)
-    if origin in (typing.Union, types.UnionType):
-        non_none_args = [arg for arg in typing.get_args(target_type) if arg is not type(None)]
-        return _from_jsonable(data, non_none_args[0])
-    if isinstance(target_type, type) and issubclass(target_type, Enum):
-        return target_type(data)
-    if is_dataclass(target_type):
-        hints = typing.get_type_hints(target_type)
-        kwargs = {
-            f.name: _from_jsonable(data[f.name], hints[f.name]) for f in fields(target_type)
-        }
-        return target_type(**kwargs)
-    if origin is tuple:
-        (item_type, *_rest) = typing.get_args(target_type)
-        return tuple(_from_jsonable(item, item_type) for item in data)
-    if origin is dict:
-        _key_type, value_type = typing.get_args(target_type)
-        return {key: _from_jsonable(item, value_type) for key, item in data.items()}
-    return data
+    _run_type = JudgedReasoningBenchmarkRun
 
 
 # ── Regression ─────────────────────────────────────────────────────────────────

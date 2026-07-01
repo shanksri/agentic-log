@@ -162,5 +162,53 @@ class AdvancedInvestigationResponse(BaseModel):
     report: AdvancedInvestigationReport
 
 
+class OrchestratedInvestigationRequest(BaseModel):
+    problem: str = Field(min_length=3)
+    n_hypotheses: int = Field(default=3, ge=1, le=10)
+
+
+class OrchestratedHypothesis(BaseModel):
+    id: str
+    root_cause: str
+    rationale: str
+    validation_keywords: list[str]
+    raw_confidence: float
+
+
+class OrchestratedCritique(BaseModel):
+    verdict: str
+    confidence: float
+    explanation: str
+    findings: list[str]
+    unresolved_questions: list[str]
+    missing_evidence: list[str]
+    recommended_actions: list[str]
+
+
+class OrchestratedInvestigationResponse(BaseModel):
+    """The canonical investigation endpoint, wiring Phase 19A-19D's
+    ``MultiAgentInvestigationOrchestrator`` (planner, evidence-driven
+    hypothesis generation, critic, iterative loop) — see
+    docs/architecture/19_multi_agent_investigation.md. Reflects the
+    orchestrator's final iteration only; use the evaluation API
+    (docs/architecture/22_evaluation_api.md) to inspect full iteration
+    history for a given problem.
+    """
+
+    problem: str
+    selected_root_cause: str | None
+    confidence: float
+    confidence_level: str
+    is_uncertain: bool
+    supporting_evidence: list[str]
+    contradicting_evidence: list[str]
+    remaining_uncertainty: list[str]
+    rejected_hypotheses: list[OrchestratedHypothesis]
+    critique: OrchestratedCritique
+    total_iterations: int
+    stopping_reason: str
+    stop_explanation: str
+
+
 class GitHubIssueRef(BaseModel):
     url: HttpUrl

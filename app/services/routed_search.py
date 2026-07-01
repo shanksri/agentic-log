@@ -8,10 +8,16 @@ completely unaffected unless they explicitly opt in), and without changing
 Phase 18A's routing policy/rules, the evaluation framework, or the
 benchmark framework.
 
-``RoutedSearchService`` is the new production-facing orchestrator. It is
-not wired into any API route or the investigation agent by this phase —
-per the Stop Condition, this phase produces the integration point, ready
-to be adopted, not the adoption itself.
+``RoutedSearchService`` is the production-facing orchestrator. As of the
+adoption pass that wired this module into ``app/api/routes/search.py``
+(``/search/incidents``, ``/search/debug``, via
+``app.services.search_factory.build_routed_search_service``) and into
+``MultiAgentInvestigationOrchestrator``'s default construction (Phase 19D),
+it IS the retrieval engine those callers use — not a parallel,
+evaluation-only path. ``routing_enabled`` still defaults to ``False``
+(``Settings.search_routing_enabled``), so behavior is unchanged from
+pre-adoption dense-only retrieval until an operator opts in; see
+docs/architecture/18_adaptive_routing_and_hybrid_confidence.md.
 
 # Updated architecture
 
@@ -188,6 +194,7 @@ from dataclasses import dataclass
 
 from app.db.models import Incident
 from app.services.bm25_search import BM25Retriever
+from app.services.candidate_pipeline import CandidatePipeline
 from app.services.hybrid_search import HybridRetriever, HybridSearchResult
 from app.services.llm_service import LLMService
 from app.services.routing import (
@@ -199,8 +206,6 @@ from app.services.routing import (
 from app.services.search import IncidentSearchResult, IncidentSearchService
 
 logger = logging.getLogger(__name__)
-
-_EXPAND_CANDIDATE_LIMIT = 25
 
 
 @dataclass(frozen=True)
@@ -255,10 +260,17 @@ class _ProductionCandidatePipeline:
     instead of being hardcoded to dense's own ``.search()``. Used for the
     BM25 and Hybrid branches only — see module docstring's "Routing
     integration flow".
+
+    The algorithm itself is delegated to the shared
+    ``app.services.candidate_pipeline.CandidatePipeline`` (the same class
+    ``IncidentSearchService`` uses) — this class only adds the
+    BM25/Hybrid-specific rerank-failure log event and ``strategy_label``
+    field, which differ from dense's own logging and so are kept local
+    rather than folded into the shared component.
     """
 
     def __init__(self, *, llm_service: LLMService | None) -> None:
-        self._llm_service = llm_service
+        self._core = CandidatePipeline(llm_service=llm_service)
 
     def run(
         self,
@@ -271,22 +283,13 @@ class _ProductionCandidatePipeline:
         call_site: str | None,
         strategy_label: str,
     ) -> list[IncidentSearchResult]:
-        candidate_limit = _EXPAND_CANDIDATE_LIMIT if (expand or rerank) else limit
-
-        phrases = [query]
-        if expand:
-            phrases += self._expand_query(query)
-
-        candidate_map: dict[str, IncidentSearchResult] = {}
-        for phrase in phrases:
-            for result in generate(phrase, candidate_limit):
-                self._merge(candidate_map, result)
-
-        candidates = sorted(candidate_map.values(), key=lambda r: r.distance)
+        candidates, _phrases = self._core.generate_candidates(
+            query, generate=generate, limit=limit, expand=expand, rerank=rerank
+        )
 
         if rerank:
             try:
-                results = self._rerank(query=query, candidates=candidates, limit=limit)
+                results = self._core.rerank(query=query, candidates=candidates, limit=limit)
             except Exception:
                 logger.exception(
                     "retrieval.routed_search.rerank_failed",
@@ -296,67 +299,6 @@ class _ProductionCandidatePipeline:
         else:
             results = candidates[:limit]
         return results
-
-    def _expand_query(self, query: str) -> list[str]:
-        if self._llm_service is None:
-            return []
-        return self._llm_service.expand_search_query(query)
-
-    def _merge(
-        self, candidate_map: dict[str, IncidentSearchResult], result: IncidentSearchResult
-    ) -> None:
-        document_id = str(result.incident.id)
-        existing = candidate_map.get(document_id)
-        if existing is None or result.distance < existing.distance:
-            candidate_map[document_id] = result
-
-    def _rerank(
-        self, *, query: str, candidates: list[IncidentSearchResult], limit: int
-    ) -> list[IncidentSearchResult]:
-        candidates = sorted(candidates, key=lambda r: r.distance)
-        if not candidates or self._llm_service is None:
-            return candidates[:limit]
-
-        payloads = [
-            self._payload(index=index, result=result)
-            for index, result in enumerate(candidates, start=1)
-        ]
-        selected_ids = self._llm_service.rerank_incident_search_results(
-            query=query, candidates=payloads, limit=limit
-        )
-        result_by_id = {str(index): result for index, result in enumerate(candidates, start=1)}
-        reranked = [
-            result_by_id[candidate_id]
-            for candidate_id in selected_ids
-            if candidate_id in result_by_id
-        ]
-        if len(reranked) >= limit:
-            return reranked[:limit]
-
-        selected_set = {id(result) for result in reranked}
-        for candidate in candidates:
-            if id(candidate) not in selected_set:
-                reranked.append(candidate)
-            if len(reranked) >= limit:
-                break
-        return reranked
-
-    def _payload(self, *, index: int, result: IncidentSearchResult) -> dict[str, object]:
-        incident = result.incident
-        symptoms = [symptom.text for symptom in incident.symptoms]
-        return {
-            "candidate_id": str(index),
-            "title": incident.title,
-            "owner": incident.owner,
-            "repo": incident.repo,
-            "source": incident.source,
-            "state": incident.state,
-            "symptoms": symptoms,
-            "severity": incident.severity,
-            "status": incident.status,
-            "resolution_summary": incident.resolution_summary,
-            "similarity_score": result.similarity_score,
-        }
 
 
 class RoutedSearchService:
@@ -466,6 +408,70 @@ class RoutedSearchService:
             rerank=rerank,
             call_site=call_site,
             strategy_label=effective_strategy.value,
+        )
+
+    def search(
+        self,
+        query: str,
+        *,
+        limit: int = 10,
+        source_type: str | None = None,
+        tags: list[str] | None = None,
+        owner: str | None = None,
+        repo: str | None = None,
+        source: str | None = None,
+        state: str | None = None,
+        call_site: str | None = None,
+    ) -> list[IncidentSearchResult]:
+        """Routed equivalent of ``IncidentSearchService.search()`` — a
+        no-expand, no-rerank lookup, routed adaptively when
+        ``routing_enabled`` and no filters are present. Not a new
+        algorithm: ``retrieve(expand=False, rerank=False)`` is already
+        documented (see ``IncidentSearchService.retrieve()``) as behaviorally
+        identical to a plain search, for whichever strategy is selected.
+        Callers that need a raw, unrouted dense lookup (e.g. per-hypothesis
+        evidence search, which historically bypassed expansion/reranking
+        entirely) get that same guarantee here, now strategy-aware.
+        """
+        return self.retrieve(
+            query,
+            limit=limit,
+            source_type=source_type,
+            tags=tags,
+            owner=owner,
+            repo=repo,
+            source=source,
+            state=state,
+            expand=False,
+            rerank=False,
+            call_site=call_site,
+        )
+
+    def search_debug(
+        self,
+        query: str,
+        *,
+        owner: str | None = None,
+        repo: str | None = None,
+        source: str | None = None,
+        state: str | None = None,
+        call_site: str | None = None,
+    ) -> list[IncidentSearchResult]:
+        """Routed equivalent of ``IncidentSearchService.search_debug()``:
+        the canonical retrieval pipeline with expansion and reranking
+        enabled, limited to 5 results — routed adaptively under the same
+        rules as ``retrieve()``.
+        """
+        return self.retrieve(
+            query,
+            limit=5,
+            owner=owner,
+            repo=repo,
+            source=source,
+            state=state,
+            expand=True,
+            rerank=True,
+            call_site=call_site,
         )
 
     @staticmethod

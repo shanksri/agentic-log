@@ -1,0 +1,8 @@
+{
+  "Dense -> Dense+Expansion": "Overall verdict: regressed. Recall@K unchanged (+0.0000), MRR regressed (-0.1175), NDCG regressed (-0.0702). Categories regressed: paraphrase. Difficulties regressed: hard.",
+  "Dense+Expansion -> Dense+Expansion+Rerank": "Overall verdict: improved. Recall@K improved (+0.0357), MRR improved (+0.2175), NDCG improved (+0.1711).",
+  "Dense -> Hybrid": "Overall verdict: improved. Recall@K unchanged (+0.0000), MRR improved (+0.0702), NDCG improved (+0.0527).",
+  "Hybrid -> Hybrid+Expansion": "Overall verdict: regressed. Recall@K unchanged (+0.0000), MRR regressed (-0.0675), NDCG regressed (-0.0429). Categories regressed: multi-concept, paraphrase. Difficulties regressed: medium.",
+  "Hybrid+Expansion -> Hybrid+Expansion+Rerank": "Overall verdict: improved. Recall@K improved (+0.0357), MRR improved (+0.1044), NDCG improved (+0.0945).",
+  "Dense Production -> Hybrid Production": "Overall verdict: improved. Recall@K unchanged (+0.0000), MRR improved (+0.0071), NDCG improved (+0.0035). Categories regressed: paraphrase. Difficulties regressed: hard."
+}

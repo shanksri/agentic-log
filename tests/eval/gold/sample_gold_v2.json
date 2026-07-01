@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "description": "Sample Gold Dataset v2 fixture for Phase 16B schema/loader tests.",
+  "created_at": "2026-06-26T00:00:00Z",
+  "author": "phase-16b",
+  "corpus_fingerprint": null,
+  "queries": [
+    {
+      "id": "v2-lex-01",
+      "query": "scheduler crashloop ValidationError UUID dag_version_id is NULL",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "apache/airflow#1001",
+          "relevance": 3
+        }
+      ]
+    },
+    {
+      "id": "v2-multi-01",
+      "query": "memory exhaustion and crash during large file compilation in watch mode",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "microsoft/TypeScript#2001",
+          "relevance": 3
+        },
+        {
+          "source_type": "github",
+          "source_external_id": "microsoft/TypeScript#2002",
+          "relevance": 2
+        }
+      ]
+    },
+    {
+      "id": "v2-neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    }
+  ]
+}

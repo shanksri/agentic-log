@@ -1,0 +1,290 @@
+[
+  {
+    "query_id": "v2-lex-01",
+    "strategy": "dense",
+    "value": 0.7198075819130206,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-02",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-03",
+    "strategy": "dense",
+    "value": 0.7161071638933275,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-04",
+    "strategy": "dense",
+    "value": 0.7580379391886045,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-05",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-06",
+    "strategy": "dense",
+    "value": 0.8272152543067932,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-07",
+    "strategy": "dense",
+    "value": 0.7963506700783582,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-08",
+    "strategy": "dense",
+    "value": 0.8593055689748798,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-09",
+    "strategy": "dense",
+    "value": 0.8695769906044006,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-10",
+    "strategy": "dense",
+    "value": 0.7065178330828064,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-11",
+    "strategy": "dense",
+    "value": 0.8640974245013356,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-lex-12",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-01",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-02",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-03",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-04",
+    "strategy": "hybrid",
+    "value": 0.6579480119847761,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-05",
+    "strategy": "hybrid",
+    "value": 0.6651182432432433,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-06",
+    "strategy": "hybrid",
+    "value": 0.5060728744939271,
+    "level": "MEDIUM",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-07",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-08",
+    "strategy": "hybrid",
+    "value": 0.6685068575864747,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-para-09",
+    "strategy": "hybrid",
+    "value": 0.5020080321285141,
+    "level": "MEDIUM",
+    "recall_at_k": 0.0,
+    "reciprocal_rank": 0.0
+  },
+  {
+    "query_id": "v2-para-10",
+    "strategy": "hybrid",
+    "value": 0.6702558960721915,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-01",
+    "strategy": "hybrid",
+    "value": 0.6702558960721915,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-02",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-03",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-04",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-05",
+    "strategy": "hybrid",
+    "value": 0.6720430107526881,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-multi-06",
+    "strategy": "hybrid",
+    "value": 0.6684491978609626,
+    "level": "HIGH",
+    "recall_at_k": 1.0,
+    "reciprocal_rank": 1.0
+  },
+  {
+    "query_id": "v2-neg-01",
+    "strategy": "dense",
+    "value": 0.5203806472051539,
+    "level": "MEDIUM",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-02",
+    "strategy": "dense",
+    "value": 0.4033634903051557,
+    "level": "MEDIUM",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-03",
+    "strategy": "hybrid",
+    "value": 0.4901960784313726,
+    "level": "MEDIUM",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-04",
+    "strategy": "dense",
+    "value": 0.4602173316219682,
+    "level": "MEDIUM",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-05",
+    "strategy": "dense",
+    "value": 0.3001620292567002,
+    "level": "LOW",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-06",
+    "strategy": "dense",
+    "value": 0.38195468133552923,
+    "level": "LOW",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-07",
+    "strategy": "dense",
+    "value": 0.4848783612251282,
+    "level": "MEDIUM",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  },
+  {
+    "query_id": "v2-neg-08",
+    "strategy": "dense",
+    "value": 0.2475791573524475,
+    "level": "LOW",
+    "recall_at_k": null,
+    "reciprocal_rank": null
+  }
+]

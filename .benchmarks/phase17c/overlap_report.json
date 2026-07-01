@@ -1,0 +1,260 @@
+{
+  "mean_jaccard": 0.14332604386783954,
+  "mean_overlap_count": 2.3333333333333335,
+  "mean_dense_only_count": 7.666666666666667,
+  "mean_bm25_only_count": 7.666666666666667,
+  "per_query": [
+    {
+      "query_id": "v2-lex-01",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-lex-02",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-lex-03",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-lex-04",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-lex-05",
+      "overlap_count": 5,
+      "dense_only_count": 5,
+      "bm25_only_count": 5,
+      "jaccard": 0.3333333333333333
+    },
+    {
+      "query_id": "v2-lex-06",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-lex-07",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-lex-08",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-lex-09",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-lex-10",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-lex-11",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-lex-12",
+      "overlap_count": 5,
+      "dense_only_count": 5,
+      "bm25_only_count": 5,
+      "jaccard": 0.3333333333333333
+    },
+    {
+      "query_id": "v2-para-01",
+      "overlap_count": 5,
+      "dense_only_count": 5,
+      "bm25_only_count": 5,
+      "jaccard": 0.3333333333333333
+    },
+    {
+      "query_id": "v2-para-02",
+      "overlap_count": 3,
+      "dense_only_count": 7,
+      "bm25_only_count": 7,
+      "jaccard": 0.17647058823529413
+    },
+    {
+      "query_id": "v2-para-03",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-para-04",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-para-05",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-para-06",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-para-07",
+      "overlap_count": 3,
+      "dense_only_count": 7,
+      "bm25_only_count": 7,
+      "jaccard": 0.17647058823529413
+    },
+    {
+      "query_id": "v2-para-08",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-para-09",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    },
+    {
+      "query_id": "v2-para-10",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-multi-01",
+      "overlap_count": 3,
+      "dense_only_count": 7,
+      "bm25_only_count": 7,
+      "jaccard": 0.17647058823529413
+    },
+    {
+      "query_id": "v2-multi-02",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-multi-03",
+      "overlap_count": 5,
+      "dense_only_count": 5,
+      "bm25_only_count": 5,
+      "jaccard": 0.3333333333333333
+    },
+    {
+      "query_id": "v2-multi-04",
+      "overlap_count": 6,
+      "dense_only_count": 4,
+      "bm25_only_count": 4,
+      "jaccard": 0.42857142857142855
+    },
+    {
+      "query_id": "v2-multi-05",
+      "overlap_count": 4,
+      "dense_only_count": 6,
+      "bm25_only_count": 6,
+      "jaccard": 0.25
+    },
+    {
+      "query_id": "v2-multi-06",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-neg-01",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-neg-02",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    },
+    {
+      "query_id": "v2-neg-03",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    },
+    {
+      "query_id": "v2-neg-04",
+      "overlap_count": 1,
+      "dense_only_count": 9,
+      "bm25_only_count": 9,
+      "jaccard": 0.05263157894736842
+    },
+    {
+      "query_id": "v2-neg-05",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    },
+    {
+      "query_id": "v2-neg-06",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    },
+    {
+      "query_id": "v2-neg-07",
+      "overlap_count": 2,
+      "dense_only_count": 8,
+      "bm25_only_count": 8,
+      "jaccard": 0.1111111111111111
+    },
+    {
+      "query_id": "v2-neg-08",
+      "overlap_count": 0,
+      "dense_only_count": 10,
+      "bm25_only_count": 10,
+      "jaccard": 0.0
+    }
+  ]
+}

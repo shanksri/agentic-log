@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from app.api.routes import agent, health, incidents, ingestion, search
+from app.api.routes import agent, evaluation, evaluation_interactive, health, incidents, ingestion, search
 from app.core.logging import configure_logging
 
 configure_logging()
@@ -17,3 +17,5 @@ app.include_router(agent.router)
 app.include_router(incidents.router)
 app.include_router(ingestion.router)
 app.include_router(search.router)
+app.include_router(evaluation.router)
+app.include_router(evaluation_interactive.router)

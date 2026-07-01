@@ -19,11 +19,21 @@ empirically (behavior study over the 8k corpus) or follow structurally from the 
 1. **Dense-only retrieval misses lexical/jargon/exact-token queries.** Rare terms ("ISR", "triggerer")
    and exact error codes under-embed; dense buries the correct incident (e.g. "ISR shrink event" → LOW
    0.371). Lexical/hybrid would fix these (docs 09, 17).
+   **Status: mitigated in library code, not in production.** BM25 lexical retrieval, RRF-fused
+   hybrid retrieval, and a deterministic query router that sends exact-error-signature/stack-trace/
+   short queries to BM25 and long multi-concept queries to Hybrid all exist and are unit-tested
+   (doc 18, Phases 17A/17B/18A/18B). None of it is wired into `app/api/routes/search.py` — dense
+   remains the only strategy reachable over HTTP as of this writing.
 2. **Reranking is near-neutral and occasionally harmful.** It can discard higher-similarity candidates
    by over-anchoring on topical affinity (ISR reverted 0.50→0.37). Expansion is the real lever (doc 13).
 3. **Confidence thresholds are stale for the grown corpus.** Calibrated on ~400 incidents; at ~8,000 the
    MEDIUM band catches generic noise ("bug" 0.454, "memory" 0.440) — MEDIUM lost discriminative power.
    HIGH still meaningful (doc 14).
+   **Status: not addressed.** The 0.40/0.55 thresholds themselves are unchanged. A strategy-aware
+   normalization layer (doc 18C) now lets BM25/Hybrid scores share these same two thresholds, but no
+   phase has recalibrated the thresholds for corpus growth or added a secondary signal (top1−top2
+   gap, source agreement) — that remains explicitly deferred, per doc 18C's own docstring, until
+   enough labeled data exists to fit a statistical calibration rather than another heuristic.
 4. **Corpus drift & "hub" incidents.** Generic-text incidents become high-recall attractors as the corpus
    densifies; one Kafka incident ("Infinite loop trying to start a broker") is top-1 for several unrelated
    queries and hijacks "triggerer not starting" (Airflow) (docs 10, 12).

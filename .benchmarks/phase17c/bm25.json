@@ -1,0 +1,916 @@
+{
+  "run_id": "bm25",
+  "timestamp": "2026-06-26T18:38:07.974077+00:00",
+  "experiment_name": "phase17c",
+  "config": {
+    "k": 10,
+    "expand": false,
+    "rerank": false
+  },
+  "report": {
+    "dataset": {
+      "version": "2.1.0",
+      "description": "Phase 17C retrieval-strategy benchmark: 36 queries authored against the live ingested corpus (8,017 GitHub/Jira incidents across kubernetes, terraform, langchain, istio, redis, helm, ray, sentry, go, cockroach, kafka, spark) to compare Dense, BM25, and Hybrid (RRF) retrieval.",
+      "created_at": "2026-06-27T00:00:00Z",
+      "author": "phase-17c",
+      "corpus_fingerprint": {
+        "computed": false,
+        "value": null
+      }
+    },
+    "config": {
+      "k": 10,
+      "expand": false,
+      "rerank": false
+    },
+    "corpus_statistics": {
+      "corpus_fingerprint": {
+        "computed": false,
+        "value": null
+      },
+      "distinct_retrieved_incident_count": 312
+    },
+    "num_evaluated": 36,
+    "num_skipped": 0,
+    "aggregate_metrics": {
+      "num_queries": 36,
+      "mean_recall_at_k": 0.8928571428571429,
+      "mean_reciprocal_rank": 0.8345238095238096,
+      "mean_ndcg_at_k": 0.8205690407302925,
+      "resolution_coverage": 1.0,
+      "queries_with_unresolved_incidents": 0
+    },
+    "per_query": [
+      {
+        "query_id": "v2-lex-01",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-01",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-02",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-02",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-03",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-03",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-04",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-04",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-05",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-05",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-06",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-06",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-07",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-07",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-08",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-08",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-09",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-09",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-10",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-10",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-11",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-11",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-lex-12",
+        "category": "lexical-overlap",
+        "difficulty": "easy",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-lex-12",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-01",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-01",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-02",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-02",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-03",
+        "category": "paraphrase",
+        "difficulty": "hard",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-03",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-04",
+        "category": "paraphrase",
+        "difficulty": "hard",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-04",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.16666666666666666,
+          "dcg_at_k": 2.493450309756155,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 0.3562071871080222
+        }
+      },
+      {
+        "query_id": "v2-para-05",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-05",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.2,
+          "dcg_at_k": 2.7079696506417914,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 0.38685280723454163
+        }
+      },
+      {
+        "query_id": "v2-para-06",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-06",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 0.0
+        }
+      },
+      {
+        "query_id": "v2-para-07",
+        "category": "paraphrase",
+        "difficulty": "hard",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-07",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-08",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-08",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-para-09",
+        "category": "paraphrase",
+        "difficulty": "medium",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-09",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 0.0
+        }
+      },
+      {
+        "query_id": "v2-para-10",
+        "category": "paraphrase",
+        "difficulty": "hard",
+        "num_relevant": 1,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-para-10",
+          "k": 10,
+          "num_relevant": 1,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 7.0,
+          "ndcg_at_k": 0.0
+        }
+      },
+      {
+        "query_id": "v2-multi-01",
+        "category": "multi-concept",
+        "difficulty": "hard",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-01",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.4165082750002025,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 0.8339912323981488
+        }
+      },
+      {
+        "query_id": "v2-multi-02",
+        "category": "multi-concept",
+        "difficulty": "medium",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-02",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 5.0234537842252145,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 0.5648906813093276
+        }
+      },
+      {
+        "query_id": "v2-multi-03",
+        "category": "multi-concept",
+        "difficulty": "hard",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-03",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 7.4165082750002025,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 0.8339912323981488
+        }
+      },
+      {
+        "query_id": "v2-multi-04",
+        "category": "multi-concept",
+        "difficulty": "hard",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-04",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 8.892789260714373,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-multi-05",
+        "category": "multi-concept",
+        "difficulty": "medium",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-05",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 8.892789260714373,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-multi-06",
+        "category": "multi-concept",
+        "difficulty": "medium",
+        "num_relevant": 2,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-multi-06",
+          "k": 10,
+          "num_relevant": 2,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "dcg_at_k": 8.892789260714373,
+          "idcg_at_k": 8.892789260714373,
+          "ndcg_at_k": 1.0
+        }
+      },
+      {
+        "query_id": "v2-neg-01",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-01",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-02",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-02",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-03",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-03",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-04",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-04",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-05",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-05",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-06",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-06",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-07",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-07",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      },
+      {
+        "query_id": "v2-neg-08",
+        "category": "no-match-expected",
+        "difficulty": "hard",
+        "num_relevant": 0,
+        "num_unresolved_expected": 0,
+        "skipped": false,
+        "skip_reason": null,
+        "metric": {
+          "query_id": "v2-neg-08",
+          "k": 10,
+          "num_relevant": 0,
+          "num_unresolved_expected": 0,
+          "num_retrieved": 10,
+          "num_duplicate_retrieved": 0,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "dcg_at_k": 0.0,
+          "idcg_at_k": 0,
+          "ndcg_at_k": null
+        }
+      }
+    ],
+    "coverage": {
+      "total_queries": 36,
+      "no_match_expected_queries": 8,
+      "fully_resolved_queries": 28,
+      "partially_resolved_queries": 0,
+      "fully_unresolved_queries": 0
+    },
+    "resolution_summary": {
+      "total_expected_incidents": 34,
+      "resolved_count": 34,
+      "unresolved_identities": []
+    },
+    "category_breakdown": {
+      "lexical-overlap": {
+        "num_queries": 12,
+        "mean_recall_at_k": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "mean_ndcg_at_k": 1.0,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      },
+      "paraphrase": {
+        "num_queries": 10,
+        "mean_recall_at_k": 0.7,
+        "mean_reciprocal_rank": 0.5366666666666666,
+        "mean_ndcg_at_k": 0.5743059994342563,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      },
+      "multi-concept": {
+        "num_queries": 6,
+        "mean_recall_at_k": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "mean_ndcg_at_k": 0.8721455243509375,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      },
+      "no-match-expected": {
+        "num_queries": 8,
+        "mean_recall_at_k": null,
+        "mean_reciprocal_rank": null,
+        "mean_ndcg_at_k": null,
+        "resolution_coverage": null,
+        "queries_with_unresolved_incidents": 0
+      }
+    },
+    "difficulty_breakdown": {
+      "easy": {
+        "num_queries": 12,
+        "mean_recall_at_k": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "mean_ndcg_at_k": 1.0,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      },
+      "medium": {
+        "num_queries": 9,
+        "mean_recall_at_k": 0.7777777777777778,
+        "mean_reciprocal_rank": 0.6888888888888889,
+        "mean_ndcg_at_k": 0.6613048320604299,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      },
+      "hard": {
+        "num_queries": 15,
+        "mean_recall_at_k": 0.8571428571428571,
+        "mean_reciprocal_rank": 0.7380952380952381,
+        "mean_ndcg_at_k": 0.7177413788434742,
+        "resolution_coverage": 1.0,
+        "queries_with_unresolved_incidents": 0
+      }
+    },
+    "started_at": "2026-06-26T18:38:06.227910+00:00",
+    "finished_at": "2026-06-26T18:38:06.531720+00:00",
+    "duration_seconds": 0.2970000000204891
+  },
+  "git_commit_sha": null,
+  "notes": null,
+  "regression": null
+}

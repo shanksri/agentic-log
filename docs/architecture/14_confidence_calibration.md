@@ -104,6 +104,13 @@ Recalibrate thresholds for the grown corpus (likely raise the LOW boundary) and/
 signal (top1−top2 gap, top-K source agreement) so MEDIUM regains meaning — measured via the framework's
 per-bucket calibration metric (doc 15).
 
+**Status:** the 0.40/0.55 thresholds and `classify_confidence` itself are unchanged by later work.
+What shipped instead is a layer *in front of* this classifier: [doc 18C](18_adaptive_routing_and_hybrid_confidence.md#phase-18c--strategy-aware-confidence-normalization)
+normalizes BM25's and Hybrid's native scores onto the same `[0, 1]` scale this module expects,
+so all three retrieval strategies can share these same two thresholds — but the thresholds
+themselves were not recalibrated, and no top1−top2 gap signal exists yet. Doc 18C's own docstring
+frames statistical recalibration as still future work, deferred until enough labeled data exists.
+
 # Interview Questions
 
 - Why use top-1 similarity rather than the mean of the top-k?

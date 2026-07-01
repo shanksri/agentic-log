@@ -1,0 +1,323 @@
+{
+  "version": "2.1.0",
+  "description": "Phase 17C retrieval-strategy benchmark: 36 queries authored against the live ingested corpus (8,017 GitHub/Jira incidents across kubernetes, terraform, langchain, istio, redis, helm, ray, sentry, go, cockroach, kafka, spark) to compare Dense, BM25, and Hybrid (RRF) retrieval.",
+  "created_at": "2026-06-27T00:00:00Z",
+  "author": "phase-17c",
+  "corpus_fingerprint": null,
+  "queries": [
+    {
+      "id": "v2-lex-01",
+      "query": "Ephemeral resources renewal diagnostics silently dropped due to discarded Append return",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "hashicorp/terraform#38574", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-02",
+      "query": "MemoryQoS does not set memory.high for BestEffort pods on cgroup v2",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137685", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-03",
+      "query": "Opt-in UltraLogLog encoding for HyperLogLog less memory same accuracy",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "redis/redis#15293", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-04",
+      "query": "Gateway API BackendTLSPolicy cross-namespace ConfigMap CAs intermittently fail SDS sync",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "istio/istio#59021", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-05",
+      "query": "kube-apiserver upgrade from v1.32 to v1.33 can deadlock due to admission webhooks and ServiceCIDR",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137356", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-06",
+      "query": "HuggingFaceBgeEmbeddings was marked as deprecated without proper replacement",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "langchain-ai/langchain#29768", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-07",
+      "query": "s3 backend not using sso session when profile is used",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "hashicorp/terraform#36500", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-08",
+      "query": "ZookeeperConsumerConnectorMBean needs to close SimpleConsumer when done",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "jira", "source_external_id": "KAFKA-17", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-09",
+      "query": "CoreDNS restart loop FailedCreatePodSandBox due to flannel subnet.env race condition",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#138622", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-10",
+      "query": "Add cluster resharding with minimal downtime and online migration",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "redis/redis#15318", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-11",
+      "query": "Helm plugin update fails",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "helm/helm#31664", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-lex-12",
+      "query": "Ray Dashboard per process GRAM usage measures utilization and not allocated memory",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "ray-project/ray#61456", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-01",
+      "query": "Terraform isn't picking up the AWS SSO-based session when a named profile is specified for the S3 state backend",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "hashicorp/terraform#36500", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-02",
+      "query": "On cgroup v2, best-effort workloads don't get their upper memory bound configured by the QoS memory feature",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137685", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-03",
+      "query": "A cardinality-estimator data structure gained an encoding mode that trades a bit of accuracy for roughly a third less memory, opt-in only",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "redis/redis#15293", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-04",
+      "query": "A cross-cluster TLS policy backed by config maps in other namespaces occasionally fails to sync its certificate discovery data on the gateway",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "istio/istio#59021", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-05",
+      "query": "Bumping the Kubernetes API server across two minor releases can hang the cluster because of how admission hooks interact with a feature that ships on by default",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137356", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-06",
+      "query": "An embeddings wrapper for a BGE-style HuggingFace model lost support without anyone being given an alternative to switch to",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "langchain-ai/langchain#29768", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-07",
+      "query": "DNS pods keep getting killed and restarted because of a timing problem with how the network overlay writes its subnet configuration file",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#138622", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-08",
+      "query": "Resharding a distributed in-memory cache cluster online without taking it offline or causing major downtime",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "redis/redis#15318", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-09",
+      "query": "Updating an installed third-party CLI extension command doesn't complete successfully",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "helm/helm#31664", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-para-10",
+      "query": "The GPU memory figure shown on the cluster monitoring dashboard reflects what's actively in use rather than what was reserved",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "ray-project/ray#61456", "relevance": 3}
+      ]
+    },
+    {
+      "id": "v2-multi-01",
+      "query": "Istio BackendTLSPolicy interactions: cross-namespace SDS sync failures and conflicts when a DestinationRule also exists",
+      "category": "multi-concept",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "istio/istio#59021", "relevance": 3},
+        {"source_type": "github", "source_external_id": "istio/istio#60122", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-multi-02",
+      "query": "Helm plugin lifecycle problems: the update command failing, and the plugin version environment variable not being passed to install/update/delete scripts",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "helm/helm#31664", "relevance": 3},
+        {"source_type": "github", "source_external_id": "helm/helm#31770", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-multi-03",
+      "query": "Kubernetes memory management issues: MemoryQoS not setting memory.high for BestEffort pods, and high memory usage in kube-controller-manager from caching full objects",
+      "category": "multi-concept",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137685", "relevance": 3},
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#115699", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-multi-04",
+      "query": "Ray Data reliability problems: actor task retries hitting the same broken actor causing an infinite hang, and pipeline deadlocks when streaming generator tasks vanish",
+      "category": "multi-concept",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "ray-project/ray#60150", "relevance": 3},
+        {"source_type": "github", "source_external_id": "ray-project/ray#62535", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-multi-05",
+      "query": "Kubernetes apiserver and admission timing issues: startup timeout set too low, and an upgrade-induced deadlock from admission webhooks with new default-enabled APIs",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137356", "relevance": 3},
+        {"source_type": "github", "source_external_id": "kubernetes/kubernetes#137741", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-multi-06",
+      "query": "Sentry GitHub/GitLab source integration issues: a GitLab integration problem, and supporting relative path resolution in stack trace sources via the GitHub integration",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {"source_type": "github", "source_external_id": "getsentry/sentry#63082", "relevance": 3},
+        {"source_type": "github", "source_external_id": "getsentry/sentry#100943", "relevance": 2}
+      ]
+    },
+    {
+      "id": "v2-neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-02",
+      "query": "oven temperature calibration is inaccurate on the smart kitchen appliance",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-03",
+      "query": "employee payroll tax withholding calculation is wrong for the new fiscal year",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-04",
+      "query": "hotel room booking confirmation email never arrives after reservation",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-05",
+      "query": "airline flight seat upgrade loyalty points not credited to account",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-06",
+      "query": "veterinary appointment scheduling app crashes when adding a new pet",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-07",
+      "query": "grocery delivery driver app shows wrong estimated arrival time",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    },
+    {
+      "id": "v2-neg-08",
+      "query": "high school exam grading rubric inconsistent between teachers",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": []
+    }
+  ]
+}

@@ -1,5 +1,13 @@
 # 15 — Evaluation Framework
 
+> **Scope note:** this document covers *retrieval* evaluation only (Phases 16A–16H below). A
+> parallel system for *reasoning*/agent-quality evaluation (Phase 20A), an LLM-as-judge layer
+> (Phase 20B), and a full productionization layer on top of both — AI quality intelligence, judge
+> validation, gold-dataset authoring/labeling tooling, an end-to-end pipeline, persistent
+> experiment tracking, and a REST API — have since shipped and are **not** described here. See
+> [doc 20](20_reasoning_evaluation_and_judges.md), [doc 21](21_evaluation_platform_productionization.md),
+> and [doc 22](22_evaluation_api.md).
+
 # Purpose
 
 To measure retrieval quality in a way that stays trustworthy as the corpus grows, so every future
@@ -111,6 +119,14 @@ enforcement point and must refuse incompatible comparisons. (Implementation is r
 
 The full phased platform (identity resolver, gold v2, harness, metric engine, fingerprinting, regression
 runner, dashboard, CI) — see doc 17 and the Phase 16 roadmap.
+
+**Status:** the retrieval-side platform described above (Phases 16A–16H) has shipped as described.
+On top of it, docs 20–22 add an entirely parallel reasoning-evaluation system, judges, judge
+validation, dataset-authoring/labeling tools, an orchestration pipeline, persistent experiment
+tracking, and a 15-endpoint REST API — none of which existed when this document was written and
+none of which is described by the diagrams above. No CI gate or dashboard exists for either the
+retrieval or reasoning side as of this writing; both remain manually invoked (CLI scripts, or the
+REST API in doc 22).
 
 # Interview Questions
 

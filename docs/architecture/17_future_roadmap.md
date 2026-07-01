@@ -1,5 +1,11 @@
 # 17 — Future Roadmap
 
+> **Update note:** items 1 and 2 below have shipped; see the ✅/⚠️ status notes inline under
+> "Detailed Flow" and docs [18](18_adaptive_routing_and_hybrid_confidence.md)–[22](22_evaluation_api.md)
+> for what was actually built. Items 4–8 remain open as of this writing (query expansion is still
+> opt-in, no hub-incident downweighting or reranker guardrail exists, no embedding upgrade or
+> non-issue source generalization has shipped).
+
 # Purpose
 
 To list improvements that build on the current architecture without redesigning it, ordered by
@@ -20,16 +26,21 @@ Build the measurement platform first (Phase 16A–16H), THEN change retrieval:
 
 # Detailed Flow — ranked improvements
 
-1. **Evaluation platform (Phase 16A–16H).** Prerequisite for everything else: durable, drift-resistant
-   measurement so no future change can invalidate history (doc 15). Highest priority because it de-risks
-   all the rest.
-2. **Hybrid dense + lexical (BM25 / trigram) retrieval.** Directly fixes the largest dense failure class —
-   rare jargon, exact error codes, the Airflow hijack. The trigram full-text index already exists; this is
-   a candidate-generation enhancement merged at doc 12's boundary. Hypothesis: large NDCG gain on
-   lexical/jargon/error-code categories.
-3. **Confidence recalibration for the grown corpus.** Raise the LOW boundary and/or add a secondary signal
-   (top1−top2 gap, top-K source agreement) so MEDIUM regains meaning. Pure threshold/measurement work,
-   validated by the framework's per-bucket calibration metric (doc 14).
+1. **Evaluation platform (Phase 16A–16H).** ✅ **Shipped**, and then some — see doc 15 for the
+   retrieval-side platform this item originally scoped, and docs 20–22 for the reasoning
+   evaluation, LLM-as-judge, judge validation, dataset authoring/labeling, end-to-end pipeline,
+   experiment tracking, and REST API built on top of it (Phases 20A–21H), none of which this
+   roadmap entry anticipated.
+2. **Hybrid dense + lexical (BM25 / trigram) retrieval.** ✅ **Shipped as an independent BM25
+   engine + RRF fusion**, not a trigram-index candidate-generation merge at doc 12's boundary as
+   originally scoped — see doc 18 (Phases 17A/17B). Also shipped alongside it: an adaptive router
+   (18A/18B) that picks dense/BM25/hybrid per query, and a confidence-normalization layer (18C) so
+   all three strategies can share doc 14's thresholds. **None of it is wired into an API route** —
+   `app/api/routes/search.py` still only calls dense `IncidentSearchService`.
+3. **Confidence recalibration for the grown corpus.** ⚠️ **Not done.** Doc 18C's normalization
+   layer lets non-dense strategies share the existing 0.40/0.55 thresholds, but nobody has raised
+   the LOW boundary or added a top1−top2-gap/source-agreement signal — still open, per doc 14's
+   and doc 18C's own Future Work sections.
 4. **Default-on query expansion.** Empirically the most reliable lever; promote from opt-in to default
    once the harness confirms the gain and bounds latency (doc 11).
 5. **Hub-incident detection / downweighting.** Identify incidents that rank top-1 across many unrelated

@@ -95,6 +95,13 @@ diagnosing recall vs. precision behavior.
 Reciprocal-rank fusion or hybrid (dense+lexical) candidate sources merged here; dynamic pool sizing
 based on score gaps.
 
+**Status:** shipped, but as a *separate* fusion path, not merged into `_merge_candidates` itself.
+[Doc 18](18_adaptive_routing_and_hybrid_confidence.md)'s Hybrid retriever (Phase 17B) performs its
+own Reciprocal Rank Fusion of dense and BM25 candidates independently of this module — the
+best-distance merge described above still governs dense's own multi-phrase expansion merge
+unchanged. A future integration that routes hybrid's fused pool through this same merge function
+has not been built; the two candidate-generation strategies currently coexist rather than compose.
+
 # Interview Questions
 
 - Why keep the minimum distance per incident instead of summing scores across phrases?

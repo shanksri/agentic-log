@@ -1,5 +1,15 @@
 # 01 — System Overview
 
+> **Update note (docs 18–22):** the diagrams and prose below describe the system through
+> Retrieval v1 / early Phase 16 — dense-only retrieval with a single-shot investigation agent.
+> Both "Future Improvements" items this doc lists (hybrid retrieval, the evaluation platform) have
+> since shipped. See [doc 18](18_adaptive_routing_and_hybrid_confidence.md) for adaptive
+> routing/hybrid retrieval/confidence normalization, [doc 19](19_multi_agent_investigation.md) for
+> the four-agent investigation framework that now exists alongside the single-shot agent described
+> here, and [docs 20](20_reasoning_evaluation_and_judges.md)–[22](22_evaluation_api.md) for the
+> full evaluation platform. None of docs 18/19 is wired into an API route yet — the read path
+> described below remains what's actually reachable over HTTP today.
+
 # Purpose
 
 To give a single, accurate mental model of the entire platform: the components, how
@@ -143,6 +153,14 @@ gracefully (fall back to dense order on failure).
 
 Hybrid (dense+lexical) retrieval, confidence recalibration for the grown corpus, and
 the full evaluation platform (docs 15–17). No architectural redesign required.
+
+**Status:** all three have shipped, unwired. Hybrid retrieval and adaptive routing exist as a
+fully-built, unit-tested library (doc 18) but are not reachable through `app/api/routes/search.py`.
+Confidence recalibration exists as a strategy-aware normalization layer (doc 18C) but is likewise
+unwired. The evaluation platform shipped far beyond what doc 15 describes — reasoning evaluation,
+LLM-as-judge, judge validation, gold-authoring tooling, an end-to-end pipeline, persistent
+experiment tracking, and a 15-endpoint REST API (docs 20–22) — none of which this document's
+diagrams reflect.
 
 # Interview Questions
 

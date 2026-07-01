@@ -1,0 +1,218 @@
+[
+  {
+    "query_id": "v2-lex-01",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 11
+  },
+  {
+    "query_id": "v2-lex-02",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 12
+  },
+  {
+    "query_id": "v2-lex-03",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 10
+  },
+  {
+    "query_id": "v2-lex-04",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 11
+  },
+  {
+    "query_id": "v2-lex-05",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 17
+  },
+  {
+    "query_id": "v2-lex-06",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 8
+  },
+  {
+    "query_id": "v2-lex-07",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 10
+  },
+  {
+    "query_id": "v2-lex-08",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 7
+  },
+  {
+    "query_id": "v2-lex-09",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 11
+  },
+  {
+    "query_id": "v2-lex-10",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 9
+  },
+  {
+    "query_id": "v2-lex-11",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 4
+  },
+  {
+    "query_id": "v2-lex-12",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 12
+  },
+  {
+    "query_id": "v2-para-01",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 21
+  },
+  {
+    "query_id": "v2-para-02",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 19
+  },
+  {
+    "query_id": "v2-para-03",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 24
+  },
+  {
+    "query_id": "v2-para-04",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 23
+  },
+  {
+    "query_id": "v2-para-05",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 27
+  },
+  {
+    "query_id": "v2-para-06",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 20
+  },
+  {
+    "query_id": "v2-para-07",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 22
+  },
+  {
+    "query_id": "v2-para-08",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 16
+  },
+  {
+    "query_id": "v2-para-09",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 12
+  },
+  {
+    "query_id": "v2-para-10",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 21
+  },
+  {
+    "query_id": "v2-multi-01",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 15
+  },
+  {
+    "query_id": "v2-multi-02",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 22
+  },
+  {
+    "query_id": "v2-multi-03",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 24
+  },
+  {
+    "query_id": "v2-multi-04",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 24
+  },
+  {
+    "query_id": "v2-multi-05",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 24
+  },
+  {
+    "query_id": "v2-multi-06",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 23
+  },
+  {
+    "query_id": "v2-neg-01",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 9
+  },
+  {
+    "query_id": "v2-neg-02",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 10
+  },
+  {
+    "query_id": "v2-neg-03",
+    "strategy": "hybrid",
+    "reason": "long query (>= 12 tokens) \u2014 reads as multi-concept, benefits from combining lexical and semantic signals",
+    "token_count": 12
+  },
+  {
+    "query_id": "v2-neg-04",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 9
+  },
+  {
+    "query_id": "v2-neg-05",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 10
+  },
+  {
+    "query_id": "v2-neg-06",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 10
+  },
+  {
+    "query_id": "v2-neg-07",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 9
+  },
+  {
+    "query_id": "v2-neg-08",
+    "strategy": "dense",
+    "reason": "no strong lexical signal \u2014 default to dense semantic retrieval",
+    "token_count": 8
+  }
+]

@@ -29,6 +29,12 @@ EvaluationPipeline.run(inputs)
         │     judge.evaluate_session()  per InvestigationResult
         │     → create_judged_benchmark_run()  +  repo.save()
         │
+        ├─ Step 8b   Generation (Phase 22 — default OFF: one LLM call per
+        │     gold query with a reference_answer, so it is opt-in via
+        │     run_generation=True, unlike every other stage)
+        │     evaluate_generation()
+        │     → create_generation_benchmark_run()  +  repo.save()
+        │
         ├─ Step 9    Failure Analysis & Quality Report
         │     analyze_retrieval/reasoning/judge_failures()
         │     → cluster_failures()
@@ -100,6 +106,18 @@ from app.evaluation.failure_analysis import (
     analyze_retrieval_failures,
     cluster_failures,
 )
+from app.evaluation.generation_benchmark import (
+    GenerationBenchmarkRepository,
+    GenerationBenchmarkRun,
+    create_generation_benchmark_run,
+)
+from app.evaluation.generation_harness import (
+    DEFAULT_GENERATION_K,
+    GenerationEvaluationConfig,
+    GenerationEvaluationMode,
+    GenerationEvaluationReport,
+    evaluate_generation,
+)
 from app.evaluation.gold_dataset import GoldDataset
 from app.evaluation.harness import EvaluationReport, evaluate
 from app.evaluation.judge import Judge, JudgeEvaluation
@@ -151,6 +169,18 @@ class EvaluationPipelineConfig:
     retrieval_expand: bool = False
     retrieval_rerank: bool = False
     n_hypotheses: int = 3
+    # Phase 22. Default False — the only stage that is opt-in rather than
+    # opt-out, because it costs one LLM call per gold query carrying a
+    # reference_answer (every other stage's cost is bounded or LLM-free by
+    # default). False also preserves exact pre-22A behavior for existing
+    # callers constructing this config without the field.
+    run_generation: bool = False
+    generation_k: int = DEFAULT_GENERATION_K
+    # Phase 22B — evaluation mode ("fast"/"standard"/"full", default fast:
+    # conservative for production cost) and evaluator-stability repetitions
+    # (default 1: no repetition). Both defaulted, fully backward compatible.
+    generation_mode: str = GenerationEvaluationMode.FAST.value
+    generation_repetitions: int = 1
 
 
 # ── Repository bundle ────────────────────────────────────────────────────────────
@@ -168,6 +198,7 @@ class PipelineRepositories:
     retrieval_repo: BenchmarkRepository | None = None
     reasoning_repo: ReasoningBenchmarkRepository | None = None
     judged_repo: JudgedReasoningBenchmarkRepository | None = None
+    generation_repo: GenerationBenchmarkRepository | None = None
 
 
 # ── Pipeline inputs ──────────────────────────────────────────────────────────────
@@ -189,6 +220,14 @@ class PipelineInputs:
     reasoning_dataset: ReasoningGoldDataset | None = None
     orchestrator: object = None
     judge: Judge | None = None
+    # Phase 22: generation + grounding evaluation. All typed loosely for the
+    # same reason as search_service/orchestrator — the generation harness
+    # knows its own protocol types (AnswerGenerator, TokenEmbedder,
+    # GroundingLLMClient, SentenceEmbedder).
+    answer_generator: object = None
+    token_embedder: object = None
+    grounding_llm: object = None
+    sentence_embedder: object = None
 
 
 # ── Execution summary ────────────────────────────────────────────────────────────
@@ -206,6 +245,10 @@ class ExecutionSummary:
     judge_evaluations: int
     warnings: tuple[str, ...]
     errors: tuple[str, ...]
+    # Phase 22 — number of gold queries actually scored by generation
+    # evaluation (skipped/failed queries excluded). Defaulted so existing
+    # construction sites are unaffected.
+    generation_queries: int = 0
 
 
 # ── Pipeline result ──────────────────────────────────────────────────────────────
@@ -230,6 +273,10 @@ class EvaluationPipelineResult:
     judge_validation_report: JudgeValidationReport | None
     quality_report: AIQualityReport | None
     execution_summary: ExecutionSummary
+    # Phase 22 — defaulted (None) so pre-22A construction sites (e.g. the
+    # API's _make_minimal_pipeline_result) are unaffected.
+    generation_report: GenerationEvaluationReport | None = None
+    generation_benchmark: GenerationBenchmarkRun | None = None
 
 
 # ── Pipeline ─────────────────────────────────────────────────────────────────────
@@ -302,6 +349,8 @@ class EvaluationPipeline:
         judge_report: JudgedReasoningBenchmarkRun | None = None
         judge_validation: JudgeValidationReport | None = None
         quality_report: AIQualityReport | None = None
+        generation_report: GenerationEvaluationReport | None = None
+        generation_benchmark: GenerationBenchmarkRun | None = None
         n_judge_evals = 0
 
         # ── Step 1-4: Retrieval ─────────────────────────────────────────────────
@@ -425,6 +474,48 @@ class EvaluationPipeline:
             except Exception as exc:  # noqa: BLE001
                 errors.append(f"Judge benchmark creation failed: {exc!r}")
 
+        # ── Step 8b: Generation (Phase 22, opt-in) ─────────────────────────────
+        if not cfg.run_generation:
+            # Deliberately NOT a warning: generation is opt-in (default off,
+            # unlike every other stage), so its absence is the normal case
+            # and must not add noise to every pre-Phase-22 pipeline run.
+            pass
+        elif inputs.gold_dataset is None:
+            warnings.append(
+                "Generation evaluation skipped: no gold_dataset supplied."
+            )
+        elif inputs.search_service is None:
+            warnings.append(
+                "Generation evaluation skipped: no search_service supplied."
+            )
+        elif inputs.answer_generator is None:
+            warnings.append(
+                "Generation evaluation skipped: no answer_generator supplied."
+            )
+        else:
+            try:
+                generation_report = evaluate_generation(
+                    inputs.gold_dataset,
+                    inputs.search_service,
+                    inputs.answer_generator,  # type: ignore[arg-type]
+                    k=cfg.generation_k,
+                    token_embedder=inputs.token_embedder,  # type: ignore[arg-type]
+                    grounding_llm=inputs.grounding_llm,  # type: ignore[arg-type]
+                    sentence_embedder=inputs.sentence_embedder,  # type: ignore[arg-type]
+                    config=GenerationEvaluationConfig(
+                        mode=GenerationEvaluationMode(cfg.generation_mode),
+                        evaluation_repetitions=cfg.generation_repetitions,
+                    ),
+                )
+                generation_benchmark = create_generation_benchmark_run(
+                    experiment_name=cfg.experiment_name,
+                    report=generation_report,
+                )
+                if cfg.persist_results and repos.generation_repo is not None:
+                    repos.generation_repo.save(generation_benchmark)
+            except Exception as exc:  # noqa: BLE001
+                errors.append(f"Generation evaluation failed: {exc!r}")
+
         # ── Step 9: Failure Analysis & Quality Report ───────────────────────────
         if not cfg.run_failure_analysis:
             warnings.append(
@@ -486,6 +577,9 @@ class EvaluationPipeline:
             judge_evaluations=n_judge_evals,
             warnings=tuple(warnings),
             errors=tuple(errors),
+            generation_queries=(
+                generation_report.num_answered if generation_report else 0
+            ),
         )
 
         return EvaluationPipelineResult(
@@ -499,4 +593,6 @@ class EvaluationPipeline:
             judge_validation_report=judge_validation,
             quality_report=quality_report,
             execution_summary=summary,
+            generation_report=generation_report,
+            generation_benchmark=generation_benchmark,
         )

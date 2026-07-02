@@ -95,6 +95,43 @@ class FullPipelineRequest(BaseModel):
     experiment_name: str = "default"
     persist: bool = True
     k: int = Field(default=10, ge=1, le=100)
+    generation: bool = Field(
+        default=False,
+        description=(
+            "Run generation + grounding evaluation (Phase 22): BERTScore vs "
+            "each query's reference_answer, plus RAGAS-style Faithfulness / "
+            "Answer Relevancy / Context Precision / Context Recall / Context "
+            "Entity Recall vs the retrieved context. Costs several LLM calls "
+            "per evaluated query, so it is opt-in. Queries missing a "
+            "reference_answer skip BERTScore (and the reference-dependent "
+            "grounding metrics); queries with no retrieved context skip the "
+            "grounding metrics — neither fails the evaluation."
+        ),
+    )
+    generation_mode: str = Field(
+        default="fast",
+        pattern="^(fast|standard|full)$",
+        description=(
+            "Which grounding metrics execute (Phase 22B). fast: BERTScore + "
+            "Faithfulness (2 LLM calls/query). standard: + Answer Relevancy "
+            "(3). full: + Context Precision / Context Recall / Context Entity "
+            "Recall (7). Disabled metrics are skipped with a note, never "
+            "reported as zero. Default fast — conservative for production "
+            "cost."
+        ),
+    )
+    generation_repetitions: int = Field(
+        default=1,
+        ge=1,
+        le=10,
+        description=(
+            "Evaluator-stability repetitions (Phase 22B). N > 1 runs each "
+            "enabled grounding metric N independent times; the reported "
+            "value is the mean, and per-metric std-dev plus a HIGH/MEDIUM/"
+            "LOW confidence band land in the report's metric_variance / "
+            "metric_confidence. Multiplies grounding LLM cost by N."
+        ),
+    )
 
 
 # ── Response models ───────────────────────────────────────────────────────────
@@ -149,6 +186,7 @@ class FullPipelineResponse(BaseModel):
     execution_summary: dict[str, Any]
     warnings: list[str]
     errors: list[str]
+    generation_report: dict[str, Any] | None = None  # Phase 22A (additive)
 
 
 class RunSummary(BaseModel):
@@ -168,6 +206,7 @@ class RunDetailResponse(BaseModel):
     reasoning_report: dict[str, Any] | None
     judge_report: dict[str, Any] | None
     validation_report: dict[str, Any] | None
+    generation_report: dict[str, Any] | None = None  # Phase 22A (additive)
 
 
 class FailedQueriesResponse(BaseModel):
@@ -195,6 +234,19 @@ class StatsResponse(BaseModel):
     best_reasoning_accuracy: float | None
     latest_run: str | None
     trend: list[str]
+    # Phase 22C (additive): historical metric/cost/stability trend series
+    # across the run history; None when trend computation was unavailable.
+    trends: dict[str, Any] | None = None
+
+
+class DiagnosticsResponse(BaseModel):
+    """Phase 22C: the diagnostics dashboard for one persisted run —
+    outliers, stability, cost, skip diagnostics and health classification,
+    computed from the run's already-persisted reports (nothing re-run).
+    """
+
+    run_id: str
+    diagnostics: dict[str, Any]
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -283,6 +335,63 @@ def _build_judge(judge_arg: str):
         from app.evaluation.rule_judge import RuleJudge
         return RuleJudge()
     raise HTTPException(status_code=400, detail=f"Unknown judge: {judge_arg!r}")
+
+
+def _build_answer_generator():
+    """Best-effort AnswerGenerator (Phase 22A) over the existing LLMService;
+    returns None when the LLM backend is unavailable (the pipeline then
+    records a 'generation skipped' warning instead of failing the request).
+    """
+    try:
+        from app.evaluation.generation_harness import LLMServiceAnswerGenerator
+        from app.services.llm_service import LLMService
+
+        return LLMServiceAnswerGenerator(LLMService())
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _build_token_embedder():
+    """Best-effort BERTScore TokenEmbedder (Phase 22) over the existing
+    sentence-transformers EmbeddingService; returns None when unavailable
+    (BERTScore fields are then None — undefined — in the generation report,
+    while the grounding metrics still compute).
+    """
+    try:
+        from app.evaluation.generation_metrics import SentenceTransformerTokenEmbedder
+        from app.services.embedding_service import EmbeddingService
+
+        return SentenceTransformerTokenEmbedder(EmbeddingService())
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _build_grounding_llm():
+    """Best-effort GroundingLLMClient (Phase 22) — ``LLMService`` satisfies
+    the protocol directly via its existing ``generate_json`` method; returns
+    None when the LLM backend is unavailable (all grounding metrics are then
+    None with a recorded note, while BERTScore still computes).
+    """
+    try:
+        from app.services.llm_service import LLMService
+
+        return LLMService()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _build_sentence_embedder():
+    """Best-effort SentenceEmbedder (Phase 22) for Answer Relevancy —
+    ``EmbeddingService`` satisfies the protocol directly via its existing
+    ``embed_text`` method; returns None when unavailable (answer_relevancy
+    is then None with a recorded note).
+    """
+    try:
+        from app.services.embedding_service import EmbeddingService
+
+        return EmbeddingService()
+    except Exception:  # noqa: BLE001
+        return None
 
 
 # ── Shared scoring helper ────────────────────────────────────────────────────
@@ -664,6 +773,23 @@ def run_full_pipeline(
 
     judge = _build_judge(request.judge)
 
+    # Generation + grounding (Phase 22): best-effort like every other
+    # service — a missing LLM/embedding backend degrades to a pipeline
+    # warning or per-metric None, not a request failure.
+    answer_generator = None
+    token_embedder = None
+    grounding_llm = None
+    sentence_embedder = None
+    if request.generation:
+        answer_generator = _build_answer_generator()
+        token_embedder = _build_token_embedder()
+        grounding_llm = _build_grounding_llm()
+        # Answer Relevancy (the only sentence-embedding consumer) is
+        # disabled in fast mode — don't load an embedding model for a mode
+        # that will never use it (Phase 22B cost discipline).
+        if request.generation_mode != "fast":
+            sentence_embedder = _build_sentence_embedder()
+
     config = EvaluationPipelineConfig(
         experiment_name=request.experiment_name,
         run_retrieval=gold_dataset is not None,
@@ -673,6 +799,9 @@ def run_full_pipeline(
         run_validation=True,
         persist_results=False,  # we persist via ExperimentRepository instead
         retrieval_k=request.k,
+        run_generation=request.generation,
+        generation_mode=request.generation_mode,
+        generation_repetitions=request.generation_repetitions,
     )
 
     pipeline = EvaluationPipeline(
@@ -692,6 +821,10 @@ def run_full_pipeline(
                 reasoning_dataset=reasoning_dataset,
                 orchestrator=orchestrator,
                 judge=judge,
+                answer_generator=answer_generator,
+                token_embedder=token_embedder,
+                grounding_llm=grounding_llm,
+                sentence_embedder=sentence_embedder,
             )
         )
     except Exception as exc:  # noqa: BLE001
@@ -718,6 +851,9 @@ def run_full_pipeline(
         execution_summary=_to_dict(s),
         warnings=list(s.warnings),
         errors=list(s.errors),
+        generation_report=(
+            _to_dict(result.generation_report) if result.generation_report else None
+        ),
     )
 
 
@@ -834,6 +970,36 @@ def get_judge_disagreements(
     )
 
 
+# ── GET /evaluation/runs/{run_id}/diagnostics (Phase 22C) ─────────────────────
+
+
+@router.get("/runs/{run_id}/diagnostics", response_model=DiagnosticsResponse)
+def get_run_diagnostics(
+    run_id: str,
+    repo: ExperimentRepository = ExperimentRepo,
+) -> DiagnosticsResponse:
+    """Return the Phase 22C diagnostics dashboard for one persisted run:
+    outlier sections, evaluator-stability diagnostics, call-count cost
+    estimate, skip diagnostics, and the overall health classification —
+    computed on demand from the run's already-persisted report dicts,
+    recomputing no metric.
+    """
+    from app.evaluation.evaluation_diagnostics import build_health_report
+
+    run = repo.load(run_id)
+    if run is None:
+        raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
+    health = build_health_report(
+        retrieval_report=run.retrieval_report,
+        generation_report=getattr(run, "generation_report", None),
+        reasoning_report=run.reasoning_report,
+        judge_report=run.judge_report,
+        quality_report=run.quality_report,
+        run_id=run_id,
+    )
+    return DiagnosticsResponse(run_id=run_id, diagnostics=_to_dict(health))
+
+
 # ── GET /evaluation/stats ─────────────────────────────────────────────────────
 
 
@@ -841,8 +1007,18 @@ def get_judge_disagreements(
 def get_stats(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> StatsResponse:
-    """Return aggregate statistics across the full experiment run history."""
+    """Return aggregate statistics across the full experiment run history,
+    including Phase 22C historical trend series (best-effort — ``trends``
+    is null if trend computation fails, never a request failure).
+    """
     stats = repo.stats()
+    trends: dict[str, Any] | None = None
+    try:
+        from app.evaluation.evaluation_diagnostics import compute_evaluation_trends
+
+        trends = _to_dict(compute_evaluation_trends(repo))
+    except Exception:  # noqa: BLE001 — trends are additive, never fatal
+        trends = None
     return StatsResponse(
         total_runs=stats.total_runs,
         best_mrr=stats.best_mrr,
@@ -850,6 +1026,7 @@ def get_stats(
         best_reasoning_accuracy=stats.best_reasoning_accuracy,
         latest_run=stats.latest_run,
         trend=list(stats.trend),
+        trends=trends,
     )
 
 
@@ -870,6 +1047,9 @@ def _run_to_detail(run: Any) -> RunDetailResponse:
         reasoning_report=run.reasoning_report,
         judge_report=run.judge_report,
         validation_report=run.validation_report,
+        # getattr: tolerate test stubs / older ExperimentRun shapes that
+        # predate Phase 22A's generation_report field.
+        generation_report=getattr(run, "generation_report", None),
     )
 
 

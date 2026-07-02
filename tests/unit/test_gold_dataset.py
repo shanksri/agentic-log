@@ -188,3 +188,31 @@ def test_dataset_default_corpus_fingerprint_is_uncomputed_placeholder() -> None:
 def test_dataset_author_is_optional() -> None:
     dataset = _dataset()
     assert dataset.author is None
+
+
+# ── reference_answer (Phase 22A) ─────────────────────────────────────────────
+
+
+def test_reference_answer_defaults_to_none_backward_compatible() -> None:
+    query = _query()
+    assert query.reference_answer is None
+    assert query.issues() == []
+
+
+def test_reference_answer_present_is_valid() -> None:
+    query = GoldQuery(
+        id="q-1", query="broker down", category="lexical-overlap",
+        difficulty="easy", expected_incidents=(_expected(),),
+        reference_answer="restart the kafka broker",
+    )
+    assert query.issues() == []
+    assert query.reference_answer == "restart the kafka broker"
+
+
+def test_reference_answer_empty_string_is_invalid() -> None:
+    query = GoldQuery(
+        id="q-1", query="broker down", category="lexical-overlap",
+        difficulty="easy", expected_incidents=(_expected(),),
+        reference_answer="   ",
+    )
+    assert any("reference_answer" in issue for issue in query.issues())

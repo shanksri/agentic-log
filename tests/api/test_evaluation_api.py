@@ -863,3 +863,251 @@ def test_build_orchestrator_constructs_without_typeerror() -> None:
 
     orchestrator = _build_orchestrator(None)
     assert isinstance(orchestrator, MultiAgentInvestigationOrchestrator)
+
+
+# ── POST /evaluation/full — generation (Phase 22A) ────────────────────────────
+
+
+def _make_generation_report():
+    from app.evaluation.generation_harness import (
+        GenerationEvaluationReport,
+        GenerationQueryResult,
+    )
+    from app.evaluation.generation_metrics import (
+        GenerationMetrics,
+        aggregate_generation_metrics,
+    )
+    from app.evaluation.grounding_metrics import (
+        GroundingMetrics,
+        aggregate_grounding_metrics,
+    )
+    generation = GenerationMetrics(
+        bert_score_precision=0.9, bert_score_recall=0.7, bert_score_f1=0.7875
+    )
+    grounding = GroundingMetrics(
+        faithfulness=1.0, answer_relevancy=0.85, context_precision=0.5,
+        context_recall=0.75, context_entity_recall=None,
+    )
+    return GenerationEvaluationReport(
+        dataset_version="2.1.0", dataset_description="d", k=5,
+        num_answered=1, num_generation_scored=1, num_grounding_scored=1,
+        num_skipped=0, num_failed=0,
+        results=(
+            GenerationQueryResult(
+                query_id="q-1", query="broker down",
+                generated_answer="restart it",
+                reference_answer="restart the broker",
+                num_contexts=2,
+                generation=generation, grounding=grounding,
+                skipped=False, skip_reason=None, notes=(),
+            ),
+        ),
+        generation_aggregate=aggregate_generation_metrics([generation]),
+        grounding_aggregate=aggregate_grounding_metrics([grounding]),
+        started_at="2026-07-02T00:00:00+00:00",
+        finished_at="2026-07-02T00:00:01+00:00",
+        duration_seconds=1.0,
+    )
+
+
+def test_full_pipeline_generation_report_in_response(monkeypatch) -> None:
+    from app.evaluation.evaluation_pipeline import EvaluationPipelineResult
+    gen_report = _make_generation_report()
+    pipeline_result = EvaluationPipelineResult(
+        retrieval_report=None, retrieval_regression=None, retrieval_benchmark=None,
+        reasoning_report=None, reasoning_regression=None, reasoning_benchmark=None,
+        judge_report=None, judge_validation_report=None, quality_report=None,
+        execution_summary=_make_execution_summary(),
+        generation_report=gen_report,
+    )
+    client, _ = _client()
+    try:
+        import app.api.routes.evaluation as ev_mod
+        monkeypatch.setattr(ev_mod, "_load_gold_dataset", lambda p: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_search_service", lambda db: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_answer_generator", lambda: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_token_embedder", lambda: None)
+        with patch(
+            "app.evaluation.evaluation_pipeline.EvaluationPipeline.run",
+            return_value=pipeline_result,
+        ):
+            resp = client.post(
+                "/evaluation/full",
+                json={
+                    "retrieval_dataset": "some/dataset.json",
+                    "generation": True,
+                    "persist": False,
+                    "judge": "none",
+                },
+            )
+        assert resp.status_code == 200
+        data = resp.json()
+        report = data["generation_report"]
+        assert report is not None
+        assert report["num_answered"] == 1
+        # Generation half (BERTScore) and grounding half (RAGAS) both present.
+        assert report["generation_aggregate"]["bert_score_f1"]["mean"] == pytest.approx(0.7875)
+        assert report["grounding_aggregate"]["faithfulness"]["mean"] == pytest.approx(1.0)
+        assert report["grounding_aggregate"]["context_precision"]["mean"] == pytest.approx(0.5)
+        assert report["grounding_aggregate"]["context_entity_recall"] is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_full_pipeline_generation_flag_passed_to_config(monkeypatch) -> None:
+    captured: dict = {}
+    client, _ = _client()
+    try:
+        import app.api.routes.evaluation as ev_mod
+        monkeypatch.setattr(ev_mod, "_build_search_service", lambda db: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_answer_generator", lambda: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_token_embedder", lambda: None)
+
+        from app.evaluation.evaluation_pipeline import EvaluationPipeline
+        original_run = EvaluationPipeline.run
+
+        def spy_run(self, inputs):
+            captured["run_generation"] = self.config.run_generation
+            captured["answer_generator"] = inputs.answer_generator
+            return _make_pipeline_result()
+
+        with patch.object(EvaluationPipeline, "run", spy_run):
+            resp = client.post(
+                "/evaluation/full",
+                json={"generation": True, "persist": False, "judge": "none"},
+            )
+        assert resp.status_code == 200
+        assert captured["run_generation"] is True
+        assert captured["answer_generator"] is not None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_full_pipeline_default_request_has_generation_off_backward_compatible(
+    monkeypatch,
+) -> None:
+    # A pre-22A request body (no "generation" key) must behave exactly as
+    # before: run_generation False, no generation_report in the result, and
+    # the response's new field is null.
+    captured: dict = {}
+    client, _ = _client()
+    try:
+        from app.evaluation.evaluation_pipeline import EvaluationPipeline
+
+        def spy_run(self, inputs):
+            captured["run_generation"] = self.config.run_generation
+            return _make_pipeline_result()
+
+        with patch.object(EvaluationPipeline, "run", spy_run):
+            resp = client.post(
+                "/evaluation/full", json={"persist": False, "judge": "none"}
+            )
+        assert resp.status_code == 200
+        assert captured["run_generation"] is False
+        assert resp.json()["generation_report"] is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_run_detail_tolerates_runs_without_generation_report() -> None:
+    # The FakeExperimentRepo's ExperimentRun predates 22A field population —
+    # RunDetailResponse must surface generation_report as null, not error.
+    client, fake_repo = _client()
+    try:
+        fake_repo.save(_make_pipeline_result(), experiment_name="old")
+        resp = client.get("/evaluation/runs/latest")
+        assert resp.status_code == 200
+        assert resp.json()["generation_report"] is None
+    finally:
+        app.dependency_overrides.clear()
+
+
+# ── Phase 22B: generation_mode / generation_repetitions ───────────────────────
+
+
+def test_full_pipeline_mode_and_repetitions_passed_to_config(monkeypatch) -> None:
+    captured: dict = {}
+    client, _ = _client()
+    try:
+        import app.api.routes.evaluation as ev_mod
+        monkeypatch.setattr(ev_mod, "_build_search_service", lambda db: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_answer_generator", lambda: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_token_embedder", lambda: None)
+        monkeypatch.setattr(ev_mod, "_build_grounding_llm", lambda: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_sentence_embedder", lambda: MagicMock())
+
+        from app.evaluation.evaluation_pipeline import EvaluationPipeline
+
+        def spy_run(self, inputs):
+            captured["generation_mode"] = self.config.generation_mode
+            captured["generation_repetitions"] = self.config.generation_repetitions
+            return _make_pipeline_result()
+
+        with patch.object(EvaluationPipeline, "run", spy_run):
+            resp = client.post(
+                "/evaluation/full",
+                json={
+                    "generation": True,
+                    "generation_mode": "standard",
+                    "generation_repetitions": 3,
+                    "persist": False,
+                    "judge": "none",
+                },
+            )
+        assert resp.status_code == 200
+        assert captured["generation_mode"] == "standard"
+        assert captured["generation_repetitions"] == 3
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_full_pipeline_defaults_fast_mode_single_repetition(monkeypatch) -> None:
+    # Backward compatibility: a request body without the Phase 22B fields
+    # gets fast mode and 1 repetition — conservative production defaults.
+    captured: dict = {}
+    client, _ = _client()
+    try:
+        import app.api.routes.evaluation as ev_mod
+        monkeypatch.setattr(ev_mod, "_build_search_service", lambda db: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_answer_generator", lambda: MagicMock())
+        monkeypatch.setattr(ev_mod, "_build_token_embedder", lambda: None)
+        monkeypatch.setattr(ev_mod, "_build_grounding_llm", lambda: MagicMock())
+
+        embedder_built: list[bool] = []
+        monkeypatch.setattr(
+            ev_mod, "_build_sentence_embedder",
+            lambda: embedder_built.append(True) or MagicMock(),
+        )
+
+        from app.evaluation.evaluation_pipeline import EvaluationPipeline
+
+        def spy_run(self, inputs):
+            captured["generation_mode"] = self.config.generation_mode
+            captured["generation_repetitions"] = self.config.generation_repetitions
+            return _make_pipeline_result()
+
+        with patch.object(EvaluationPipeline, "run", spy_run):
+            resp = client.post(
+                "/evaluation/full",
+                json={"generation": True, "persist": False, "judge": "none"},
+            )
+        assert resp.status_code == 200
+        assert captured["generation_mode"] == "fast"
+        assert captured["generation_repetitions"] == 1
+        # fast mode never uses Answer Relevancy -> the sentence-embedding
+        # model must not be loaded at all (Phase 22B cost discipline).
+        assert embedder_built == []
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_full_pipeline_rejects_invalid_generation_mode() -> None:
+    client, _ = _client()
+    try:
+        resp = client.post(
+            "/evaluation/full",
+            json={"generation": True, "generation_mode": "turbo", "judge": "none"},
+        )
+        assert resp.status_code == 422
+    finally:
+        app.dependency_overrides.clear()

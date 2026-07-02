@@ -97,6 +97,16 @@ class ExpectedIncident:
 class GoldQuery:
     """One gold query entry: a natural-language query plus its expected,
     graded, identity-anchored answer set.
+
+    ``reference_answer`` (Phase 22) is an OPTIONAL human-authored answer
+    used only by generation evaluation (``app.evaluation.generation_harness``)
+    — retrieval evaluation never reads it. ``None`` (the default) means the
+    query participates in retrieval evaluation exactly as before; generation
+    evaluation then skips BERTScore and the reference-dependent grounding
+    metrics (context recall / context entity recall) for the query, while
+    the reference-free grounding metrics (faithfulness, answer relevancy,
+    context precision) can still run. Existing datasets without the field
+    remain valid unchanged.
     """
 
     id: str
@@ -104,6 +114,7 @@ class GoldQuery:
     category: str
     difficulty: str
     expected_incidents: tuple[ExpectedIncident, ...] = field(default_factory=tuple)
+    reference_answer: str | None = None
 
     def issues(self) -> list[str]:
         problems: list[str] = []
@@ -111,6 +122,12 @@ class GoldQuery:
             problems.append("query.id must be non-empty")
         if not self.query:
             problems.append(f"query {self.id!r}: query text must be non-empty")
+        if self.reference_answer is not None and not self.reference_answer.strip():
+            problems.append(
+                f"query {self.id!r}: reference_answer, when present, must be a "
+                "non-empty string (omit the field or use null to skip generation "
+                "evaluation)"
+            )
         if self.category not in VALID_CATEGORIES:
             problems.append(
                 f"query {self.id!r}: category {self.category!r} not in {sorted(VALID_CATEGORIES)}"

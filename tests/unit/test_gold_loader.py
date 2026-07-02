@@ -288,3 +288,41 @@ def test_summarize_resolution_fully_covered_when_everything_resolves(session: Se
 
     assert summary.fully_covered is True
     assert summary.unresolved_count == 0
+
+
+# ── reference_answer parsing (Phase 22A) ─────────────────────────────────────
+
+
+def test_parse_dataset_without_reference_answer_still_works() -> None:
+    # Backward compatibility: a pre-22A dataset (no reference_answer field
+    # anywhere) parses exactly as before, with None on every query.
+    dataset = parse_gold_dataset(_valid_raw())
+    assert dataset.queries[0].reference_answer is None
+
+
+def test_parse_reference_answer_string_passes_through() -> None:
+    raw = _valid_raw()
+    raw["queries"][0]["reference_answer"] = "restart the kafka broker"
+    dataset = parse_gold_dataset(raw)
+    assert dataset.queries[0].reference_answer == "restart the kafka broker"
+
+
+def test_parse_reference_answer_null_means_none() -> None:
+    raw = _valid_raw()
+    raw["queries"][0]["reference_answer"] = None
+    dataset = parse_gold_dataset(raw)
+    assert dataset.queries[0].reference_answer is None
+
+
+def test_parse_reference_answer_non_string_rejected() -> None:
+    raw = _valid_raw()
+    raw["queries"][0]["reference_answer"] = 42
+    with pytest.raises(GoldDatasetParseError, match="reference_answer"):
+        parse_gold_dataset(raw)
+
+
+def test_sample_gold_dataset_on_disk_still_loads() -> None:
+    # The committed sample dataset predates Phase 22A and has no
+    # reference_answer field — it must load unchanged.
+    dataset = load_gold_dataset(SAMPLE_PATH)
+    assert all(q.reference_answer is None for q in dataset.queries)

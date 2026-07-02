@@ -94,6 +94,15 @@ def _parse_gold_query(raw: dict[str, Any]) -> GoldQuery:
     expected_raw = raw.get("expected_incidents", [])
     if not isinstance(expected_raw, list):
         raise GoldDatasetParseError(f"{context}: expected_incidents must be a list")
+    # reference_answer (Phase 22A) is optional and backward compatible:
+    # absent and null both mean "no reference answer" (generation evaluation
+    # skips this query); when present it must be a string.
+    reference_answer = raw.get("reference_answer")
+    if reference_answer is not None and not isinstance(reference_answer, str):
+        raise GoldDatasetParseError(
+            f"{context}: field 'reference_answer' must be a string or null, "
+            f"got {type(reference_answer)!r}"
+        )
     return GoldQuery(
         id=query_id,
         query=_require_str(raw, "query", context=context),
@@ -102,6 +111,7 @@ def _parse_gold_query(raw: dict[str, Any]) -> GoldQuery:
         expected_incidents=tuple(
             _parse_expected_incident(entry, context=context) for entry in expected_raw
         ),
+        reference_answer=reference_answer,
     )
 
 

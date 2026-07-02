@@ -233,6 +233,9 @@ class ExperimentRun:
     failed_queries: tuple[dict[str, Any], ...]
     failed_reasoning: tuple[dict[str, Any], ...]
     judge_disagreements: tuple[dict[str, Any], ...]
+    # Phase 22A — defaulted so runs persisted before generation evaluation
+    # existed (no generation_report.json on disk) load unchanged as None.
+    generation_report: dict[str, Any] | None = None
 
 
 # ── Statistics ────────────────────────────────────────────────────────────────
@@ -260,6 +263,7 @@ _REPORT_FILES = {
     "quality_report": "quality_report.json",
     "validation_report": "validation_report.json",
     "regression_report": "regression_report.json",
+    "generation_report": "generation_report.json",  # Phase 22A
 }
 
 
@@ -342,6 +346,7 @@ class ExperimentRepository:
             "regression_report": (
                 result.retrieval_regression or result.reasoning_regression
             ),
+            "generation_report": result.generation_report,  # Phase 22A
         }
         serialised: dict[str, dict[str, Any] | None] = {}
         for key, obj in report_map.items():
@@ -522,4 +527,5 @@ class ExperimentRepository:
             failed_queries=_list("failed_queries.json"),
             failed_reasoning=_list("failed_reasoning.json"),
             judge_disagreements=_list("judge_disagreements.json"),
+            generation_report=_opt("generation_report.json"),
         )

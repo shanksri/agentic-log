@@ -9,14 +9,26 @@ all three into an iterative loop with explicit stopping conditions. Every phase 
 of the prior three phases, nor either pre-existing agent, is modified by a later one.
 
 **Update:** Phase 19D (`MultiAgentInvestigationOrchestrator`) is now wired into
-`app/api/routes/agent.py` as `POST /agent/investigate-orchestrated`, the canonical investigation
-endpoint, and its default `search_service` construction was switched from a plain, dense-only
-`IncidentSearchService` to a fully-wired `RoutedSearchService` (doc 18, Phase 18E) — investigations
-now benefit from adaptive routing (Dense/BM25/Hybrid) the same way `/search/incidents` does. Phases
-19A/19B/19C's own narrower wrapper agents (`HypothesisDrivenInvestigationAgent`,
-`PlannedInvestigationAgent`, `CriticReviewedInvestigationAgent`) remain unwired and still default to
-plain dense `IncidentSearchService` — only Phase 19D's orchestrator was adopted. See "Integration
-status" at the end of this document for the current picture.
+`app/api/routes/agent.py` as `POST /agent/investigate` — see **Phase 23A** below, the single
+canonical investigation endpoint — and its default `search_service` construction was switched from
+a plain, dense-only `IncidentSearchService` to a fully-wired `RoutedSearchService` (doc 18, Phase
+18E) — investigations now benefit from adaptive routing (Dense/BM25/Hybrid) the same way
+`/search/incidents` does. Phases 19A/19B/19C's own narrower wrapper agents
+(`HypothesisDrivenInvestigationAgent`, `PlannedInvestigationAgent`,
+`CriticReviewedInvestigationAgent`) remain unwired and still default to plain dense
+`IncidentSearchService` — only Phase 19D's orchestrator was adopted. See "Integration status" at
+the end of this document for the current picture.
+
+**Phase 23A (API surface consolidation):** `POST /agent/investigate` (single-shot
+`InvestigationAgent`), `POST /agent/investigate-advanced` (single-shot `AdvancedInvestigationAgent`),
+and `POST /agent/investigate-orchestrated` (this orchestrator) used to coexist as three routes for
+one business capability — "investigate this problem and report a root cause" — at three successive
+levels of sophistication, with the orchestrator already documented as canonical. The two narrower
+routes were removed; `POST /agent/investigate` now serves the orchestrator directly (the path
+previously used by the single-shot agent was reassigned, not duplicated). `InvestigationAgent` and
+`AdvancedInvestigationAgent` themselves are unmodified and still directly unit-tested — only their
+public HTTP routes were retired. See `app/api/routes/agent.py`'s module docstring for the full
+rationale.
 
 ---
 
@@ -598,8 +610,9 @@ Public: `MultiAgentInvestigationOrchestrator.investigate(...)`, and the pure fun
 `CritiqueVerdict`, `CritiqueResult`, `CritiquedInvestigationReport`), and
 `IncidentSearchService.retrieve()`/`.confidence_for()`.
 
-**Wired into `app/api/routes/agent.py`** as `POST /agent/investigate-orchestrated` (see doc 22's
-sibling API docs and this document's "Integration status"). `__init__`'s `search_service` parameter
+**Wired into `app/api/routes/agent.py`** as `POST /agent/investigate` (Phase 23A: the single
+canonical investigation route — see doc 22's sibling API docs and this document's "Integration
+status"). `__init__`'s `search_service` parameter
 now accepts `IncidentSearchService | RoutedSearchService | None` and, when not explicitly passed,
 defaults to `app.services.search_factory.build_routed_search_service(db, llm_service=self.llm_service)`
 (doc 18, Phase 18E) rather than a plain `IncidentSearchService(db)` — see doc 18's Phase 18E section
@@ -662,24 +675,41 @@ platform-level roadmap.
 
 ## Integration status
 
-Phase 19D (`MultiAgentInvestigationOrchestrator`) is wired into `app/api/routes/agent.py`:
+Phase 19D (`MultiAgentInvestigationOrchestrator`) is wired into `app/api/routes/agent.py` as the
+single canonical investigation route (Phase 23A):
+
+```python
+POST /agent/investigate  → MultiAgentInvestigationOrchestrator   (planner + evidence-driven
+                                                                    hypotheses + critic + iterative loop)
+```
+
+Before Phase 23A, three routes coexisted for this one capability:
 
 ```python
 POST /agent/investigate               → InvestigationAgent                    (single-pass, one LLM call)
 POST /agent/investigate-advanced      → AdvancedInvestigationAgent            (single-pass, two LLM calls)
-POST /agent/investigate-orchestrated  → MultiAgentInvestigationOrchestrator   (planner + evidence-driven
-                                                                                hypotheses + critic + iterative loop)
+POST /agent/investigate-orchestrated  → MultiAgentInvestigationOrchestrator   (this orchestrator)
 ```
 
-`/agent/investigate-orchestrated` is documented as the canonical investigation endpoint for new
-integrations; the two pre-existing endpoints remain available unmodified. The orchestrator's
-default retrieval backend is now `RoutedSearchService` (doc 18, Phase 18E) rather than plain dense
-`IncidentSearchService`, so both the orchestrator's initial retrieval and every hypothesis's
-evidence search benefit from adaptive routing when `Settings.search_routing_enabled` is set.
+`/agent/investigate-orchestrated` was already documented as canonical; the other two were earlier,
+narrower implementations of the same capability, not distinct ones, so Phase 23A retired their
+routes and reassigned the plain `/agent/investigate` path to the orchestrator. `InvestigationAgent`
+and `AdvancedInvestigationAgent` remain unmodified in `app/services/` and are still directly
+unit-tested — only their HTTP routes were removed. The orchestrator's default retrieval backend is
+`RoutedSearchService` (doc 18, Phase 18E) rather than plain dense `IncidentSearchService`, so both
+the orchestrator's initial retrieval and every hypothesis's evidence search benefit from adaptive
+routing when `Settings.search_routing_enabled` is set.
 
 Phases 19A/19B/19C's own narrower wrapper agents — `HypothesisDrivenInvestigationAgent`
 (`app.services.hypothesis_investigation`), `PlannedInvestigationAgent`
 (`app.services.planner_agent`), `CriticReviewedInvestigationAgent` (`app.services.critic_agent`) —
 remain independently importable and testable but have no route of their own and still default to
 plain dense `IncidentSearchService`; only Phase 19D's full orchestrator was adopted into production.
+
+**Since Phase 23B/23C:** `POST /agent/investigate` requires `Authorization: Bearer <API_KEY>`
+(missing/malformed/wrong key → `401`) and is capped at `RATE_LIMIT_AGENT_PER_MINUTE` (default
+20/min) per caller — the platform's most expensive single-request capability short of
+`/evaluation/full`, since one investigation can run several LLM calls across multiple orchestrator
+iterations. Neither changes anything documented above; both are cross-cutting API concerns, not
+orchestrator behavior. See doc 23.
 </content>

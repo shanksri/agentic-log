@@ -14,13 +14,13 @@
       "successes": 200,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 1781.12,
+      "throughput_rps": 1976.04,
       "latency_ms": {
-        "mean": 5.25,
-        "p50": 5.02,
-        "p95": 7.39,
-        "p99": 9.05,
-        "max": 14.5
+        "mean": 4.72,
+        "p50": 4.52,
+        "p95": 6.56,
+        "p99": 8.15,
+        "max": 13.36
       }
     },
     {
@@ -30,13 +30,13 @@
       "successes": 1000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 1645.38,
+      "throughput_rps": 1680.36,
       "latency_ms": {
-        "mean": 29.78,
-        "p50": 27.07,
-        "p95": 69.21,
-        "p99": 77.02,
-        "max": 84.76
+        "mean": 28.28,
+        "p50": 25.84,
+        "p95": 64.73,
+        "p99": 79.05,
+        "max": 87.97
       }
     },
     {
@@ -46,13 +46,13 @@
       "successes": 2000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 1743.19,
+      "throughput_rps": 1792.86,
       "latency_ms": {
-        "mean": 56.13,
-        "p50": 55.74,
-        "p95": 68.15,
-        "p99": 75.7,
-        "max": 95.2
+        "mean": 54.76,
+        "p50": 54.32,
+        "p95": 67.81,
+        "p99": 74.68,
+        "max": 87.26
       }
     },
     {
@@ -62,13 +62,13 @@
       "successes": 200,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 968.89,
+      "throughput_rps": 594.42,
       "latency_ms": {
-        "mean": 10.11,
-        "p50": 9.95,
-        "p95": 13.17,
-        "p99": 15.16,
-        "max": 15.47
+        "mean": 16.55,
+        "p50": 14.36,
+        "p95": 38.3,
+        "p99": 47.89,
+        "max": 49.3
       }
     },
     {
@@ -78,13 +78,13 @@
       "successes": 1000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 887.96,
+      "throughput_rps": 602.25,
       "latency_ms": {
-        "mean": 53.82,
-        "p50": 51.23,
-        "p95": 96.77,
-        "p99": 113.6,
-        "max": 121.46
+        "mean": 81.85,
+        "p50": 77.13,
+        "p95": 129.68,
+        "p99": 148.46,
+        "max": 178.29
       }
     },
     {
@@ -94,13 +94,13 @@
       "successes": 2000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 834.75,
+      "throughput_rps": 620.19,
       "latency_ms": {
-        "mean": 118.06,
-        "p50": 110.5,
-        "p95": 183.92,
-        "p99": 195.11,
-        "max": 206.85
+        "mean": 159.45,
+        "p50": 151.12,
+        "p95": 224.58,
+        "p99": 239.96,
+        "max": 255.72
       }
     },
     {
@@ -110,13 +110,13 @@
       "successes": 200,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 900.57,
+      "throughput_rps": 624.92,
       "latency_ms": {
-        "mean": 10.91,
-        "p50": 11.02,
-        "p95": 13.76,
-        "p99": 15.2,
-        "max": 17.28
+        "mean": 15.75,
+        "p50": 15.92,
+        "p95": 18.7,
+        "p99": 20.81,
+        "max": 21.14
       }
     },
     {
@@ -126,13 +126,13 @@
       "successes": 1000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 897.59,
+      "throughput_rps": 617.19,
       "latency_ms": {
-        "mean": 54.4,
-        "p50": 51.78,
-        "p95": 104.07,
-        "p99": 124.55,
-        "max": 138.9
+        "mean": 79.8,
+        "p50": 77.37,
+        "p95": 120.08,
+        "p99": 152.94,
+        "max": 173.02
       }
     },
     {
@@ -142,13 +142,13 @@
       "successes": 2000,
       "errors": 0,
       "error_rate": 0.0,
-      "throughput_rps": 870.79,
+      "throughput_rps": 611.02,
       "latency_ms": {
-        "mean": 112.65,
-        "p50": 104.91,
-        "p95": 179.79,
-        "p99": 193.13,
-        "max": 203.49
+        "mean": 161.16,
+        "p50": 149.7,
+        "p95": 234.45,
+        "p99": 278.43,
+        "max": 312.58
       }
     }
   ]

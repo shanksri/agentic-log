@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import RATE_LIMIT_RESPONSES, search_rate_limit
 from app.api.schemas import (
     SearchDebugRequest,
     SearchDebugResponse,
@@ -15,7 +17,12 @@ from app.services.llm_service import LLMService
 from app.services.routed_search import RoutedSearchService
 from app.services.search_factory import build_routed_search_service
 
-router = APIRouter(prefix="/search", tags=["search"])
+router = APIRouter(
+    prefix="/search",
+    tags=["search"],
+    dependencies=[Depends(require_api_key), Depends(search_rate_limit)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 
 @router.post("/incidents", response_model=SearchResponse)

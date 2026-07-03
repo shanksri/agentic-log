@@ -1,14 +1,21 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import RATE_LIMIT_RESPONSES, incidents_rate_limit
 from app.api.schemas import IncidentResponse
 from app.api.validation import validate_uuid
 from app.db.models import Incident
 
-router = APIRouter(prefix="/incidents", tags=["incidents"])
+router = APIRouter(
+    prefix="/incidents",
+    tags=["incidents"],
+    dependencies=[Depends(require_api_key), Depends(incidents_rate_limit)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 
 @router.get("", response_model=list[IncidentResponse])

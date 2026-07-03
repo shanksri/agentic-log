@@ -11,6 +11,7 @@ from unittest.mock import MagicMock
 
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
 from app.db.session import get_db
 from app.main import app
 
@@ -40,7 +41,11 @@ def _incident(*, incident_id: uuid.UUID | None = None) -> SimpleNamespace:
 
 
 def _client(db: MagicMock) -> TestClient:
+    """Phase 23B: also bypasses ``require_api_key`` — see
+    tests/api/test_authentication.py for the real auth behavior.
+    """
     app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[require_api_key] = lambda: None
     return TestClient(app, raise_server_exceptions=False)
 
 

@@ -159,6 +159,7 @@ EMBEDDING_DIMENSIONS=384
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
 LOG_LEVEL=INFO
+API_KEY=
 ```
 
 Notes:
@@ -172,6 +173,9 @@ Notes:
   `sentence-transformers/all-MiniLM-L6-v2`.
 - `EMBEDDING_DIMENSIONS` must match the database vector dimension. The current
   migration creates `VECTOR(384)`.
+- `API_KEY` is required (Phase 23B) for every `/ingestion`, `/search`,
+  `/agent`, `/incidents`, and `/evaluation` request — generate one with
+  e.g. `openssl rand -hex 32`. See the root README's Authentication section.
 - Do not commit real API keys.
 
 ## Docker Requirements
@@ -353,6 +357,14 @@ python -m ruff format . --check
 
 ## Ingest GitHub Incidents
 
+Every business endpoint requires an `Authorization: Bearer <API_KEY>` header (Phase 23B — see the
+root README's Authentication section). Set `API_KEY` in `.env` first, then reuse this header
+variable across all the requests below:
+
+```powershell
+$headers = @{ Authorization = "Bearer $env:API_KEY" }
+```
+
 With the API running, ingest public GitHub issues:
 
 ```powershell
@@ -367,6 +379,7 @@ $body = @{
 Invoke-RestMethod `
   -Method Post `
   -Uri "http://127.0.0.1:8000/ingestion/github" `
+  -Headers $headers `
   -ContentType "application/json" `
   -Body $body
 ```
@@ -392,6 +405,7 @@ $body = @{
 Invoke-RestMethod `
   -Method Post `
   -Uri "http://127.0.0.1:8000/search/incidents" `
+  -Headers $headers `
   -ContentType "application/json" `
   -Body $body
 ```
@@ -408,6 +422,7 @@ $body = @{
 Invoke-RestMethod `
   -Method Post `
   -Uri "http://127.0.0.1:8000/agent/investigate" `
+  -Headers $headers `
   -ContentType "application/json" `
   -Body $body
 ```

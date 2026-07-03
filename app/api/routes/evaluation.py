@@ -1,4 +1,4 @@
-"""Evaluation REST API (Phase 21G).
+"""Evaluation REST API (Phase 21G; consolidated Phase 23A).
 
 Exposes the existing evaluation framework (Phases 16–21F) through FastAPI
 endpoints.  This module introduces NO new evaluation logic — every endpoint
@@ -14,12 +14,26 @@ Pydantic-typed response envelopes.
 
   GET  /evaluation/runs               — list persisted experiment runs
   GET  /evaluation/runs/latest        — shortcut to the most recent run
-  GET  /evaluation/runs/{run_id}      — load one run by ID
-  GET  /evaluation/runs/{run_id}/failed-queries       — retrieval failures only
-  GET  /evaluation/runs/{run_id}/failed-reasoning     — reasoning failures only
-  GET  /evaluation/runs/{run_id}/judge-disagreements  — low-scoring judge cases
+  GET  /evaluation/runs/{run_id}      — load one run: full reports, failed
+                                         queries/reasoning, judge
+                                         disagreements, and (opt-in via
+                                         ?include_diagnostics=true) the
+                                         diagnostics dashboard — see
+                                         ``RunDetailResponse``
 
   GET  /evaluation/stats              — aggregate statistics across run history
+
+# Phase 23A: API surface consolidation
+
+Four endpoints that used to exist as independent routes —
+``/runs/{run_id}/failed-queries``, ``/failed-reasoning``,
+``/judge-disagreements``, ``/diagnostics`` — were removed. Each did nothing
+but load the same run and return one filtered view of data
+``GET /runs/{run_id}`` already computes or can compute; they were duplicate
+views over one resource, not distinct capabilities, so they were folded into
+``RunDetailResponse`` fields / the ``include_diagnostics`` query parameter
+instead of kept as separate routes. Nothing they returned was removed — see
+``docs/architecture/22_evaluation_api.md`` for the before/after mapping.
 
 # Design constraints
 
@@ -44,13 +58,32 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import (
+    RATE_LIMIT_RESPONSES,
+    evaluation_full_rate_limit,
+    evaluation_query_rate_limit,
+    evaluation_reasoning_rate_limit,
+    evaluation_retrieval_rate_limit,
+    evaluation_runs_rate_limit,
+)
 from app.api.validation import validate_safe_identifier, validate_uuid
 from app.evaluation.experiment_tracking import ExperimentRepository, _to_jsonable
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/evaluation", tags=["evaluation"])
+# Phase 23C: rate limits differ per route within this router (query vs.
+# retrieval vs. reasoning vs. full vs. the read-only runs/stats views), so
+# — unlike every other router in this API — the limit can't be a single
+# router-level dependency; each is applied individually below via
+# `dependencies=[Depends(<group>_rate_limit)]` on its own route decorator.
+router = APIRouter(
+    prefix="/evaluation",
+    tags=["evaluation"],
+    dependencies=[Depends(require_api_key)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 # experiment_name is echoed back verbatim and (via make_run_id) becomes part
 # of the on-disk run_id, so it is constrained to the same safe-identifier
@@ -217,6 +250,21 @@ class RunSummary(BaseModel):
 
 
 class RunDetailResponse(BaseModel):
+    """Phase 23A: the single canonical "view a run" response shape.
+
+    Previously, a run's failed queries / failed reasoning cases / judge
+    disagreements / diagnostics dashboard each required a separate GET call
+    to a dedicated endpoint (``/runs/{id}/failed-queries``,
+    ``/failed-reasoning``, ``/judge-disagreements``, ``/diagnostics``) even
+    though all four are just derived views over the one run resource this
+    response already represents. ``failed_queries``/``failed_reasoning``/
+    ``judge_disagreements`` are precomputed at save time (see
+    ``ExperimentRepository.save``) so including them here is free; the
+    diagnostics dashboard is a real, non-trivial computation
+    (``build_health_report``), so it stays opt-in via ``include_diagnostics``
+    on the routes below rather than running on every call.
+    """
+
     metadata: dict[str, Any]
     summary: dict[str, Any]
     quality_report: dict[str, Any] | None
@@ -226,24 +274,10 @@ class RunDetailResponse(BaseModel):
     judge_report: dict[str, Any] | None
     validation_report: dict[str, Any] | None
     generation_report: dict[str, Any] | None = None  # Phase 22A (additive)
-
-
-class FailedQueriesResponse(BaseModel):
-    run_id: str
-    total: int
-    failed_queries: list[dict[str, Any]]
-
-
-class FailedReasoningResponse(BaseModel):
-    run_id: str
-    total: int
-    failed_reasoning: list[dict[str, Any]]
-
-
-class JudgeDisagreementsResponse(BaseModel):
-    run_id: str
-    total: int
-    disagreements: list[dict[str, Any]]
+    failed_queries: list[dict[str, Any]] = []
+    failed_reasoning: list[dict[str, Any]] = []
+    judge_disagreements: list[dict[str, Any]] = []
+    diagnostics: dict[str, Any] | None = None
 
 
 class StatsResponse(BaseModel):
@@ -256,16 +290,6 @@ class StatsResponse(BaseModel):
     # Phase 22C (additive): historical metric/cost/stability trend series
     # across the run history; None when trend computation was unavailable.
     trends: dict[str, Any] | None = None
-
-
-class DiagnosticsResponse(BaseModel):
-    """Phase 22C: the diagnostics dashboard for one persisted run —
-    outliers, stability, cost, skip diagnostics and health classification,
-    computed from the run's already-persisted reports (nothing re-run).
-    """
-
-    run_id: str
-    diagnostics: dict[str, Any]
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -598,7 +622,9 @@ def _score_query_against_expected(
 # ── POST /evaluation/query ────────────────────────────────────────────────────
 
 
-@router.post("/query", response_model=QueryEvalResponse)
+@router.post(
+    "/query", response_model=QueryEvalResponse, dependencies=[Depends(evaluation_query_rate_limit)]
+)
 def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalResponse:
     """Evaluate a single retrieval query against expected incident IDs.
 
@@ -633,7 +659,11 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
 # ── POST /evaluation/retrieval ────────────────────────────────────────────────
 
 
-@router.post("/retrieval", response_model=RetrievalBenchmarkResponse)
+@router.post(
+    "/retrieval",
+    response_model=RetrievalBenchmarkResponse,
+    dependencies=[Depends(evaluation_retrieval_rate_limit)],
+)
 def run_retrieval_benchmark(
     request: RetrievalBenchmarkRequest,
     db: DbSession,
@@ -686,7 +716,11 @@ def run_retrieval_benchmark(
 # ── POST /evaluation/reasoning ────────────────────────────────────────────────
 
 
-@router.post("/reasoning", response_model=ReasoningBenchmarkResponse)
+@router.post(
+    "/reasoning",
+    response_model=ReasoningBenchmarkResponse,
+    dependencies=[Depends(evaluation_reasoning_rate_limit)],
+)
 def run_reasoning_benchmark(
     request: ReasoningBenchmarkRequest,
     db: DbSession,
@@ -756,7 +790,9 @@ def run_reasoning_benchmark(
 # ── POST /evaluation/full ─────────────────────────────────────────────────────
 
 
-@router.post("/full", response_model=FullPipelineResponse)
+@router.post(
+    "/full", response_model=FullPipelineResponse, dependencies=[Depends(evaluation_full_rate_limit)]
+)
 def run_full_pipeline(
     request: FullPipelineRequest,
     db: DbSession,
@@ -885,7 +921,9 @@ def run_full_pipeline(
 # ── GET /evaluation/runs ──────────────────────────────────────────────────────
 
 
-@router.get("/runs", response_model=list[RunSummary])
+@router.get(
+    "/runs", response_model=list[RunSummary], dependencies=[Depends(evaluation_runs_rate_limit)]
+)
 def list_runs(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> list[RunSummary]:
@@ -912,128 +950,65 @@ def list_runs(
 # ── GET /evaluation/runs/latest  (must be before /{run_id}) ──────────────────
 
 
-@router.get("/runs/latest", response_model=RunDetailResponse)
+@router.get(
+    "/runs/latest",
+    response_model=RunDetailResponse,
+    dependencies=[Depends(evaluation_runs_rate_limit)],
+)
 def get_latest_run(
     repo: ExperimentRepository = ExperimentRepo,
+    include_diagnostics: bool = False,
 ) -> RunDetailResponse:
-    """Load the most recently persisted experiment run."""
+    """Load the most recently persisted experiment run — its full reports
+    plus its failed-query/failed-reasoning/judge-disagreement views, and
+    (opt-in) its diagnostics dashboard. See ``RunDetailResponse``.
+    """
     run = repo.latest()
     if run is None:
         raise HTTPException(status_code=404, detail="No runs found.")
-    return _run_to_detail(run)
+    return _run_to_detail(run, include_diagnostics=include_diagnostics)
 
 
 # ── GET /evaluation/runs/{run_id} ─────────────────────────────────────────────
 
 
-@router.get("/runs/{run_id}", response_model=RunDetailResponse)
+@router.get(
+    "/runs/{run_id}",
+    response_model=RunDetailResponse,
+    dependencies=[Depends(evaluation_runs_rate_limit)],
+)
 def get_run(
     run_id: str,
     repo: ExperimentRepository = ExperimentRepo,
+    include_diagnostics: bool = False,
 ) -> RunDetailResponse:
-    """Load a specific experiment run by ID."""
-    run_id = validate_safe_identifier(run_id, field_name="run_id")
-    run = repo.load(run_id)
-    if run is None:
-        raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
-    return _run_to_detail(run)
+    """Load a specific experiment run by ID.
 
-
-# ── GET /evaluation/runs/{run_id}/failed-queries ──────────────────────────────
-
-
-@router.get("/runs/{run_id}/failed-queries", response_model=FailedQueriesResponse)
-def get_failed_queries(
-    run_id: str,
-    repo: ExperimentRepository = ExperimentRepo,
-) -> FailedQueriesResponse:
-    """Return retrieval failures (recall < 1.0 or skipped) for one run."""
-    run_id = validate_safe_identifier(run_id, field_name="run_id")
-    run = repo.load(run_id)
-    if run is None:
-        raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
-    return FailedQueriesResponse(
-        run_id=run_id,
-        total=len(run.failed_queries),
-        failed_queries=list(run.failed_queries),
-    )
-
-
-# ── GET /evaluation/runs/{run_id}/failed-reasoning ───────────────────────────
-
-
-@router.get("/runs/{run_id}/failed-reasoning", response_model=FailedReasoningResponse)
-def get_failed_reasoning(
-    run_id: str,
-    repo: ExperimentRepository = ExperimentRepo,
-) -> FailedReasoningResponse:
-    """Return reasoning failures for one run."""
-    run_id = validate_safe_identifier(run_id, field_name="run_id")
-    run = repo.load(run_id)
-    if run is None:
-        raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
-    return FailedReasoningResponse(
-        run_id=run_id,
-        total=len(run.failed_reasoning),
-        failed_reasoning=list(run.failed_reasoning),
-    )
-
-
-# ── GET /evaluation/runs/{run_id}/judge-disagreements ────────────────────────
-
-
-@router.get("/runs/{run_id}/judge-disagreements", response_model=JudgeDisagreementsResponse)
-def get_judge_disagreements(
-    run_id: str,
-    repo: ExperimentRepository = ExperimentRepo,
-) -> JudgeDisagreementsResponse:
-    """Return judge disagreement cases (score < 5.0) for one run."""
-    run_id = validate_safe_identifier(run_id, field_name="run_id")
-    run = repo.load(run_id)
-    if run is None:
-        raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
-    return JudgeDisagreementsResponse(
-        run_id=run_id,
-        total=len(run.judge_disagreements),
-        disagreements=list(run.judge_disagreements),
-    )
-
-
-# ── GET /evaluation/runs/{run_id}/diagnostics (Phase 22C) ─────────────────────
-
-
-@router.get("/runs/{run_id}/diagnostics", response_model=DiagnosticsResponse)
-def get_run_diagnostics(
-    run_id: str,
-    repo: ExperimentRepository = ExperimentRepo,
-) -> DiagnosticsResponse:
-    """Return the Phase 22C diagnostics dashboard for one persisted run:
-    outlier sections, evaluator-stability diagnostics, call-count cost
-    estimate, skip diagnostics, and the overall health classification —
-    computed on demand from the run's already-persisted report dicts,
-    recomputing no metric.
+    Phase 23A: the single canonical way to view a run. Previously,
+    ``failed-queries``, ``failed-reasoning``, ``judge-disagreements``, and
+    ``diagnostics`` were four separate GET endpoints, each loading the same
+    run to return a filtered view of data this response already carries (or
+    can carry — see ``include_diagnostics``). Those routes were removed;
+    the same information is now on this response's
+    ``failed_queries``/``failed_reasoning``/``judge_disagreements`` fields
+    (always populated — precomputed at save time, no extra cost) and
+    ``diagnostics`` field (populated only when ``include_diagnostics=true``,
+    since building the diagnostics dashboard is real, non-trivial work that
+    a plain "view this run" call shouldn't always pay for).
     """
-    from app.evaluation.evaluation_diagnostics import build_health_report
-
     run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
-    health = build_health_report(
-        retrieval_report=run.retrieval_report,
-        generation_report=getattr(run, "generation_report", None),
-        reasoning_report=run.reasoning_report,
-        judge_report=run.judge_report,
-        quality_report=run.quality_report,
-        run_id=run_id,
-    )
-    return DiagnosticsResponse(run_id=run_id, diagnostics=_to_dict(health))
+    return _run_to_detail(run, include_diagnostics=include_diagnostics)
 
 
 # ── GET /evaluation/stats ─────────────────────────────────────────────────────
 
 
-@router.get("/stats", response_model=StatsResponse)
+@router.get(
+    "/stats", response_model=StatsResponse, dependencies=[Depends(evaluation_runs_rate_limit)]
+)
 def get_stats(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> StatsResponse:
@@ -1063,11 +1038,26 @@ def get_stats(
 # ── Private helpers ───────────────────────────────────────────────────────────
 
 
-def _run_to_detail(run: Any) -> RunDetailResponse:
+def _run_to_detail(run: Any, *, include_diagnostics: bool = False) -> RunDetailResponse:
     qual = run.quality_report
     recs: list[dict[str, Any]] = []
     if qual is not None:
         recs = qual.get("recommendations") or []
+
+    diagnostics: dict[str, Any] | None = None
+    if include_diagnostics:
+        from app.evaluation.evaluation_diagnostics import build_health_report
+
+        health = build_health_report(
+            retrieval_report=run.retrieval_report,
+            generation_report=getattr(run, "generation_report", None),
+            reasoning_report=run.reasoning_report,
+            judge_report=run.judge_report,
+            quality_report=run.quality_report,
+            run_id=run.metadata.run_id,
+        )
+        diagnostics = _to_dict(health)
+
     return RunDetailResponse(
         metadata=_to_jsonable(run.metadata),
         summary=run.summary,
@@ -1080,6 +1070,10 @@ def _run_to_detail(run: Any) -> RunDetailResponse:
         # getattr: tolerate test stubs / older ExperimentRun shapes that
         # predate Phase 22A's generation_report field.
         generation_report=getattr(run, "generation_report", None),
+        failed_queries=list(run.failed_queries),
+        failed_reasoning=list(run.failed_reasoning),
+        judge_disagreements=list(run.judge_disagreements),
+        diagnostics=diagnostics,
     )
 
 

@@ -13,6 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
 from app.db.session import get_db
 from app.main import app
 from app.api.routes.evaluation_interactive import (
@@ -52,10 +53,15 @@ def _fresh_store() -> dict:
 
 
 def _client(store: dict | None = None) -> tuple[TestClient, dict]:
-    """Return (client, session_store) with all real dependencies overridden."""
+    """Return (client, session_store) with all real dependencies overridden.
+
+    Phase 23B: also bypasses ``require_api_key`` — see
+    tests/api/test_authentication.py for the real auth behavior.
+    """
     s = store if store is not None else {}
     app.dependency_overrides[get_db] = _fake_db
     app.dependency_overrides[_get_session_store] = lambda: s
+    app.dependency_overrides[require_api_key] = lambda: None
     return TestClient(app, raise_server_exceptions=False), s
 
 

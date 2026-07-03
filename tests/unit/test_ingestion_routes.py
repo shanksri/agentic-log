@@ -4,6 +4,8 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
+from app.api.rate_limit import reset_rate_limits
 from app.db.session import get_db
 from app.main import app
 
@@ -30,6 +32,8 @@ def _client(monkeypatch, capture: dict[str, Any]) -> TestClient:
         fake_ingest_jira_project,
     )
     app.dependency_overrides[get_db] = _override_db
+    app.dependency_overrides[require_api_key] = lambda: None
+    reset_rate_limits()  # Phase 23C: isolate from other tests sharing the process-local backend
     return TestClient(app)
 
 

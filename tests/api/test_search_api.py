@@ -23,6 +23,7 @@ from unittest.mock import MagicMock
 
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
 from app.db.session import get_db
 from app.main import app
 from app.services.hybrid_search import HybridSearchResult
@@ -110,7 +111,11 @@ class FakeHybrid:
 
 
 def _client() -> TestClient:
+    """Phase 23B: also bypasses ``require_api_key`` — see
+    tests/api/test_authentication.py for the real auth behavior.
+    """
     app.dependency_overrides[get_db] = lambda: MagicMock()
+    app.dependency_overrides[require_api_key] = lambda: None
     return TestClient(app)
 
 

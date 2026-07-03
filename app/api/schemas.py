@@ -118,56 +118,14 @@ class SearchDebugResponse(BaseModel):
 
 
 class InvestigationRequest(BaseModel):
-    problem: str = Field(min_length=3, max_length=5000)
+    """Phase 23A: the single investigation request shape — previously
+    duplicated (with narrower fields/no n_hypotheses control) across
+    ``/investigate`` and ``/investigate-advanced``'s now-removed request
+    models. Those two single-shot agents were earlier, less capable
+    implementations of the same business capability this now serves;
+    see docs/architecture/19_multi_agent_investigation.md.
+    """
 
-
-class InvestigationResponse(BaseModel):
-    analysis: str
-
-
-class AdvancedInvestigationRequest(BaseModel):
-    problem: str = Field(min_length=3, max_length=5000)
-
-
-class AdvancedHypothesis(BaseModel):
-    root_cause: str
-    confidence_score: float
-    validation_keywords: list[str]
-    rationale: str
-
-
-class AdvancedEvidenceIncident(BaseModel):
-    title: str
-    symptoms: list[str]
-    severity: str
-    status: str
-    resolution_summary: str
-    similarity_score: float
-
-
-class AdvancedHypothesisEvidence(BaseModel):
-    hypothesis: AdvancedHypothesis
-    query: str
-    supporting_incidents: list[AdvancedEvidenceIncident]
-
-
-class AdvancedInvestigationReport(BaseModel):
-    executive_summary: str
-    ranked_hypotheses: list[str]
-    supporting_evidence: list[str]
-    recommended_actions: list[str]
-    confidence_assessment: str
-
-
-class AdvancedInvestigationResponse(BaseModel):
-    problem: str
-    initial_incidents: list[AdvancedEvidenceIncident]
-    hypotheses: list[AdvancedHypothesis]
-    evidence: list[AdvancedHypothesisEvidence]
-    report: AdvancedInvestigationReport
-
-
-class OrchestratedInvestigationRequest(BaseModel):
     problem: str = Field(min_length=3, max_length=5000)
     n_hypotheses: int = Field(default=3, ge=1, le=10)
 
@@ -190,8 +148,8 @@ class OrchestratedCritique(BaseModel):
     recommended_actions: list[str]
 
 
-class OrchestratedInvestigationResponse(BaseModel):
-    """The canonical investigation endpoint, wiring Phase 19A-19D's
+class InvestigationResponse(BaseModel):
+    """The single investigation response shape, wiring Phase 19A-19D's
     ``MultiAgentInvestigationOrchestrator`` (planner, evidence-driven
     hypothesis generation, critic, iterative loop) — see
     docs/architecture/19_multi_agent_investigation.md. Reflects the

@@ -3,9 +3,11 @@ from __future__ import annotations
 import logging
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import RATE_LIMIT_RESPONSES, ingestion_rate_limit
 from app.api.schemas import (
     GitHubIngestRequest,
     GitHubIngestResponse,
@@ -16,7 +18,12 @@ from app.services.incident_ingestion import IncidentIngestionService
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/ingestion", tags=["ingestion"])
+router = APIRouter(
+    prefix="/ingestion",
+    tags=["ingestion"],
+    dependencies=[Depends(require_api_key), Depends(ingestion_rate_limit)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 # Both endpoints call out to a third-party API (GitHub/Jira) through the
 # ingestion service's collectors. A connectivity failure there is an

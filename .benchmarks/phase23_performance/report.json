@@ -4,52 +4,52 @@
     "retrieval_bm25": {
       "index_build_500_docs": {
         "iterations": 20,
-        "mean_ms": 3.4674,
-        "p50_ms": 3.4154,
-        "p95_ms": 5.8671,
-        "p99_ms": 5.8671,
-        "max_ms": 5.8671
+        "mean_ms": 2.9362,
+        "p50_ms": 2.8881,
+        "p95_ms": 3.36,
+        "p99_ms": 3.36,
+        "max_ms": 3.36
       },
       "query_scoring": {
         "iterations": 200,
-        "mean_ms": 0.8463,
-        "p50_ms": 0.8195,
-        "p95_ms": 1.0961,
-        "p99_ms": 1.4228,
-        "max_ms": 1.5994
+        "mean_ms": 0.7435,
+        "p50_ms": 0.7182,
+        "p95_ms": 0.9257,
+        "p99_ms": 1.4963,
+        "max_ms": 1.6681
       }
     },
     "routing_decision": {
       "iterations": 200,
-      "mean_ms": 0.0425,
-      "p50_ms": 0.0421,
-      "p95_ms": 0.0431,
-      "p99_ms": 0.0513,
-      "max_ms": 0.0858
+      "mean_ms": 0.0518,
+      "p50_ms": 0.0432,
+      "p95_ms": 0.0838,
+      "p99_ms": 0.1601,
+      "max_ms": 0.2069
     },
     "generation_bertscore": {
       "iterations": 200,
-      "mean_ms": 0.5462,
-      "p50_ms": 0.5586,
-      "p95_ms": 0.6684,
-      "p99_ms": 0.9844,
-      "max_ms": 1.0026
+      "mean_ms": 0.5661,
+      "p50_ms": 0.5684,
+      "p95_ms": 0.7532,
+      "p99_ms": 1.0128,
+      "max_ms": 1.0331
     },
     "evaluation_metrics": {
       "iterations": 200,
-      "mean_ms": 0.0289,
-      "p50_ms": 0.0284,
-      "p95_ms": 0.0297,
-      "p99_ms": 0.0538,
-      "max_ms": 0.1017
+      "mean_ms": 0.0419,
+      "p50_ms": 0.0393,
+      "p95_ms": 0.0609,
+      "p99_ms": 0.1011,
+      "max_ms": 0.1413
     },
     "orchestration_loop_fake_llm": {
       "iterations": 50,
-      "mean_ms": 0.0781,
-      "p50_ms": 0.0679,
-      "p95_ms": 0.0895,
-      "p99_ms": 0.3919,
-      "max_ms": 0.3919
+      "mean_ms": 0.062,
+      "p50_ms": 0.0562,
+      "p95_ms": 0.0764,
+      "p99_ms": 0.2319,
+      "max_ms": 0.2319
     }
   }
 }

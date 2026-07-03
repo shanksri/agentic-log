@@ -845,4 +845,9 @@ so out-of-the-box behavior is unchanged from dense-only retrieval until explicit
 evaluation-only adapters in `app/evaluation/{overlap_analysis,production_pipeline,retrieval_strategies}.py`
 remain separate, additional consumers of the same underlying classes, used for benchmarking rather
 than serving requests.
+
+**Since Phase 23B/23C:** both `/search/incidents` and `/search/debug` require
+`Authorization: Bearer <API_KEY>` and share one rate-limit bucket, `RATE_LIMIT_SEARCH_PER_MINUTE`
+(default 100/min) — the highest limit in the API, reflecting that dense/BM25/hybrid retrieval is
+comparatively cheap next to the LLM-heavy `/agent` and `/evaluation/full` endpoints. See doc 23.
 </content>

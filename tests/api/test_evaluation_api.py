@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
 from app.db.session import get_db
 from app.main import app
 from app.api.routes.evaluation import _get_repo
@@ -179,10 +180,16 @@ class FakeExperimentRepo:
 
 
 def _client(overrides: dict | None = None) -> tuple[TestClient, FakeExperimentRepo]:
-    """Return (client, fake_repo) with DB and repo dependencies overridden."""
+    """Return (client, fake_repo) with DB and repo dependencies overridden.
+
+    Phase 23B: also bypasses ``require_api_key`` (no-op override) — these
+    tests exercise the evaluation routes, not authentication. See
+    tests/api/test_authentication.py for the real auth behavior.
+    """
     fake_repo = FakeExperimentRepo()
     app.dependency_overrides[get_db] = _fake_db
     app.dependency_overrides[_get_repo] = lambda: fake_repo
+    app.dependency_overrides[require_api_key] = lambda: None
     if overrides:
         app.dependency_overrides.update(overrides)
     return TestClient(app, raise_server_exceptions=False), fake_repo
@@ -685,81 +692,66 @@ def test_get_run_includes_summary() -> None:
         app.dependency_overrides.clear()
 
 
-# ── GET /evaluation/runs/{run_id}/failed-queries ──────────────────────────────
+# ── GET /evaluation/runs/{run_id}: failed-queries/failed-reasoning/ ──────────
+# judge-disagreements views (Phase 23A: folded into RunDetailResponse —
+# previously three separate GET endpoints, now always-present fields on
+# the same run-detail response tested above).
 
 
-def test_failed_queries_not_found() -> None:
-    client, _ = _client()
-    try:
-        resp = client.get("/evaluation/runs/no_such_run/failed-queries")
-        assert resp.status_code == 404
-    finally:
-        app.dependency_overrides.clear()
-
-
-def test_failed_queries_empty_for_new_run() -> None:
+def test_get_run_includes_empty_failure_views_for_new_run() -> None:
     pipeline_result = _make_pipeline_result()
     client, fake_repo = _client()
     try:
         rid = fake_repo.save(pipeline_result, experiment_name="t")
-        resp = client.get(f"/evaluation/runs/{rid}/failed-queries")
+        resp = client.get(f"/evaluation/runs/{rid}")
         assert resp.status_code == 200
         data = resp.json()
-        assert data["total"] == 0
         assert data["failed_queries"] == []
-        assert data["run_id"] == rid
+        assert data["failed_reasoning"] == []
+        assert data["judge_disagreements"] == []
     finally:
         app.dependency_overrides.clear()
 
 
-# ── GET /evaluation/runs/{run_id}/failed-reasoning ───────────────────────────
-
-
-def test_failed_reasoning_not_found() -> None:
-    client, _ = _client()
-    try:
-        resp = client.get("/evaluation/runs/no_such_run/failed-reasoning")
-        assert resp.status_code == 404
-    finally:
-        app.dependency_overrides.clear()
-
-
-def test_failed_reasoning_empty_for_new_run() -> None:
+def test_get_run_diagnostics_omitted_by_default() -> None:
+    """The diagnostics dashboard is real computation (Phase 22C's
+    build_health_report), so it must NOT be computed on a plain
+    GET /runs/{run_id} call — only when explicitly requested.
+    """
     pipeline_result = _make_pipeline_result()
     client, fake_repo = _client()
     try:
         rid = fake_repo.save(pipeline_result, experiment_name="t")
-        resp = client.get(f"/evaluation/runs/{rid}/failed-reasoning")
+        resp = client.get(f"/evaluation/runs/{rid}")
         assert resp.status_code == 200
-        data = resp.json()
-        assert data["total"] == 0
-        assert data["run_id"] == rid
+        assert resp.json()["diagnostics"] is None
     finally:
         app.dependency_overrides.clear()
 
 
-# ── GET /evaluation/runs/{run_id}/judge-disagreements ────────────────────────
-
-
-def test_judge_disagreements_not_found() -> None:
-    client, _ = _client()
-    try:
-        resp = client.get("/evaluation/runs/no_such_run/judge-disagreements")
-        assert resp.status_code == 404
-    finally:
-        app.dependency_overrides.clear()
-
-
-def test_judge_disagreements_empty_for_new_run() -> None:
+def test_get_run_diagnostics_included_when_requested() -> None:
     pipeline_result = _make_pipeline_result()
     client, fake_repo = _client()
     try:
         rid = fake_repo.save(pipeline_result, experiment_name="t")
-        resp = client.get(f"/evaluation/runs/{rid}/judge-disagreements")
+        resp = client.get(f"/evaluation/runs/{rid}", params={"include_diagnostics": "true"})
         assert resp.status_code == 200
         data = resp.json()
-        assert data["total"] == 0
-        assert data["run_id"] == rid
+        assert data["diagnostics"] is not None
+        assert data["diagnostics"]["run_id"] == rid
+        assert "overall_health" in data["diagnostics"]
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_get_latest_run_diagnostics_included_when_requested() -> None:
+    pipeline_result = _make_pipeline_result()
+    client, fake_repo = _client()
+    try:
+        fake_repo.save(pipeline_result, experiment_name="t")
+        resp = client.get("/evaluation/runs/latest", params={"include_diagnostics": "true"})
+        assert resp.status_code == 200
+        assert resp.json()["diagnostics"] is not None
     finally:
         app.dependency_overrides.clear()
 
@@ -837,13 +829,31 @@ def test_all_expected_routes_registered() -> None:
             "/evaluation/runs",
             "/evaluation/runs/latest",
             "/evaluation/runs/{run_id}",
-            "/evaluation/runs/{run_id}/failed-queries",
-            "/evaluation/runs/{run_id}/failed-reasoning",
-            "/evaluation/runs/{run_id}/judge-disagreements",
             "/evaluation/stats",
         }
         for path in expected:
             assert path in paths, f"Missing route: {path}"
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_removed_filtered_view_routes_no_longer_registered() -> None:
+    """Phase 23A: these four routes were consolidated into
+    GET /evaluation/runs/{run_id} (see RunDetailResponse) and must not
+    reappear as separate paths.
+    """
+    client, _ = _client()
+    try:
+        resp = client.get("/openapi.json")
+        paths = set(resp.json()["paths"].keys())
+        removed = {
+            "/evaluation/runs/{run_id}/failed-queries",
+            "/evaluation/runs/{run_id}/failed-reasoning",
+            "/evaluation/runs/{run_id}/judge-disagreements",
+            "/evaluation/runs/{run_id}/diagnostics",
+        }
+        for path in removed:
+            assert path not in paths, f"Route should have been removed: {path}"
     finally:
         app.dependency_overrides.clear()
 

@@ -4,8 +4,10 @@ This is the internal engineering reference for the Incident Intelligence platfor
 describe the system through **Retrieval v1** (dense-only retrieval, a single-shot investigation
 agent, and the retrieval-only evaluation platform); docs 18–22 cover everything built since —
 adaptive routing/hybrid retrieval, a four-agent investigation framework, reasoning evaluation and
-LLM-as-judge, evaluation-platform productionization, and a REST API. It is written for engineers
-joining the team who need to understand the whole system without reading the source first.
+LLM-as-judge, evaluation-platform productionization, and a REST API; doc 23 covers production
+hardening, API surface consolidation, authentication, and rate limiting — the layer that now sits
+in front of everything docs 18–22 describe. It is written for engineers joining the team who need
+to understand the whole system without reading the source first.
 
 ## What this system does
 
@@ -50,6 +52,7 @@ component.
 | [20](architecture/20_reasoning_evaluation_and_judges.md) | Reasoning evaluation harness + LLM-as-judge framework |
 | [21](architecture/21_evaluation_platform_productionization.md) | AI quality intelligence, judge validation, gold dataset authoring/labeling, end-to-end pipeline, experiment tracking |
 | [22](architecture/22_evaluation_api.md) | Evaluation REST API (machine-facing + human-friendly interactive workflow) |
+| [23](architecture/23_production_hardening_and_api_security.md) | Production hardening, API surface consolidation (27→21 endpoints), Bearer API-key authentication, endpoint-aware rate limiting |
 
 ## Core design principles (read these first)
 
@@ -75,9 +78,21 @@ Phase 19D) — see doc 18's "Phase 18E — Production Adoption" section. It ship
 `SEARCH_ROUTING_ENABLED`), so out-of-the-box behavior is unchanged from dense-only retrieval until
 an operator opts in. Doc 19's three narrower single-purpose agents
 (`HypothesisDrivenInvestigationAgent`/`PlannedInvestigationAgent`/`CriticReviewedInvestigationAgent`)
-remain unwired — only the full Phase 19D orchestrator (reachable via `POST
-/agent/investigate-orchestrated`) was adopted. Docs 20–21's evaluation platform is still only
-reachable through the REST API in doc 22 or the CLI scripts in `scripts/`, not through automatic
-CI, and `/evaluation/*`'s own orchestrator construction (`_build_orchestrator`) still deliberately
-pins a plain dense `IncidentSearchService` for reproducible benchmarking, unaffected by the routed
-default. Treat "documented" and "in production" as separate questions when reading docs 20–22.
+remain unwired — only the full Phase 19D orchestrator (reachable via `POST /agent/investigate`, the
+single canonical investigation route since Phase 23A's API surface consolidation — see doc 19's
+"Integration status") was adopted. Docs 20–21's evaluation platform is still only reachable through
+the REST API in doc 22 or the CLI scripts in `scripts/`, not through automatic CI, and
+`/evaluation/*`'s own orchestrator construction (`_build_orchestrator`) still deliberately pins a
+plain dense `IncidentSearchService` for reproducible benchmarking, unaffected by the routed default.
+Treat "documented" and "in production" as separate questions when reading docs 20–22.
+
+**Phase 23/23A/23B/23C (production hardening, API consolidation, auth, rate limiting) — see doc
+23, the newest doc in this series.** Input validation, graceful degradation, and a
+security/load-testing pass were applied platform-wide (23); the public API surface was reduced
+from 27 to 21 endpoints by removing duplicate/legacy routes (three investigation endpoints down to
+one; four per-run filtered-view endpoints folded into `GET /evaluation/runs/{run_id}` — see doc
+19's "Integration status" and doc 22's `RunDetailResponse` section) (23A); every business endpoint
+now requires `Authorization: Bearer <API_KEY>` (23B); every business endpoint now enforces a
+per-minute, per-caller rate limit sized to its cost, from 2/min (`/evaluation/full`) up to 100/min
+(`/search`, `/incidents`) (23C). `/health` and `/health/ready` remain the only always-open,
+always-unlimited routes.

@@ -52,7 +52,9 @@ from datetime import UTC, datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import RATE_LIMIT_RESPONSES, interactive_evaluation_rate_limit
 from app.api.routes.evaluation import (
     QueryEvalResponse,
     _build_search_service,
@@ -62,7 +64,12 @@ from app.api.validation import validate_uuid
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/evaluation", tags=["evaluation"])
+router = APIRouter(
+    prefix="/evaluation",
+    tags=["evaluation"],
+    dependencies=[Depends(require_api_key), Depends(interactive_evaluation_rate_limit)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 # ── Session store ─────────────────────────────────────────────────────────────
 

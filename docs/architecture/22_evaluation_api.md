@@ -14,9 +14,13 @@ app.include_router(evaluation.router)
 app.include_router(evaluation_interactive.router)
 ```
 
-No architecture doc in this series documents any REST endpoint prior to this one — `/search`,
-`/incidents`, `/ingestion`, `/agent` remain undocumented at the API level. This doc's scope is
-strictly 21G/21H; the pre-existing gap is noted in doc 17.
+No architecture doc in this series documents any REST endpoint prior to this one at the per-route
+level — `/search`, `/incidents`, `/ingestion`, `/agent` remain undocumented route-by-route. This
+doc's scope is strictly 21G/21H; the pre-existing gap is noted in doc 17. **Every route in this
+doc — and every other business route in the API — now sits behind Bearer API-key authentication
+and endpoint-aware rate limiting (Phases 23B/23C); see doc 23, which covers those two phases plus
+production hardening (23) and the API surface consolidation (23A) that removed several endpoints
+this doc originally described.**
 
 ---
 
@@ -70,9 +74,15 @@ ExperimentRepo = Depends(_get_repo)
 | `ReasoningBenchmarkResponse` | `run_id \| None, experiment_name, reasoning_report: dict, judge_aggregate: dict \| None, regression_report: None (always), warnings, errors` |
 | `FullPipelineResponse` | `run_id \| None, experiment_name, retrieval_report, reasoning_report, judge_report, quality_report, validation_report, retrieval_regression, reasoning_regression: dict \| None each, execution_summary: dict, warnings, errors` |
 | `RunSummary` | `run_id, timestamp, experiment_name, duration: float, git_commit: str \| None` |
-| `RunDetailResponse` | `metadata: dict, summary: dict, quality_report: dict \| None, recommendations: list[dict], retrieval_report, reasoning_report, judge_report, validation_report: dict \| None each` |
-| `FailedQueriesResponse` / `FailedReasoningResponse` / `JudgeDisagreementsResponse` | `run_id, total: int, <field>: list[dict]` |
-| `StatsResponse` | `total_runs: int, best_mrr, best_ndcg, best_reasoning_accuracy: float \| None each, latest_run: str \| None, trend: list[str]` |
+| `RunDetailResponse` | `metadata: dict, summary: dict, quality_report: dict \| None, recommendations: list[dict], retrieval_report, reasoning_report, judge_report, validation_report: dict \| None each, generation_report: dict \| None, failed_queries: list[dict], failed_reasoning: list[dict], judge_disagreements: list[dict], diagnostics: dict \| None` — the last four fields are a **Phase 23A** addition; see below |
+| `StatsResponse` | `total_runs: int, best_mrr, best_ndcg, best_reasoning_accuracy: float \| None each, latest_run: str \| None, trend: list[str], trends: dict \| None` (`trends` is a Phase 22C addition — historical metric/cost/stability series across run history) |
+
+**Phase 23A removed `FailedQueriesResponse`/`FailedReasoningResponse`/`JudgeDisagreementsResponse`
+and their four dedicated GET routes** (`/runs/{id}/failed-queries`, `/failed-reasoning`,
+`/judge-disagreements`, `/diagnostics`) — each did nothing but load the same run and return one
+filtered view of it, so their data moved onto `RunDetailResponse` directly (see the row above) and
+the routes were deleted. `GET /evaluation/runs/{run_id}` is now the single way to view everything
+about a run, including its diagnostics dashboard on request. See doc 23.
 
 **Design constraints stated in the module docstring:**
 - MUST NOT compute metrics, re-run evaluation, or duplicate serialization.
@@ -167,13 +177,23 @@ reduced to a `RunSummary`; runs that fail to load (`repo.load(rid) is None`) are
 
 **`GET /evaluation/runs/{run_id}`** — `repo.load(run_id)`; `404` if not found; same
 `_run_to_detail()` helper as `latest`. `_run_to_detail` pulls `recommendations` out of
-`run.quality_report["recommendations"]` if present, else `[]`.
+`run.quality_report["recommendations"]` if present, else `[]`. Also populates
+`failed_queries`/`failed_reasoning`/`judge_disagreements` (Phase 23A — see below) and, when
+`?include_diagnostics=true` is passed, `diagnostics` (Phase 22C's `build_health_report`, computed
+on demand — see doc 21C/the diagnostics module for what it contains).
 
-**`GET /evaluation/runs/{run_id}/failed-queries|failed-reasoning|judge-disagreements`** — three
-structurally identical endpoints; each loads the run (`404` if missing) and returns
-`len(collection)` plus the raw `list(collection)` from the persisted run object
-(`run.failed_queries`, `run.failed_reasoning`, `run.judge_disagreements` respectively — all
-produced upstream by Phase 21A/21B/21F machinery, not recomputed here).
+**Phase 23A: `failed-queries`/`failed-reasoning`/`judge-disagreements`/`diagnostics` are no longer
+separate endpoints.** They used to be four routes —
+`GET /evaluation/runs/{run_id}/failed-queries`, `/failed-reasoning`, `/judge-disagreements`,
+`/diagnostics` — each loading the same run and returning one filtered view of data
+`_run_to_detail()` already had available (`run.failed_queries`, `run.failed_reasoning`,
+`run.judge_disagreements` — all produced upstream by Phase 21A/21B/21F machinery, not recomputed;
+`diagnostics` via Phase 22C's `build_health_report`). Four routes over one resource with no
+independent identity of their own — not a distinct capability, just duplicated exposure of the same
+run — so they were folded into `RunDetailResponse` fields. The three failure/disagreement lists are
+free (precomputed at save time) so they're always populated; `diagnostics` is real computation, so
+it stays opt-in via the `include_diagnostics` query parameter rather than running on every
+`GET /runs/{run_id}` call.
 
 **`GET /evaluation/stats`** — `repo.stats()` (Phase 21F), mapped field-for-field into
 `StatsResponse`.
@@ -215,8 +235,8 @@ previously made no longer holds at the *import* level. Functionally, though, `_b
 (above) still explicitly constructs and passes its own plain dense `IncidentSearchService` as
 `search_service`, which short-circuits the orchestrator's routed default — so `/evaluation/reasoning`
 and `/evaluation/full` still evaluate against dense-only retrieval in practice, deliberately, for
-reproducible benchmarking. Only `/search/incidents`, `/search/debug`, and
-`/agent/investigate-orchestrated` actually execute routing/BM25/Hybrid.
+reproducible benchmarking. Only `/search/incidents`, `/search/debug`, and `/agent/investigate`
+(Phase 23A: the sole investigation route, orchestrator-backed) actually execute routing/BM25/Hybrid.
 
 ### Testing
 
@@ -227,10 +247,13 @@ missing dataset, success, 503 when orchestrator unavailable); `POST /full` (empt
 datasets given, persist saves a run, retrieval report present when a retrieval dataset is given,
 `execution_summary` always present, 400 on an invalid judge string); `GET /runs` (empty list,
 newest-first ordering, required fields present); `GET /runs/latest` (404 with no runs, returns most
-recent); `GET /runs/{run_id}` (404, metadata, summary); the three failure/disagreement sub-routes
-(404, empty collections on a fresh run); `GET /stats` (empty repo, aggregates after several saves,
-`latest_run` populated); and two route-registration checks — the `evaluation` tag appears in the
-OpenAPI schema, and all 11 expected routes are registered.
+recent); `GET /runs/{run_id}` (404, metadata, summary, empty failed-query/failed-reasoning/
+judge-disagreement lists on a fresh run, `diagnostics` omitted by default and populated only with
+`?include_diagnostics=true` — Phase 23A folded what were three failure/disagreement sub-routes plus
+the Phase 22C diagnostics route into this one endpoint); `GET /stats` (empty repo, aggregates after
+several saves, `latest_run` populated); and route-registration checks — the `evaluation` tag appears
+in the OpenAPI schema, all 8 current routes are registered, and the four retired filtered-view
+routes are confirmed absent.
 
 ### Risks
 
@@ -243,8 +266,10 @@ OpenAPI schema, and all 11 expected routes are registered.
   append a persistence failure to `errors`; `/full` swallows it with a bare `pass` and reports
   nothing to the caller. A client polling `/full` with `persist=True` has no way to know
   persistence silently failed.
-- **No authentication, no rate limiting.** Any caller can trigger a full pipeline run (LLM calls
-  included) or read the entire experiment history.
+- ~~**No authentication, no rate limiting.**~~ **Resolved (Phases 23B/23C).** Every route in this
+  document now requires `Authorization: Bearer <API_KEY>` and enforces a per-minute, per-caller
+  limit (2/min for `/full`, 5/min for `/retrieval`/`/reasoning`, 20/min for `/query`, 60/min for
+  the `runs`/`stats` views) — see doc 23.
 - **Synchronous, blocking handlers.** A `/full` call with both datasets and an LLM judge runs
   entirely inside one FastAPI request; there is no background-job model, so slow evaluations block
   the request thread.

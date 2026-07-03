@@ -1,5 +1,10 @@
-"""API tests for /agent routes, including /investigate-orchestrated (Phase
-19A-19D wired as the canonical investigation endpoint).
+"""API tests for /agent routes.
+
+Phase 23A: ``/investigate`` is now the single canonical investigation
+endpoint (previously ``/investigate-orchestrated``); the earlier
+``/investigate`` (single-shot) and ``/investigate-advanced`` routes were
+retired as historical implementations of the same capability — see
+``app/api/routes/agent.py``'s module/route docstrings.
 
 No database, no OpenAI, no retrieval — MultiAgentInvestigationOrchestrator
 is monkeypatched; only the Pydantic/FastAPI routing layer is exercised.
@@ -10,12 +15,18 @@ from unittest.mock import MagicMock
 
 from fastapi.testclient import TestClient
 
+from app.api.auth import require_api_key
 from app.db.session import get_db
 from app.main import app
 
 
 def _client() -> TestClient:
+    """Phase 23B: auth is bypassed here (dependency override to a no-op) —
+    these tests exercise routing/orchestration, not authentication. See
+    tests/api/test_authentication.py for the real auth behavior.
+    """
     app.dependency_overrides[get_db] = lambda: MagicMock()
+    app.dependency_overrides[require_api_key] = lambda: None
     return TestClient(app)
 
 
@@ -74,7 +85,7 @@ def _fake_session(*, uncertain: bool = False):
     )
 
 
-def test_investigate_orchestrated_returns_accepted_hypothesis(monkeypatch) -> None:
+def test_investigate_returns_accepted_hypothesis(monkeypatch) -> None:
     import app.api.routes.agent as agent_mod
 
     fake_orchestrator = MagicMock()
@@ -84,9 +95,7 @@ def test_investigate_orchestrated_returns_accepted_hypothesis(monkeypatch) -> No
     )
     client = _client()
     try:
-        resp = client.post(
-            "/agent/investigate-orchestrated", json={"problem": "users cannot log in"}
-        )
+        resp = client.post("/agent/investigate", json={"problem": "users cannot log in"})
         assert resp.status_code == 200
         body = resp.json()
         assert body["selected_root_cause"] == "expired auth token"
@@ -104,7 +113,7 @@ def test_investigate_orchestrated_returns_accepted_hypothesis(monkeypatch) -> No
         app.dependency_overrides.clear()
 
 
-def test_investigate_orchestrated_uncertain_has_no_selected_cause(monkeypatch) -> None:
+def test_investigate_uncertain_has_no_selected_cause(monkeypatch) -> None:
     import app.api.routes.agent as agent_mod
 
     fake_orchestrator = MagicMock()
@@ -114,9 +123,7 @@ def test_investigate_orchestrated_uncertain_has_no_selected_cause(monkeypatch) -
     )
     client = _client()
     try:
-        resp = client.post(
-            "/agent/investigate-orchestrated", json={"problem": "users cannot log in"}
-        )
+        resp = client.post("/agent/investigate", json={"problem": "users cannot log in"})
         assert resp.status_code == 200
         body = resp.json()
         assert body["selected_root_cause"] is None
@@ -126,7 +133,7 @@ def test_investigate_orchestrated_uncertain_has_no_selected_cause(monkeypatch) -
         app.dependency_overrides.clear()
 
 
-def test_investigate_orchestrated_respects_n_hypotheses(monkeypatch) -> None:
+def test_investigate_respects_n_hypotheses(monkeypatch) -> None:
     import app.api.routes.agent as agent_mod
 
     fake_orchestrator = MagicMock()
@@ -137,7 +144,7 @@ def test_investigate_orchestrated_respects_n_hypotheses(monkeypatch) -> None:
     client = _client()
     try:
         resp = client.post(
-            "/agent/investigate-orchestrated",
+            "/agent/investigate",
             json={"problem": "users cannot log in", "n_hypotheses": 5},
         )
         assert resp.status_code == 200
@@ -148,22 +155,25 @@ def test_investigate_orchestrated_respects_n_hypotheses(monkeypatch) -> None:
         app.dependency_overrides.clear()
 
 
-def test_investigate_orchestrated_rejects_short_problem() -> None:
+def test_investigate_rejects_short_problem() -> None:
     client = _client()
     try:
-        resp = client.post("/agent/investigate-orchestrated", json={"problem": "hi"})
+        resp = client.post("/agent/investigate", json={"problem": "hi"})
         assert resp.status_code == 422
     finally:
         app.dependency_overrides.clear()
 
 
-def test_all_agent_routes_registered() -> None:
+def test_only_canonical_agent_route_registered() -> None:
+    """Phase 23A: /investigate-advanced and /investigate-orchestrated must
+    no longer exist — /investigate is the single canonical route.
+    """
     client = _client()
     try:
         resp = client.get("/openapi.json")
         paths = set(resp.json()["paths"].keys())
         assert "/agent/investigate" in paths
-        assert "/agent/investigate-advanced" in paths
-        assert "/agent/investigate-orchestrated" in paths
+        assert "/agent/investigate-advanced" not in paths
+        assert "/agent/investigate-orchestrated" not in paths
     finally:
         app.dependency_overrides.clear()

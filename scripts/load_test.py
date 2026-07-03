@@ -37,6 +37,7 @@ import statistics
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import httpx
@@ -103,6 +104,43 @@ class RunResult:
         }
 
 
+def _fake_investigation_session() -> SimpleNamespace:
+    """A minimal stand-in for MultiAgentInvestigationOrchestrator.investigate()'s
+    return value — just enough attribute shape for the /agent/investigate
+    route (Phase 23A: the single canonical, orchestrator-backed endpoint) to
+    build a response without touching a real LLM.
+    """
+    from app.services.critic_agent import CritiqueVerdict
+    from app.services.investigation_orchestrator import StoppingReason
+
+    investigation = SimpleNamespace(
+        problem="load-test problem",
+        selected_hypothesis=SimpleNamespace(root_cause="fake root cause"),
+        confidence=0.8,
+        confidence_level="HIGH",
+        supporting_evidence=(),
+        contradicting_evidence=(),
+        remaining_uncertainty=(),
+        is_uncertain=False,
+        rejected_hypotheses=(),
+    )
+    critique = SimpleNamespace(
+        verdict=CritiqueVerdict.APPROVED,
+        confidence=0.8,
+        explanation="approved",
+        findings=(),
+        unresolved_questions=(),
+        missing_evidence=(),
+        recommended_actions=(),
+    )
+    return SimpleNamespace(
+        final_report=SimpleNamespace(investigation=investigation, critique=critique),
+        total_iterations=1,
+        stopping_reason=StoppingReason.CRITIC_APPROVED,
+        stop_explanation="stopped after 1 iteration",
+    )
+
+
 def _install_fakes() -> None:
     """Override the DB dependency and monkeypatch the search/agent
     construction points with fast in-memory fakes, exactly like the test
@@ -110,17 +148,27 @@ def _install_fakes() -> None:
     """
     import app.api.routes.agent as agent_mod
     import app.api.routes.search as search_mod
+    from app.api.auth import require_api_key
+    from app.core.config import settings
 
     app.dependency_overrides[get_db] = lambda: MagicMock()
+    # Phase 23B: every business route now requires Bearer auth; this script
+    # measures routing/serialization overhead, not authentication, so it
+    # bypasses the check the same way the test suite does.
+    app.dependency_overrides[require_api_key] = lambda: None
+    # Phase 23C: this script deliberately sends far more than any endpoint's
+    # per-minute limit (that's the point of a load test) — disable rate
+    # limiting entirely rather than getting 429s mixed into the results.
+    settings.rate_limit_enabled = False
 
     fake_search_service = MagicMock()
     fake_search_service.search.return_value = []
     fake_search_service.search_debug.return_value = []
     search_mod.build_routed_search_service = lambda db, **kw: fake_search_service
 
-    fake_agent = MagicMock()
-    fake_agent.investigate.return_value = "fake analysis"
-    agent_mod.InvestigationAgent = lambda db: fake_agent
+    fake_orchestrator = MagicMock()
+    fake_orchestrator.investigate.return_value = _fake_investigation_session()
+    agent_mod.MultiAgentInvestigationOrchestrator = lambda db: fake_orchestrator
 
 
 ENDPOINTS = [

@@ -2,32 +2,33 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.api.auth import require_api_key
 from app.api.dependencies import DbSession
+from app.api.rate_limit import RATE_LIMIT_RESPONSES, agent_rate_limit
 from app.api.schemas import (
-    AdvancedInvestigationRequest,
-    AdvancedInvestigationResponse,
     InvestigationRequest,
     InvestigationResponse,
     OrchestratedCritique,
     OrchestratedHypothesis,
-    OrchestratedInvestigationRequest,
-    OrchestratedInvestigationResponse,
 )
-from app.services.advanced_investigation_agent import AdvancedInvestigationAgent
-from app.services.investigation_agent import InvestigationAgent
 from app.services.investigation_orchestrator import MultiAgentInvestigationOrchestrator
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/agent", tags=["agent"])
+router = APIRouter(
+    prefix="/agent",
+    tags=["agent"],
+    dependencies=[Depends(require_api_key), Depends(agent_rate_limit)],
+    responses=RATE_LIMIT_RESPONSES,
+)
 
 # Construction-time failures (missing OPENAI_API_KEY, etc.) are a
 # service-unavailable condition — 503; anything raised once the agent is
 # already running (mid-investigation LLM/embedding failure) is reported as a
-# generic 500 rather than a raw traceback. Neither branch changes any agent's
-# reasoning — Phase 23 does not touch agent/orchestrator control flow.
+# generic 500 rather than a raw traceback. Neither branch changes the
+# orchestrator's reasoning — this is response-handling only.
 
 
 def _run_or_503(build_and_run, *, what: str):
@@ -48,47 +49,34 @@ def _run_or_503(build_and_run, *, what: str):
 
 @router.post("/investigate", response_model=InvestigationResponse)
 def investigate(request: InvestigationRequest, db: DbSession) -> InvestigationResponse:
-    analysis = _run_or_503(
-        lambda: InvestigationAgent(db).investigate(request.problem),
-        what="Investigation",
-    )
-    return InvestigationResponse(analysis=analysis)
+    """The single canonical investigation endpoint (Phase 23A). Internally
+    backed by Phase 19A-19D's ``MultiAgentInvestigationOrchestrator``
+    (planner, evidence-driven hypothesis generation, critic, iterative
+    loop) — see docs/architecture/19_multi_agent_investigation.md.
 
-
-@router.post("/investigate-advanced", response_model=AdvancedInvestigationResponse)
-def investigate_advanced(
-    request: AdvancedInvestigationRequest,
-    db: DbSession,
-) -> AdvancedInvestigationResponse:
-    result = _run_or_503(
-        lambda: AdvancedInvestigationAgent(db).investigate(request.problem),
-        what="Advanced investigation",
-    )
-    return AdvancedInvestigationResponse.model_validate(result)
-
-
-@router.post("/investigate-orchestrated", response_model=OrchestratedInvestigationResponse)
-def investigate_orchestrated(
-    request: OrchestratedInvestigationRequest,
-    db: DbSession,
-) -> OrchestratedInvestigationResponse:
-    """Canonical investigation endpoint: Phase 19A-19D's multi-agent
-    orchestrator (planner, evidence-driven hypothesis generation, critic,
-    iterative loop — see docs/architecture/19_multi_agent_investigation.md).
-
-    Prefer this over ``/investigate`` and ``/investigate-advanced`` for new
-    integrations; those remain available unmodified for existing callers.
+    Phase 23A history: this route previously coexisted with
+    ``/investigate-advanced`` (a single-shot structured-report agent) and
+    ``/investigate-orchestrated`` (this same orchestrator, under a
+    different path) — three endpoints for one business capability
+    ("investigate this problem and report a root cause") at three
+    successive levels of sophistication. The orchestrator was already the
+    documented "canonical" choice; the other two were earlier
+    implementations, not distinct capabilities, so they were removed
+    rather than kept as parallel routes. The underlying single-shot agent
+    classes (``InvestigationAgent``, ``AdvancedInvestigationAgent`` in
+    ``app/services/``) are unmodified and still directly unit-tested —
+    only their public HTTP routes were retired.
     """
     session = _run_or_503(
         lambda: MultiAgentInvestigationOrchestrator(db).investigate(
             request.problem, n_hypotheses=request.n_hypotheses
         ),
-        what="Orchestrated investigation",
+        what="Investigation",
     )
     investigation = session.final_report.investigation
     critique = session.final_report.critique
 
-    return OrchestratedInvestigationResponse(
+    return InvestigationResponse(
         problem=investigation.problem,
         selected_root_cause=(
             investigation.selected_hypothesis.root_cause

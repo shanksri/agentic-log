@@ -3,9 +3,26 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from openai import OpenAI
+from openai import APIError, OpenAI
 
 from app.core.config import settings
+
+# No timeout was previously configured on the OpenAI client, so a stalled
+# connection or slow response could hang a request indefinitely (Phase 23
+# hardening finding). 30s covers normal completions with headroom; callers
+# that need a different budget can still pass their own ``OpenAI`` client
+# in through composition if ever needed — this is just the default.
+_DEFAULT_TIMEOUT_SECONDS = 30.0
+
+
+class LLMResponseError(RuntimeError):
+    """Raised when the OpenAI API call fails or returns a response that
+    cannot be parsed/used (timeout, connection error, non-JSON content,
+    JSON that isn't an object). Callers that already catch broad
+    ``Exception`` around LLM calls (most of the codebase) need no changes;
+    this exists so failures are typed and carry a clear message instead of
+    a raw ``json.JSONDecodeError`` or SDK-internal exception.
+    """
 
 
 class LLMService:
@@ -14,55 +31,65 @@ class LLMService:
         *,
         api_key: str | None = None,
         model: str | None = None,
+        timeout: float = _DEFAULT_TIMEOUT_SECONDS,
     ) -> None:
         self.api_key = api_key or settings.openai_api_key
         self.model = model or settings.openai_model
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY is required for incident investigation")
-        self.client = OpenAI(api_key=self.api_key)
+        self.client = OpenAI(api_key=self.api_key, timeout=timeout)
 
     def generate_investigation(self, *, problem: str, context: str) -> str:
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a senior incident investigator. Use the provided similar "
-                        "incident context as evidence. Be explicit about uncertainty. "
-                        "Return concise sections for probable root causes, confidence "
-                        "assessment, supporting evidence, and recommended actions."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f"Current problem statement:\n{problem}\n\n"
-                        f"Similar incident context:\n{context}\n\n"
-                        "Analyze the current problem using only defensible inferences from "
-                        "the problem and retrieved incidents."
-                    ),
-                },
-            ],
-            temperature=0.2,
-        )
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a senior incident investigator. Use the provided similar "
+                            "incident context as evidence. Be explicit about uncertainty. "
+                            "Return concise sections for probable root causes, confidence "
+                            "assessment, supporting evidence, and recommended actions."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Current problem statement:\n{problem}\n\n"
+                            f"Similar incident context:\n{context}\n\n"
+                            "Analyze the current problem using only defensible inferences from "
+                            "the problem and retrieved incidents."
+                        ),
+                    },
+                ],
+                temperature=0.2,
+            )
+        except APIError as exc:
+            raise LLMResponseError(f"OpenAI request failed: {exc}") from exc
         content = response.choices[0].message.content
         return content or ""
 
     def generate_json(self, *, system_prompt: str, user_prompt: str) -> dict[str, Any]:
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            response_format={"type": "json_object"},
-            temperature=0.2,
-        )
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.2,
+            )
+        except APIError as exc:
+            raise LLMResponseError(f"OpenAI request failed: {exc}") from exc
         content = response.choices[0].message.content or "{}"
-        parsed = json.loads(content)
+        try:
+            parsed = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise LLMResponseError(f"OpenAI response was not valid JSON: {exc}") from exc
         if not isinstance(parsed, dict):
-            raise ValueError("OpenAI response was not a JSON object")
+            raise LLMResponseError("OpenAI response was not a JSON object")
         return parsed
 
     def generate_hypotheses(

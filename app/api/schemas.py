@@ -11,9 +11,14 @@ class HealthResponse(BaseModel):
     status: str
 
 
+class ReadinessResponse(BaseModel):
+    status: str
+    database: str
+
+
 class GitHubIngestRequest(BaseModel):
-    owner: str = Field(min_length=1)
-    repo: str = Field(min_length=1)
+    owner: str = Field(min_length=1, max_length=100)
+    repo: str = Field(min_length=1, max_length=100)
     state: str = Field(default="all", pattern="^(open|closed|all)$")
     limit: int = Field(default=50, ge=1, le=500)
     include_comments: bool = True
@@ -28,8 +33,8 @@ class GitHubIngestResponse(BaseModel):
 
 
 class JiraIngestRequest(BaseModel):
-    base_url: str = Field(min_length=1)
-    project_key: str = Field(min_length=1)
+    base_url: str = Field(min_length=1, max_length=500)
+    project_key: str = Field(min_length=1, max_length=50)
     limit: int = Field(default=50, ge=1, le=500)
     force_backfill: bool = False
 
@@ -67,14 +72,14 @@ class IncidentResponse(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    query: str = Field(min_length=3)
+    query: str = Field(min_length=3, max_length=2000)
     limit: int = Field(default=10, ge=1, le=50)
-    source_type: str | None = None
-    tags: list[str] | None = None
-    owner: str | None = None
-    repo: str | None = None
-    source: str | None = None
-    state: str | None = None
+    source_type: str | None = Field(default=None, max_length=100)
+    tags: list[str] | None = Field(default=None, max_length=50)
+    owner: str | None = Field(default=None, max_length=100)
+    repo: str | None = Field(default=None, max_length=100)
+    source: str | None = Field(default=None, max_length=100)
+    state: str | None = Field(default=None, max_length=100)
 
 
 class SearchResult(BaseModel):
@@ -91,11 +96,11 @@ class SearchResponse(BaseModel):
 
 
 class SearchDebugRequest(BaseModel):
-    query: str = Field(min_length=3)
-    owner: str | None = None
-    repo: str | None = None
-    source: str | None = None
-    state: str | None = None
+    query: str = Field(min_length=3, max_length=2000)
+    owner: str | None = Field(default=None, max_length=100)
+    repo: str | None = Field(default=None, max_length=100)
+    source: str | None = Field(default=None, max_length=100)
+    state: str | None = Field(default=None, max_length=100)
 
 
 class SearchDebugResult(BaseModel):
@@ -113,7 +118,7 @@ class SearchDebugResponse(BaseModel):
 
 
 class InvestigationRequest(BaseModel):
-    problem: str = Field(min_length=3)
+    problem: str = Field(min_length=3, max_length=5000)
 
 
 class InvestigationResponse(BaseModel):
@@ -121,7 +126,7 @@ class InvestigationResponse(BaseModel):
 
 
 class AdvancedInvestigationRequest(BaseModel):
-    problem: str = Field(min_length=3)
+    problem: str = Field(min_length=3, max_length=5000)
 
 
 class AdvancedHypothesis(BaseModel):
@@ -163,7 +168,7 @@ class AdvancedInvestigationResponse(BaseModel):
 
 
 class OrchestratedInvestigationRequest(BaseModel):
-    problem: str = Field(min_length=3)
+    problem: str = Field(min_length=3, max_length=5000)
     n_hypotheses: int = Field(default=3, ge=1, le=10)
 
 

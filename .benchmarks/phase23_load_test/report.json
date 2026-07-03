@@ -1,0 +1,155 @@
+{
+  "scope_limitation": "Measured against in-process fakes (no live DB/LLM in this environment) \u2014 see module docstring. Re-run against a real deployment before using these numbers for capacity planning.",
+  "concurrency_levels": [
+    10,
+    50,
+    100
+  ],
+  "requests_per_worker": 20,
+  "results": [
+    {
+      "endpoint": "GET /health",
+      "concurrency": 10,
+      "total_requests": 200,
+      "successes": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 1781.12,
+      "latency_ms": {
+        "mean": 5.25,
+        "p50": 5.02,
+        "p95": 7.39,
+        "p99": 9.05,
+        "max": 14.5
+      }
+    },
+    {
+      "endpoint": "GET /health",
+      "concurrency": 50,
+      "total_requests": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 1645.38,
+      "latency_ms": {
+        "mean": 29.78,
+        "p50": 27.07,
+        "p95": 69.21,
+        "p99": 77.02,
+        "max": 84.76
+      }
+    },
+    {
+      "endpoint": "GET /health",
+      "concurrency": 100,
+      "total_requests": 2000,
+      "successes": 2000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 1743.19,
+      "latency_ms": {
+        "mean": 56.13,
+        "p50": 55.74,
+        "p95": 68.15,
+        "p99": 75.7,
+        "max": 95.2
+      }
+    },
+    {
+      "endpoint": "POST /search/incidents",
+      "concurrency": 10,
+      "total_requests": 200,
+      "successes": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 968.89,
+      "latency_ms": {
+        "mean": 10.11,
+        "p50": 9.95,
+        "p95": 13.17,
+        "p99": 15.16,
+        "max": 15.47
+      }
+    },
+    {
+      "endpoint": "POST /search/incidents",
+      "concurrency": 50,
+      "total_requests": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 887.96,
+      "latency_ms": {
+        "mean": 53.82,
+        "p50": 51.23,
+        "p95": 96.77,
+        "p99": 113.6,
+        "max": 121.46
+      }
+    },
+    {
+      "endpoint": "POST /search/incidents",
+      "concurrency": 100,
+      "total_requests": 2000,
+      "successes": 2000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 834.75,
+      "latency_ms": {
+        "mean": 118.06,
+        "p50": 110.5,
+        "p95": 183.92,
+        "p99": 195.11,
+        "max": 206.85
+      }
+    },
+    {
+      "endpoint": "POST /agent/investigate",
+      "concurrency": 10,
+      "total_requests": 200,
+      "successes": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 900.57,
+      "latency_ms": {
+        "mean": 10.91,
+        "p50": 11.02,
+        "p95": 13.76,
+        "p99": 15.2,
+        "max": 17.28
+      }
+    },
+    {
+      "endpoint": "POST /agent/investigate",
+      "concurrency": 50,
+      "total_requests": 1000,
+      "successes": 1000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 897.59,
+      "latency_ms": {
+        "mean": 54.4,
+        "p50": 51.78,
+        "p95": 104.07,
+        "p99": 124.55,
+        "max": 138.9
+      }
+    },
+    {
+      "endpoint": "POST /agent/investigate",
+      "concurrency": 100,
+      "total_requests": 2000,
+      "successes": 2000,
+      "errors": 0,
+      "error_rate": 0.0,
+      "throughput_rps": 870.79,
+      "latency_ms": {
+        "mean": 112.65,
+        "p50": 104.91,
+        "p95": 179.79,
+        "p99": 193.13,
+        "max": 203.49
+      }
+    }
+  ]
+}

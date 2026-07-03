@@ -36,6 +36,7 @@ Pydantic-typed response envelopes.
 from __future__ import annotations
 
 import json
+import logging
 import uuid
 from pathlib import Path
 from typing import Any
@@ -44,9 +45,18 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.api.dependencies import DbSession
+from app.api.validation import validate_safe_identifier, validate_uuid
 from app.evaluation.experiment_tracking import ExperimentRepository, _to_jsonable
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/evaluation", tags=["evaluation"])
+
+# experiment_name is echoed back verbatim and (via make_run_id) becomes part
+# of the on-disk run_id, so it is constrained to the same safe-identifier
+# shape as run_id itself, plus spaces (existing callers use names like
+# "api-full" / "nightly run").
+_EXPERIMENT_NAME_MAX_LENGTH = 100
 
 # ── Default repository path (override-able via dependency) ────────────────────
 
@@ -63,36 +73,45 @@ ExperimentRepo = Depends(_get_repo)
 # ── Request models ────────────────────────────────────────────────────────────
 
 
+def _experiment_name_field() -> Any:
+    return Field(
+        default="default",
+        max_length=_EXPERIMENT_NAME_MAX_LENGTH,
+        pattern=r"^[A-Za-z0-9._ -]+$",
+    )
+
+
 class QueryEvalRequest(BaseModel):
     """Evaluate a single retrieval query against known expected incidents."""
 
-    query: str = Field(min_length=1)
+    query: str = Field(min_length=1, max_length=2000)
     expected_incident_ids: list[str] = Field(
         default=[],
+        max_length=1000,
         description="Stable UUIDs of the incidents expected to be found.",
     )
     k: int = Field(default=10, ge=1, le=100)
 
 
 class RetrievalBenchmarkRequest(BaseModel):
-    dataset_path: str = Field(min_length=1)
+    dataset_path: str = Field(min_length=1, max_length=1000)
     persist: bool = True
-    experiment_name: str = "default"
+    experiment_name: str = _experiment_name_field()
     k: int = Field(default=10, ge=1, le=100)
 
 
 class ReasoningBenchmarkRequest(BaseModel):
-    dataset_path: str = Field(min_length=1)
+    dataset_path: str = Field(min_length=1, max_length=1000)
     judge: str = Field(default="none", pattern="^(rule|none)$")
-    experiment_name: str = "default"
+    experiment_name: str = _experiment_name_field()
     persist: bool = True
 
 
 class FullPipelineRequest(BaseModel):
-    retrieval_dataset: str | None = None
-    reasoning_dataset: str | None = None
+    retrieval_dataset: str | None = Field(default=None, max_length=1000)
+    reasoning_dataset: str | None = Field(default=None, max_length=1000)
     judge: str = Field(default="none", pattern="^(rule|none)$")
-    experiment_name: str = "default"
+    experiment_name: str = _experiment_name_field()
     persist: bool = True
     k: int = Field(default=10, ge=1, le=100)
     generation: bool = Field(
@@ -295,16 +314,21 @@ def _load_reasoning_dataset(path: str):
 
 
 def _build_search_service(db):
-    """Build IncidentSearchService; raise 503 if unavailable."""
+    """Build IncidentSearchService; raise 503 if unavailable.
+
+    The underlying exception (which may embed a DB DSN or other internal
+    detail) is logged server-side only; the client sees a generic message.
+    """
     try:
         from app.services.embedding_service import EmbeddingService
         from app.services.search import IncidentSearchService
 
         return IncidentSearchService(db=db, embedding_service=EmbeddingService())
     except Exception as exc:  # noqa: BLE001
+        logger.exception("Search service unavailable")
         raise HTTPException(
             status_code=503,
-            detail=f"Search service unavailable: {exc}",
+            detail="Search service is temporarily unavailable.",
         ) from exc
 
 
@@ -322,9 +346,10 @@ def _build_orchestrator(db):
         llm = LLMService()
         return MultiAgentInvestigationOrchestrator(db, search_service=search, llm_service=llm)
     except Exception as exc:  # noqa: BLE001
+        logger.exception("Orchestrator unavailable")
         raise HTTPException(
             status_code=503,
-            detail=f"Orchestrator unavailable: {exc}",
+            detail="Investigation orchestrator is temporarily unavailable.",
         ) from exc
 
 
@@ -587,16 +612,13 @@ def evaluate_query(request: QueryEvalRequest, db: DbSession) -> QueryEvalRespons
             request.query, limit=request.k, call_site="evaluation_api"
         )
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        logger.exception("Retrieval failed for query %r", request.query)
+        raise HTTPException(status_code=500, detail="Retrieval failed.") from exc
 
-    expected_uuids: list[uuid.UUID] = []
-    for eid in request.expected_incident_ids:
-        try:
-            expected_uuids.append(uuid.UUID(eid))
-        except ValueError:
-            raise HTTPException(
-                status_code=422, detail=f"Invalid UUID in expected_incident_ids: {eid!r}"
-            )
+    expected_uuids: list[uuid.UUID] = [
+        validate_uuid(eid, field_name="expected_incident_ids")
+        for eid in request.expected_incident_ids
+    ]
 
     retrieved = [(r.incident.id, r.incident.title, r.similarity_score) for r in results]
     return _score_query_against_expected(
@@ -639,7 +661,8 @@ def run_retrieval_benchmark(
             k=request.k,
         )
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Retrieval evaluation failed: {exc}") from exc
+        logger.exception("Retrieval evaluation failed")
+        raise HTTPException(status_code=500, detail="Retrieval evaluation failed.") from exc
 
     run_id: str | None = None
     if request.persist:
@@ -682,8 +705,9 @@ def run_reasoning_benchmark(
     try:
         report = evaluate_reasoning_dataset(dataset, orchestrator)
     except Exception as exc:  # noqa: BLE001
+        logger.exception("Reasoning evaluation failed")
         raise HTTPException(
-            status_code=500, detail=f"Reasoning evaluation failed: {exc}"
+            status_code=500, detail="Reasoning evaluation failed."
         ) from exc
 
     judge_aggregate: dict[str, Any] | None = None
@@ -828,7 +852,8 @@ def run_full_pipeline(
             )
         )
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Pipeline failed: {exc}") from exc
+        logger.exception("Evaluation pipeline failed")
+        raise HTTPException(status_code=500, detail="Evaluation pipeline failed.") from exc
 
     run_id: str | None = None
     if request.persist:
@@ -907,6 +932,7 @@ def get_run(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> RunDetailResponse:
     """Load a specific experiment run by ID."""
+    run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
@@ -922,6 +948,7 @@ def get_failed_queries(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> FailedQueriesResponse:
     """Return retrieval failures (recall < 1.0 or skipped) for one run."""
+    run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
@@ -941,6 +968,7 @@ def get_failed_reasoning(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> FailedReasoningResponse:
     """Return reasoning failures for one run."""
+    run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
@@ -960,6 +988,7 @@ def get_judge_disagreements(
     repo: ExperimentRepository = ExperimentRepo,
 ) -> JudgeDisagreementsResponse:
     """Return judge disagreement cases (score < 5.0) for one run."""
+    run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")
@@ -986,6 +1015,7 @@ def get_run_diagnostics(
     """
     from app.evaluation.evaluation_diagnostics import build_health_report
 
+    run_id = validate_safe_identifier(run_id, field_name="run_id")
     run = repo.load(run_id)
     if run is None:
         raise HTTPException(status_code=404, detail=f"Run {run_id!r} not found.")

@@ -44,6 +44,7 @@ dict per test.
 
 from __future__ import annotations
 
+import logging
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -57,6 +58,9 @@ from app.api.routes.evaluation import (
     _build_search_service,
     _score_query_against_expected,
 )
+from app.api.validation import validate_uuid
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/evaluation", tags=["evaluation"])
 
@@ -109,10 +113,15 @@ def _prune_expired(store: dict[str, PreviewSession]) -> None:
         del store[sid]
 
 
+_MAX_SESSION_ID_LENGTH = 200
+
+
 def _require_session(
     session_id: str,
     store: dict[str, PreviewSession],
 ) -> PreviewSession:
+    if not session_id or len(session_id) > _MAX_SESSION_ID_LENGTH:
+        raise HTTPException(status_code=422, detail="session_id is malformed.")
     _prune_expired(store)
     session = store.get(session_id)
     if session is None:
@@ -127,7 +136,7 @@ def _require_session(
 
 
 class PreviewRequest(BaseModel):
-    query: str = Field(min_length=1)
+    query: str = Field(min_length=1, max_length=2000)
     k: int = Field(default=10, ge=1, le=100)
 
 
@@ -151,6 +160,7 @@ class PreviewResponse(BaseModel):
 
 class EvaluateSessionRequest(BaseModel):
     selected_incident_ids: list[str] = Field(
+        max_length=1000,
         description=(
             "UUIDs of the incidents you consider correct for this query.  "
             "Pass an empty list to signal that none of the retrieved results "
@@ -170,9 +180,10 @@ class SessionStatusResponse(BaseModel):
 
 
 class ByTitleRequest(BaseModel):
-    query: str = Field(min_length=1)
+    query: str = Field(min_length=1, max_length=2000)
     expected_titles: list[str] = Field(
         min_length=1,
+        max_length=1000,
         description="Exact incident titles to resolve to UUIDs.",
     )
     k: int = Field(default=10, ge=1, le=100)
@@ -226,7 +237,8 @@ def preview_query(
             request.query, limit=request.k, call_site="evaluation_interactive"
         )
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        logger.exception("Retrieval failed for query %r", request.query)
+        raise HTTPException(status_code=500, detail="Retrieval failed.") from exc
 
     hits = [
         _SearchHit(
@@ -311,8 +323,9 @@ def evaluate_query_by_title(
                 by_lower[key] = row.id
         resolved_uuids = [by_lower[t] for t in title_lower if t in by_lower]
     except Exception as exc:  # noqa: BLE001
+        logger.exception("Title resolution failed")
         raise HTTPException(
-            status_code=500, detail=f"Title resolution failed: {exc}"
+            status_code=500, detail="Title resolution failed."
         ) from exc
 
     # Run retrieval
@@ -322,7 +335,8 @@ def evaluate_query_by_title(
             request.query, limit=request.k, call_site="evaluation_by_title"
         )
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        logger.exception("Retrieval failed for query %r", request.query)
+        raise HTTPException(status_code=500, detail="Retrieval failed.") from exc
 
     hits = [
         _SearchHit(
@@ -359,15 +373,10 @@ def evaluate_session(
     """
     session = _require_session(session_id, store)
 
-    expected_uuids: list[uuid.UUID] = []
-    for eid in request.selected_incident_ids:
-        try:
-            expected_uuids.append(uuid.UUID(eid))
-        except ValueError:
-            raise HTTPException(
-                status_code=422,
-                detail=f"Invalid UUID in selected_incident_ids: {eid!r}",
-            )
+    expected_uuids: list[uuid.UUID] = [
+        validate_uuid(eid, field_name="selected_incident_ids")
+        for eid in request.selected_incident_ids
+    ]
 
     result = _score_hits_against(
         session.hits, expected_uuids, session.k, session.query

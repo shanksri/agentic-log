@@ -409,12 +409,25 @@ class ExperimentRepository:
             return None
         return self._load_from_dir(self._latest)
 
+    def _run_dir_for(self, run_id: str) -> Path | None:
+        """Resolve ``run_id`` to its directory under ``history/``, or
+        ``None`` if it would resolve outside that directory (Phase 23
+        hardening — defense in depth against a ``run_id`` containing
+        traversal segments, independent of any upstream API-layer
+        validation).
+        """
+        history = self._history.resolve()
+        candidate = (self._history / run_id).resolve()
+        if candidate != history and history not in candidate.parents:
+            return None
+        return candidate
+
     def load(self, run_id: str) -> ExperimentRun | None:
         """Load the run with this ``run_id``.  Returns ``None`` if it does
         not exist.
         """
-        run_dir = self._history / run_id
-        if not run_dir.exists():
+        run_dir = self._run_dir_for(run_id)
+        if run_dir is None or not run_dir.exists():
             return None
         return self._load_from_dir(run_dir)
 
@@ -422,8 +435,8 @@ class ExperimentRepository:
         """Remove the run directory.  Also clears ``latest/`` if it points
         to the deleted run.  Returns ``True`` if the run existed.
         """
-        run_dir = self._history / run_id
-        if not run_dir.exists():
+        run_dir = self._run_dir_for(run_id)
+        if run_dir is None or not run_dir.exists():
             return False
         shutil.rmtree(run_dir)
         # Clear latest if it matches

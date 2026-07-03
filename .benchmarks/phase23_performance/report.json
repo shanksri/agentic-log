@@ -1,0 +1,55 @@
+{
+  "scope_limitation": "Pure-computation profiling only \u2014 no live DB or OpenAI round trip included (see module docstring). Real deployment latency for retrieval/generation/orchestration is dominated by DB I/O and LLM round trips, not the computation profiled here.",
+  "results": {
+    "retrieval_bm25": {
+      "index_build_500_docs": {
+        "iterations": 20,
+        "mean_ms": 3.4674,
+        "p50_ms": 3.4154,
+        "p95_ms": 5.8671,
+        "p99_ms": 5.8671,
+        "max_ms": 5.8671
+      },
+      "query_scoring": {
+        "iterations": 200,
+        "mean_ms": 0.8463,
+        "p50_ms": 0.8195,
+        "p95_ms": 1.0961,
+        "p99_ms": 1.4228,
+        "max_ms": 1.5994
+      }
+    },
+    "routing_decision": {
+      "iterations": 200,
+      "mean_ms": 0.0425,
+      "p50_ms": 0.0421,
+      "p95_ms": 0.0431,
+      "p99_ms": 0.0513,
+      "max_ms": 0.0858
+    },
+    "generation_bertscore": {
+      "iterations": 200,
+      "mean_ms": 0.5462,
+      "p50_ms": 0.5586,
+      "p95_ms": 0.6684,
+      "p99_ms": 0.9844,
+      "max_ms": 1.0026
+    },
+    "evaluation_metrics": {
+      "iterations": 200,
+      "mean_ms": 0.0289,
+      "p50_ms": 0.0284,
+      "p95_ms": 0.0297,
+      "p99_ms": 0.0538,
+      "max_ms": 0.1017
+    },
+    "orchestration_loop_fake_llm": {
+      "iterations": 50,
+      "mean_ms": 0.0781,
+      "p50_ms": 0.0679,
+      "p95_ms": 0.0895,
+      "p99_ms": 0.3919,
+      "max_ms": 0.3919
+    }
+  }
+}

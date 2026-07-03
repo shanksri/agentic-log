@@ -1,25 +1,27 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 
 from app.api.dependencies import DbSession
 from app.api.schemas import IncidentResponse
+from app.api.validation import validate_uuid
 from app.db.models import Incident
 
 router = APIRouter(prefix="/incidents", tags=["incidents"])
 
 
 @router.get("", response_model=list[IncidentResponse])
-def list_incidents(db: DbSession, limit: int = 50) -> list[Incident]:
+def list_incidents(db: DbSession, limit: int = Query(default=50, ge=1, le=200)) -> list[Incident]:
     return list(
-        db.scalars(select(Incident).order_by(Incident.created_at.desc()).limit(min(limit, 200)))
+        db.scalars(select(Incident).order_by(Incident.created_at.desc()).limit(limit))
     )
 
 
 @router.get("/{incident_id}", response_model=IncidentResponse)
 def get_incident(incident_id: str, db: DbSession) -> Incident:
-    incident = db.get(Incident, incident_id)
+    parsed_id = validate_uuid(incident_id, field_name="incident_id")
+    incident = db.get(Incident, parsed_id)
     if incident is None:
         raise HTTPException(status_code=404, detail="Incident not found")
     return incident

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
+import logging
+
+from fastapi import APIRouter, HTTPException
 
 from app.api.dependencies import DbSession
 from app.api.schemas import (
@@ -17,12 +19,39 @@ from app.services.advanced_investigation_agent import AdvancedInvestigationAgent
 from app.services.investigation_agent import InvestigationAgent
 from app.services.investigation_orchestrator import MultiAgentInvestigationOrchestrator
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/agent", tags=["agent"])
+
+# Construction-time failures (missing OPENAI_API_KEY, etc.) are a
+# service-unavailable condition — 503; anything raised once the agent is
+# already running (mid-investigation LLM/embedding failure) is reported as a
+# generic 500 rather than a raw traceback. Neither branch changes any agent's
+# reasoning — Phase 23 does not touch agent/orchestrator control flow.
+
+
+def _run_or_503(build_and_run, *, what: str):
+    try:
+        return build_and_run()
+    except ValueError as exc:
+        # Agent/LLMService constructors raise ValueError for missing
+        # configuration (e.g. no OPENAI_API_KEY) — that is unavailability,
+        # not a request error.
+        logger.exception("%s unavailable", what)
+        raise HTTPException(status_code=503, detail=f"{what} is temporarily unavailable.") from exc
+    except HTTPException:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("%s failed", what)
+        raise HTTPException(status_code=500, detail=f"{what} failed.") from exc
 
 
 @router.post("/investigate", response_model=InvestigationResponse)
 def investigate(request: InvestigationRequest, db: DbSession) -> InvestigationResponse:
-    analysis = InvestigationAgent(db).investigate(request.problem)
+    analysis = _run_or_503(
+        lambda: InvestigationAgent(db).investigate(request.problem),
+        what="Investigation",
+    )
     return InvestigationResponse(analysis=analysis)
 
 
@@ -31,7 +60,10 @@ def investigate_advanced(
     request: AdvancedInvestigationRequest,
     db: DbSession,
 ) -> AdvancedInvestigationResponse:
-    result = AdvancedInvestigationAgent(db).investigate(request.problem)
+    result = _run_or_503(
+        lambda: AdvancedInvestigationAgent(db).investigate(request.problem),
+        what="Advanced investigation",
+    )
     return AdvancedInvestigationResponse.model_validate(result)
 
 
@@ -47,8 +79,11 @@ def investigate_orchestrated(
     Prefer this over ``/investigate`` and ``/investigate-advanced`` for new
     integrations; those remain available unmodified for existing callers.
     """
-    session = MultiAgentInvestigationOrchestrator(db).investigate(
-        request.problem, n_hypotheses=request.n_hypotheses
+    session = _run_or_503(
+        lambda: MultiAgentInvestigationOrchestrator(db).investigate(
+            request.problem, n_hypotheses=request.n_hypotheses
+        ),
+        what="Orchestrated investigation",
     )
     investigation = session.final_report.investigation
     critique = session.final_report.critique

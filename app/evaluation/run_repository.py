@@ -19,10 +19,13 @@ method on ``BenchmarkRepository`` to the mixin's concrete implementation.
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 from app.evaluation.serialization import from_jsonable, to_jsonable
+
+logger = logging.getLogger(__name__)
 
 
 class InMemoryRunRepositoryMixin:
@@ -68,21 +71,41 @@ class FileRunRepositoryMixin:
         self._directory = Path(directory)
         self._directory.mkdir(parents=True, exist_ok=True)
 
-    def _path_for(self, run_id: str) -> Path:
-        return self._directory / f"{run_id}.json"
+    def _path_for(self, run_id: str) -> Path | None:
+        """Return the on-disk path for ``run_id``, or ``None`` if the
+        resulting path would resolve outside ``self._directory`` (a
+        defense-in-depth check — Phase 23 hardening — against a ``run_id``
+        containing traversal segments, e.g. ``..`` combined with a
+        platform path separator).
+        """
+        directory = self._directory.resolve()
+        candidate = (self._directory / f"{run_id}.json").resolve()
+        if candidate != directory and directory not in candidate.parents:
+            return None
+        return candidate
 
     def save(self, run: Any) -> None:
         path = self._path_for(run.run_id)
+        if path is None:
+            raise ValueError(f"run id {run.run_id!r} is not a valid identifier")
         if path.exists():
             raise ValueError(f"a run with id {run.run_id!r} already exists")
         path.write_text(json.dumps(to_jsonable(run), indent=2), encoding="utf-8")
 
     def get(self, run_id: str) -> Any | None:
         path = self._path_for(run_id)
-        if not path.exists():
+        if path is None or not path.exists():
             return None
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return from_jsonable(data, self._run_type)
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            logger.warning("Skipping unreadable/corrupted run file: %s", path.name)
+            return None
+        try:
+            return from_jsonable(data, self._run_type)
+        except (KeyError, TypeError, ValueError):
+            logger.warning("Skipping run file with unexpected schema: %s", path.name)
+            return None
 
     def list_runs(self, *, experiment_name: str | None = None) -> tuple[Any, ...]:
         runs = [self.get(path.stem) for path in self._directory.glob("*.json")]
@@ -97,7 +120,7 @@ class FileRunRepositoryMixin:
 
     def delete(self, run_id: str) -> bool:
         path = self._path_for(run_id)
-        if path.exists():
+        if path is not None and path.exists():
             path.unlink()
             return True
         return False

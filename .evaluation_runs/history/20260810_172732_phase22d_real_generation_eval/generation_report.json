@@ -1,0 +1,339 @@
+{
+  "dataset_version": "1.0.0",
+  "dataset_description": "Phase 22D generation/grounding-evaluation subset: 10 queries selected from tests/eval/gold/phase17c_benchmark_v1.json (36 queries), covering all 4 categories (lexical-overlap, paraphrase, multi-concept, no-match-expected), all 3 difficulties (easy, medium, hard), single- and multi-expected-incident queries, and 9 distinct source repos/projects across both GitHub and Jira. Adds a human-authored reference_answer to each query, grounded in the actual incident content read from the live database. The original phase17c_benchmark_v1.json is unmodified; this is a derived, separate file.",
+  "k": 10,
+  "num_answered": 10,
+  "num_generation_scored": 10,
+  "num_grounding_scored": 10,
+  "num_skipped": 0,
+  "num_failed": 0,
+  "results": [
+    {
+      "query_id": "v2-lex-01",
+      "query": "Ephemeral resources renewal diagnostics silently dropped due to discarded Append return",
+      "generated_answer": "### Probable Root Causes\n1. **Race Condition**: The current problem of \"Ephemeral resources renewal diagnostics silently dropped due to discarded Append return\" suggests a potential race condition similar to previously identified issues. The earlier incident involving a race condition in ephemeral resources indicates that timing issues during resource management may lead to diagnostics being lost.\n  \n2. **Lifecycle Management Issues**: The need to expand `lifecycle {destroy = false}` in previous incidents points to challenges in resource lifecycle management. If resources are not being managed correctly, it could lead to diagnostics being discarded unexpectedly.\n\n3. **Resource Dependency Conflicts**: The mention of resources that cannot support `create_before_destroy` indicates that certain dependencies may not be properly handled, leading to dropped diagnostics when resources are renewed or modified.\n\n### Confidence Assessment\n- **Moderate Confidence**: The parallels drawn from similar incidents provide a reasonable basis for suspecting race conditions and lifecycle management issues as root causes. However, without direct evidence from logs or diagnostics specific to the current problem, there remains uncertainty regarding the exact nature of the failure.\n\n### Supporting Evidence\n- **Similar Incident Resolutions**: The resolution of previous incidents involving race conditions and lifecycle management issues supports the hypothesis that these factors are at play in the current problem. The resolution of the race condition in ephemeral resources and the adjustments made to lifecycle flags provide context for the current situation.\n  \n- **Patterns in Resource Management**: The recurring theme of issues related to resource lifecycle and management in the provided incidents suggests that these are systemic issues that may affect the current problem.\n\n### Recommended Actions\n1. **Investigate for Race Conditions**: Conduct a thorough investigation into the timing and order of operations related to ephemeral resource management to identify any race conditions that may lead to diagnostics being dropped.\n\n2. **Review Lifecycle Management**: Assess the current lifecycle management configurations and consider implementing the `lifecycle {destroy = false}` flag where applicable to prevent premature destruction of resources.\n\n3. **Enhance Logging and Diagnostics**: Improve logging around the renewal diagnostics process to capture more detailed information about when and why diagnostics are being discarded. This will aid in identifying the root cause more definitively.\n\n4. **Test Resource Dependencies**: Evaluate the dependencies of the resources involved to ensure that they are compatible with the current lifecycle management strategies, particularly in relation to `create_before_destroy` constraints.",
+      "reference_answer": "The renewal failure is caused by an internal bug in Terraform's ephemeral resource handling (internal/terraform/node_resource_ephemeral.go, handleRenewal function): when an ephemeral resource's renewal fails, the resulting error diagnostics are discarded instead of being returned, so Terraform never surfaces the renewal failure or marks the resource unhealthy. Any ephemeral resource that encounters a renewal error is affected. The issue is marked resolved.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.45161156895872673,
+        "bert_score_recall": 0.5481668128750521,
+        "bert_score_f1": 0.4952267000603452
+      },
+      "grounding": {
+        "faithfulness": 0.9375,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-lex-08",
+      "query": "ZookeeperConsumerConnectorMBean needs to close SimpleConsumer when done",
+      "generated_answer": "### Probable Root Causes\n1. **Resource Management Issue**: The need for `ZookeeperConsumerConnectorMBean` to close `SimpleConsumer` suggests a potential oversight in resource management, indicating that consumers may not be properly released after use.\n2. **Lifecycle Management**: The incidents indicate a pattern of lifecycle management issues within the Zookeeper-based components, where proper shutdown and cleanup processes were not consistently implemented.\n3. **Configuration Handling**: The reference to configuration settings (e.g., `config.autocommit`) implies that there may be a lack of adherence to configuration management best practices, leading to improper consumer behavior.\n\n### Confidence Assessment\n- **Moderate Confidence**: The incidents share a common theme of resource and lifecycle management issues, which supports the hypothesis that similar root causes may be at play in the current problem. However, the specific details of the current issue are not fully explored in the previous incidents, leading to some uncertainty.\n\n### Supporting Evidence\n- The resolution of previous incidents related to `ZookeeperConsumerConnector` and its components indicates a recurring theme of ensuring proper closure and cleanup of resources.\n- The need for `ZookeeperConsumerConnector` to connect to new leaders and manage configurations suggests that the system's responsiveness to changes and proper resource handling are critical for stability.\n- The resolved issues demonstrate that similar problems have been identified and fixed, reinforcing the likelihood that the current issue is related to previously encountered challenges.\n\n### Recommended Actions\n1. **Implement Proper Resource Cleanup**: Ensure that `ZookeeperConsumerConnectorMBean` includes logic to close `SimpleConsumer` properly after its use to prevent resource leaks.\n2. **Review Lifecycle Management**: Conduct a thorough review of the lifecycle management practices within the Zookeeper-based components to identify and rectify any inconsistencies.\n3. **Enhance Configuration Management**: Audit the configuration handling processes to ensure that all components adhere to best practices, particularly regarding auto-commit settings and resource allocation.\n4. **Testing and Validation**: Implement comprehensive testing to validate that the changes made to address the current problem do not introduce new issues, particularly under varying load conditions.",
+      "reference_answer": "The ZookeeperConsumerConnectorMBean does not close its underlying SimpleConsumer connection when it is done being used, leaking the connection. Logged as high severity; the fix has shipped (status: Fixed). Note: the source ticket contains no further diagnostic detail beyond the title and resolution status.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.5512057357981546,
+        "bert_score_recall": 0.7102936233352544,
+        "bert_score_f1": 0.6207183799953742
+      },
+      "grounding": {
+        "faithfulness": 0.0,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-lex-03",
+      "query": "Opt-in UltraLogLog encoding for HyperLogLog less memory same accuracy",
+      "generated_answer": "### Probable Root Causes\n1. **Memory Management Inefficiencies**: The introduction of UltraLogLog encoding may not have been optimized for memory usage, leading to higher memory consumption than expected.\n2. **Encoding Implementation Issues**: The implementation of the UltraLogLog encoding for HyperLogLog may have bugs or inconsistencies that prevent it from achieving the intended memory savings.\n3. **Configuration or Opt-in Mechanism Flaws**: The opt-in nature of the feature may lead to misconfigurations or misunderstandings about its usage, resulting in suboptimal performance.\n\n### Confidence Assessment\n- **Moderate Confidence**: The evidence from similar incidents suggests that memory management and encoding implementations are common sources of issues. However, the specific context of UltraLogLog encoding is less documented, leading to uncertainty in pinpointing the exact cause.\n\n### Supporting Evidence\n- The incident regarding \"Opt-in UltraLogLog encoding for HyperLogLog\" indicates a direct relationship between memory usage and encoding accuracy, suggesting that similar issues may arise from improper implementation or configuration.\n- Resolved incidents involving memory management and encoding (e.g., \"Decrease sender side memory-registration overhead\") highlight that these areas are prone to issues that can affect performance and resource utilization.\n\n### Recommended Actions\n1. **Conduct a Code Review**: Review the implementation of UltraLogLog encoding to identify any inefficiencies or bugs that may contribute to increased memory usage.\n2. **Test Configuration Scenarios**: Create test cases that simulate various configurations of the opt-in feature to ensure it operates as intended under different conditions.\n3. **Monitor Memory Usage**: Implement monitoring tools to track memory consumption when using UltraLogLog encoding, allowing for real-time analysis and adjustments.\n4. **User Documentation**: Update user documentation to clarify the opt-in process and provide guidelines for optimal configuration to minimize memory usage.",
+      "reference_answer": "This is a feature proposal, not a bug report: Redis's dense HyperLogLog implementation is fixed at HLL_P=14 (12 KB per key), which dominates memory for workloads keeping many HLL keys (e.g. per-page or per-user unique-visitor counters). The proposal adds UltraLogLog as an opt-in dense encoding for the PF* commands, preserving HLL's properties (commutative, idempotent, mergeable, constant-time add) while using roughly 33% less memory at the same accuracy. As of this record the proposal is open, not yet merged.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.5412697372476256,
+        "bert_score_recall": 0.49887406985062505,
+        "bert_score_f1": 0.5192078919567997
+      },
+      "grounding": {
+        "faithfulness": 0.0,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-para-04",
+      "query": "A cross-cluster TLS policy backed by config maps in other namespaces occasionally fails to sync its certificate discovery data on the gateway",
+      "generated_answer": "### Probable Root Causes\n1. **Race Condition in Configuration Loading**: The issue may stem from a race condition during the loading of configuration maps, similar to the BackendTLSPolicy incident where credential resolution was affected by KRT collection ordering. This could lead to intermittent failures in syncing certificate discovery data.\n  \n2. **Cross-Namespace Configuration Issues**: The cross-namespace nature of the TLS policy may introduce complexities in how configurations are resolved and accessed, potentially leading to invalid or incomplete configurations being applied.\n\n3. **Inconsistent State During Kubernetes Reboots**: The previous incidents suggest that issues arise during Kubernetes reboots, indicating that the system may not be properly handling state transitions or dependencies during startup.\n\n### Confidence Assessment\n- **Moderate Confidence**: The connection to the race condition and cross-namespace configuration issues is supported by similar incidents, but the exact cause of the current problem remains uncertain without further investigation. The intermittent nature of the failure adds to the complexity, making it difficult to pinpoint a singular root cause.\n\n### Supporting Evidence\n- **Similar Incidents**: The BackendTLSPolicy incident highlights a race condition affecting configuration resolution, which aligns with the current problem's symptoms of intermittent sync failures. Additionally, the mention of Kubernetes reboots causing issues in previous incidents suggests a pattern that may apply here.\n- **Resolved Issues**: The resolution of past incidents related to TLS and certificate handling indicates that similar underlying issues may exist in the current problem, particularly regarding the handling of certificates and configurations across namespaces.\n\n### Recommended Actions\n1. **Investigate Configuration Loading Order**: Conduct a thorough review of the configuration loading process for the cross-cluster TLS policy to identify potential race conditions or ordering issues. Implement logging to capture the state during startup.\n\n2. **Enhance Error Handling and Reporting**: Improve the error handling mechanisms to provide clearer diagnostics when certificate discovery fails. This could include more detailed logging of the configuration state and any errors encountered during the sync process.\n\n3. **Test Kubernetes Reboot Scenarios**: Simulate Kubernetes reboots in a controlled environment to observe the behavior of the TLS policy and identify any specific failure points. This could help in understanding how the system transitions states during restarts.\n\n4. **Consider Workarounds**: As noted in previous incidents, temporary workarounds (such as adding dummy annotations) may be necessary while a permanent fix is being developed. Document these workarounds for users experiencing similar issues.",
+      "reference_answer": "Gateway pods intermittently fail to receive BackendTLSPolicy ConfigMap CAs referenced from a different namespace during SDS delivery, typically surfacing during CSI secret rotation or config changes. An affected pod shows an invalid:// WARMING state in 'istioctl proxy-config secret' even while sibling pods in the same Deployment show the ConfigMap as ACTIVE; traffic to the affected pod fails with TLS errors (503s, 'Secret is not supplied by SDS'), and the pod does not self-recover, staying Running/Ready despite the broken TLS state. Reported against Istio 1.28.1 and tracked as resolved, though the specific code fix is not captured in this record.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.5693892672521206,
+        "bert_score_recall": 0.5729948490788799,
+        "bert_score_f1": 0.5711863682140541
+      },
+      "grounding": {
+        "faithfulness": null,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "faithfulness failed on 1/1 repetition(s): GroundingResponseError(\"grounding LLM response field 'verdicts' must have exactly 23 entries, got 22\")",
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-para-06",
+      "query": "An embeddings wrapper for a BGE-style HuggingFace model lost support without anyone being given an alternative to switch to",
+      "generated_answer": "### Probable Root Causes\n1. **Lack of Communication**: The deprecation of the HuggingFaceBgeEmbeddings without a clear alternative suggests a failure in communication regarding changes in the library.\n2. **Inadequate Documentation**: Similar incidents indicate that users often face issues due to insufficient documentation or guidance on transitioning to new models or versions.\n3. **Dependency Management**: The need for upgrades (as seen in the HuggingFaceEndpointEmbeddings incident) implies that users may not be aware of necessary updates that could prevent compatibility issues.\n\n### Confidence Assessment\n- **Medium Confidence**: The root causes are inferred from patterns observed in similar incidents. However, the specific circumstances surrounding the current problem may differ, leading to uncertainty in the applicability of these causes.\n\n### Supporting Evidence\n- The incident with HuggingFaceBgeEmbeddings being deprecated without a replacement mirrors the current problem, indicating a recurring issue with communication and support during transitions.\n- Resolved incidents often highlight the necessity of upgrades or workarounds, suggesting that users may not be aware of the latest versions or alternative solutions.\n\n### Recommended Actions\n1. **Improve Communication**: Establish a clear communication channel for notifying users about deprecations and providing alternatives.\n2. **Update Documentation**: Create comprehensive documentation that includes migration guides and alternative solutions when a model is deprecated.\n3. **Version Management**: Implement a system to notify users of necessary upgrades or changes in dependencies to maintain compatibility with the latest features.\n4. **User Feedback Loop**: Encourage users to report issues and provide feedback on transitions to ensure that support is responsive and effective.",
+      "reference_answer": "Instantiating HuggingFaceBgeEmbeddings from langchain_community.embeddings (e.g. with a BAAI/bge-m3 model) triggers a LangChainDeprecationWarning stating the class was deprecated in LangChain 0.2.2 and will be removed in 1.0 -- but at the time this was filed, users reported the warning did not clearly point to a working replacement class or import path. Status: resolved.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.5155483205565483,
+        "bert_score_recall": 0.5462580072476362,
+        "bert_score_f1": 0.5304590693285484
+      },
+      "grounding": {
+        "faithfulness": 1.0,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-para-10",
+      "query": "The GPU memory figure shown on the cluster monitoring dashboard reflects what's actively in use rather than what was reserved",
+      "generated_answer": "### Probable Root Causes\n1. **Monitoring Metrics Discrepancy**: The dashboard is configured to display active memory usage rather than reserved memory, which may lead to confusion regarding resource allocation.\n2. **Similar Historical Bugs**: Previous incidents indicate a pattern where memory metrics reported do not align with expected values (e.g., `used_memory_dataset` vs. `used_memory`), suggesting a systemic issue in how memory metrics are calculated or reported.\n3. **Configuration Issues**: There may be a lack of clarity or misconfiguration in how memory resources are specified or reserved for GPU tasks, similar to past incidents where memory resource specifications were problematic.\n\n### Confidence Assessment\n- **Moderate Confidence**: The historical incidents provide a basis for understanding potential issues, but the specific cause of the current problem remains uncertain due to variations in system configurations and monitoring implementations.\n- **Uncertainty Factors**: The exact nature of the dashboard's metric calculations and any recent changes to the monitoring system are unknown, which could influence the current situation.\n\n### Supporting Evidence\n- Historical incidents demonstrate a consistent theme of discrepancies in memory reporting (e.g., Ray Dashboard metrics, memory overcommit issues).\n- Resolved issues indicate that similar problems have been addressed in the past, suggesting that the current issue may follow a comparable pattern.\n- The resolution of past incidents often involved adjustments to how memory metrics were defined or reported, reinforcing the likelihood of a similar root cause.\n\n### Recommended Actions\n1. **Review Dashboard Configuration**: Investigate the current configuration of the GPU memory monitoring dashboard to ensure it accurately reflects reserved memory rather than just active usage.\n2. **Conduct a System Audit**: Perform an audit of the memory allocation and reservation settings across the cluster to identify any discrepancies or misconfigurations.\n3. **Implement Enhanced Logging**: Introduce logging that captures both reserved and active memory usage to provide clearer insights into memory management and help diagnose future issues.\n4. **User Documentation Update**: Update documentation to clarify how memory metrics are reported and what users should expect, reducing confusion and potential misinterpretation of the dashboard data.",
+      "reference_answer": "Ray Dashboard's per-process GRAM figure is computed from pynvml.nvmlDeviceGetProcessesUtilizationInfo().memUtil, which measures the percentage of time the GPU memory bus was active (read/write activity), not the amount of memory actually allocated by the process. As a result, the GRAM value shown on the Dashboard diverges from the ray_node_gram_used Prometheus metric, which does reflect real allocation. Reported against Ray 2.54; status: resolved.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.48620298524899985,
+        "bert_score_recall": 0.4977710648782207,
+        "bert_score_f1": 0.4919190250659017
+      },
+      "grounding": {
+        "faithfulness": 0.0,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-multi-02",
+      "query": "Helm plugin lifecycle problems: the update command failing, and the plugin version environment variable not being passed to install/update/delete scripts",
+      "generated_answer": "### Probable Root Causes\n1. **Environment Variable Handling**: The failure to pass the `HELM_PLUGIN_VERSION` environment variable to install/update/delete scripts suggests a potential issue with how environment variables are managed within the Helm plugin lifecycle.\n2. **Plugin Update Mechanism**: The ongoing issues with the `helm plugin update` command indicate that there may be a flaw in the update mechanism that prevents it from correctly fetching or applying updates to plugins.\n3. **Dependency Management**: Similar incidents involving dependency updates (e.g., `helm template --dependency-update`) suggest that there may be systemic issues in how Helm handles dependencies, which could also affect plugin installations.\n\n### Confidence Assessment\n- **Moderate Confidence**: The connection between the failure to pass environment variables and previous incidents involving plugin updates and dependency management is strong, but the exact cause of the current problem remains uncertain. The open status of related incidents indicates that the issues are not fully resolved and may share underlying causes.\n\n### Supporting Evidence\n- **Similar Incidents**: The resolved incident regarding passing `HELM_PLUGIN_VERSION` indicates that this was a known issue that has been addressed before, suggesting it could be a recurring problem.\n- **Open Incidents**: The ongoing issues with `helm plugin update` and dependency management highlight a pattern of failures in the Helm plugin lifecycle, which may contribute to the current problem.\n\n### Recommended Actions\n1. **Investigate Environment Variable Handling**: Review the code responsible for passing environment variables to ensure that `HELM_PLUGIN_VERSION` is correctly set and propagated during plugin lifecycle events.\n2. **Enhance Logging**: Implement detailed logging around the plugin update process to capture any errors or warnings that occur, which may provide insights into the failure.\n3. **Monitor Related Incidents**: Keep track of the status of open incidents related to Helm plugins and dependency management to identify any correlations or shared resolutions that may apply to the current problem.\n4. **User Communication**: Inform users of the ongoing issues with plugin updates and provide guidance on potential workarounds until a resolution is implemented.",
+      "reference_answer": "Two distinct plugin-lifecycle issues, not one: (1) 'helm plugin update <name>' fails with 'failed to update plugin, got error (plugin repo was modified)' -- the install/update process itself writes to the plugin's plugin.yaml inside its git clone, which makes the VCS installer's own dirty-repo check reject the update it just performed. (2) A separate, long-open enhancement request asks Helm to pass the plugin's .version (from plugin.yaml) into install/update/delete scripts, so those scripts don't have to hardcode or guess the version being installed -- this second item is a feature gap, not a failure, and was auto-flagged stale after 90 days of inactivity.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.669471667572976,
+        "bert_score_recall": 0.6822459926417381,
+        "bert_score_f1": 0.6757984686185027
+      },
+      "grounding": {
+        "faithfulness": 0.0,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-multi-06",
+      "query": "Sentry GitHub/GitLab source integration issues: a GitLab integration problem, and supporting relative path resolution in stack trace sources via the GitHub integration",
+      "generated_answer": "### Probable Root Causes\n1. **Inconsistent Path Resolution**: The integration issues may stem from inadequate handling of relative paths in stack traces, similar to the previous Seer incident where better support for relative paths was implemented.\n2. **Integration Configuration Errors**: There may be misconfigurations in the GitLab integration setup, akin to the recurring GitHub integration problems that were resolved through configuration adjustments.\n3. **API Limitations**: The underlying APIs for GitLab and GitHub may not fully support the required features for seamless integration, as seen in past incidents where enhancements were necessary.\n\n### Confidence Assessment\n- **Moderate Confidence**: The similarities with past incidents provide a reasonable basis for these root causes, but the specific nature of the current GitLab integration issue introduces uncertainty. The resolution of past GitHub integration problems does not guarantee that the same solutions will apply to the current GitLab issue.\n\n### Supporting Evidence\n- **Historical Resolutions**: Multiple resolved incidents related to GitHub integration highlight the need for improved path resolution and configuration adjustments. The resolution of the Seer incident specifically points to the necessity of better handling of relative paths, which is directly relevant to the current problem.\n- **Open Incidents**: The presence of ongoing issues with GitHub integration suggests that these problems are not isolated and may indicate systemic challenges in the integration processes.\n\n### Recommended Actions\n1. **Investigate Path Resolution Logic**: Review and enhance the logic for resolving relative paths in stack traces for both GitLab and GitHub integrations.\n2. **Audit Integration Configurations**: Conduct a thorough audit of the GitLab integration settings to identify potential misconfigurations or discrepancies.\n3. **Engage with API Documentation**: Consult the latest API documentation for both GitLab and GitHub to identify any limitations or necessary updates that could facilitate better integration.\n4. **Monitor and Document Findings**: Keep track of any patterns or recurring issues as they arise during the investigation to inform future improvements and resolutions.",
+      "reference_answer": "Two separate source-integration problems: (1) Sentry's GitHub integration resolves relative paths in JavaScript sourcemaps using an overbroad assumption (e.g. treating '../../../../' as always mapping to the repo root) instead of resolving them relative to the sourcemap's own baseUrl/containing folder, which breaks for files at other nesting depths. (2) Sentry's GitLab integration fails during the OAuth token exchange with a RestrictedIPAddress error ('matches the URL blocklist') on self-hosted instances, even after the user enabled GitLab's 'allow local network requests' options -- the specific blocklist mechanism causing the rejection is not identified in the report.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.6118464668128406,
+        "bert_score_recall": 0.5660839420275827,
+        "bert_score_f1": 0.5880762687670508
+      },
+      "grounding": {
+        "faithfulness": 0.375,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-multi-03",
+      "query": "Kubernetes memory management issues: MemoryQoS not setting memory.high for BestEffort pods, and high memory usage in kube-controller-manager from caching full objects",
+      "generated_answer": "### Probable Root Causes\n\n1. **MemoryQoS Configuration Issue**: The failure of MemoryQoS to set `memory.high` for BestEffort pods may stem from a misconfiguration or a bug in the implementation of MemoryQoS in cgroup v2. This aligns with the previously resolved incident where MemoryQoS did not function as expected.\n\n2. **Kube-Controller-Manager Caching Behavior**: The high memory usage in the kube-controller-manager could be attributed to inefficient caching mechanisms that store full objects, leading to excessive memory consumption. This is consistent with past incidents where high memory usage was linked to caching strategies.\n\n3. **Feature Gate Impact**: The disabling of the MemoryQoS feature gate may not have adequately cleared the QoS-level memory settings, as indicated in previous incidents. This regression could contribute to the current memory management issues.\n\n### Confidence Assessment\n\n- **Moderate Confidence**: The connection between the MemoryQoS configuration issues and the past incidents provides a reasonable basis for suspecting similar underlying problems. However, the exact nature of the current misconfigurations or bugs remains uncertain without further investigation.\n  \n- **Low to Moderate Confidence**: The kube-controller-manager's caching behavior is a plausible cause of high memory usage, but the specifics of the caching implementation and its impact on memory consumption require deeper analysis.\n\n### Supporting Evidence\n\n1. **Similar Incident Resolutions**: The resolution of past incidents related to MemoryQoS and kube-controller-manager memory usage indicates a pattern of issues that may recur under similar conditions.\n  \n2. **Feature Gate Behavior**: The documented regression where QoS-level memory settings were not cleared after disabling MemoryQoS suggests that the current problem may be a continuation of this issue.\n\n3. **Historical Memory Consumption Trends**: Previous incidents reported high memory consumption leading to OOM situations, reinforcing the likelihood that memory management issues persist in the current context.\n\n### Recommended Actions\n\n1. **Investigate MemoryQoS Implementation**: Conduct a thorough review of the MemoryQoS implementation for BestEffort pods in cgroup v2 to identify any misconfigurations or bugs. This should include testing the feature in various scenarios to replicate the issue.\n\n2. **Analyze Kube-Controller-Manager Caching**: Perform an analysis of the kube-controller-manager's caching strategy to determine if optimizations can be made to reduce memory usage. Consider implementing limits or alternative caching mechanisms.\n\n3. **Review Feature Gate Behavior**: Examine the behavior of the MemoryQoS feature gate and ensure that all related memory settings are properly reset when the feature is disabled. This may involve code review and testing.\n\n4. **Monitor Memory Usage**: Implement monitoring tools to track memory usage patterns in real-time, particularly for BestEffort pods and kube-controller-manager, to identify spikes and potential OOM risks.\n\n5. **Documentation and Communication**: Document findings and communicate with the development team regarding the identified issues and recommended fixes to ensure awareness and prioritization of these memory management concerns.",
+      "reference_answer": "Two distinct Kubernetes memory issues: (1) On cgroup v2 nodes with MemoryQoS enabled, kubelet skips setting memory.high entirely for BestEffort pods (both memory requests and limits are 0), leaving it unset/max -- inconsistent with the MemoryQoS KEP formula, which specifies memory.high should be derived from node-allocatable memory for BestEffort pods. (2) kube-controller-manager's memory usage scales with the total size of objects stored in etcd (e.g. large ConfigMaps) rather than with object count, because its generic informers watch and cache full objects for every resource type even though the generic controllers using them only need object metadata.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.695977687224665,
+        "bert_score_recall": 0.6993897169015718,
+        "bert_score_f1": 0.697679530421126
+      },
+      "grounding": {
+        "faithfulness": 0.38461538461538464,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    },
+    {
+      "query_id": "v2-neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "generated_answer": "### Probable Root Causes\n1. **User Interface Confusion**: The incident where clicking \"Pay Now\" prompts re-input of payment details suggests a potential issue with the user interface that may confuse users, leading to repeated attempts to submit payment information.\n2. **Payment Method Validation**: Similar incidents indicate that there may be a lack of proper validation or handling of stored payment methods, causing failures in processing even when valid methods are available.\n3. **System Notifications**: The resolution of limiting notifications for billing failures implies that there may have been an overload of alerts that obscured critical issues, potentially leading to missed payment processing failures.\n\n### Confidence Assessment\n- **Moderate Confidence**: The connections drawn from similar incidents provide a reasonable basis for the identified root causes, but the specific mechanisms behind the current payment processing failure remain uncertain. The resolution of similar issues does not guarantee that the same causes apply here.\n\n### Supporting Evidence\n- The resolved incident regarding the \"Pay Now\" button indicates a user experience issue that could directly relate to the current problem.\n- The notification limitation resolution suggests that previous billing failures may have been overlooked due to excessive alerts, which could correlate with the current failure in payment processing.\n- The ongoing issues with other integrations and systems (e.g., Bitbucket installation failure) highlight potential systemic problems that could affect payment processing.\n\n### Recommended Actions\n1. **User Interface Review**: Conduct a thorough review of the checkout flow to identify and rectify any confusing elements that may lead to repeated payment method inputs.\n2. **Payment Method Handling**: Implement robust validation checks for stored payment methods to ensure they are correctly recognized and utilized during the checkout process.\n3. **Alert Management**: Reassess the notification system to ensure that critical payment processing alerts are prioritized and visible to relevant team members.\n4. **Monitoring and Logging**: Enhance logging around payment processing failures to capture detailed error messages and user actions leading up to the failure for better diagnosis.\n5. **User Feedback Mechanism**: Introduce a mechanism for users to report issues directly during the checkout process to gather real-time data on user experience and potential pain points.",
+      "reference_answer": "No incident in the retrieved corpus corresponds to this query. The tracked corpus covers software infrastructure issues from specific open-source GitHub repositories (e.g. Kubernetes, Terraform, Redis, Istio, Helm, Ray, Sentry, LangChain) and Jira projects (Kafka, Spark, Cassandra); it does not include consumer-facing checkout or payment-processing systems. This query falls outside the scope of the tracked systems, so no relevant root cause can be reported from this corpus.",
+      "num_contexts": 10,
+      "generation": {
+        "bert_score_precision": 0.3744065943133626,
+        "bert_score_recall": 0.3533260651539714,
+        "bert_score_f1": 0.36356100558484755
+      },
+      "grounding": {
+        "faithfulness": null,
+        "answer_relevancy": null,
+        "context_precision": null,
+        "context_recall": null,
+        "context_entity_recall": null
+      },
+      "skipped": false,
+      "skip_reason": null,
+      "notes": [
+        "faithfulness failed on 1/1 repetition(s): GroundingResponseError(\"grounding LLM response field 'verdicts' must have exactly 15 entries, got 16\")",
+        "answer_relevancy skipped: disabled in 'fast' mode",
+        "context_precision skipped: disabled in 'fast' mode",
+        "context_recall skipped: disabled in 'fast' mode",
+        "context_entity_recall skipped: disabled in 'fast' mode"
+      ],
+      "grounding_stability": null
+    }
+  ],
+  "generation_aggregate": {
+    "num_scored": 10,
+    "bert_score_precision": {
+      "count": 10,
+      "mean": 0.546693003098602,
+      "median": 0.5462377365228901,
+      "minimum": 0.3744065943133626,
+      "maximum": 0.695977687224665
+    },
+    "bert_score_recall": {
+      "count": 10,
+      "mean": 0.5675404143990532,
+      "median": 0.5571253774513174,
+      "minimum": 0.3533260651539714,
+      "maximum": 0.7102936233352544
+    },
+    "bert_score_f1": {
+      "count": 10,
+      "mean": 0.555383270801255,
+      "median": 0.5508227187713013,
+      "minimum": 0.36356100558484755,
+      "maximum": 0.697679530421126
+    }
+  },
+  "grounding_aggregate": {
+    "num_scored": 10,
+    "faithfulness": {
+      "count": 8,
+      "mean": 0.3371394230769231,
+      "median": 0.1875,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "answer_relevancy": null,
+    "context_precision": null,
+    "context_recall": null,
+    "context_entity_recall": null
+  },
+  "started_at": "2026-08-10T17:23:44.835981+00:00",
+  "finished_at": "2026-08-10T17:27:32.225861+00:00",
+  "duration_seconds": 227.391,
+  "evaluation_mode": "fast",
+  "repetitions": 1,
+  "metric_variance": null,
+  "metric_confidence": null
+}

@@ -1,0 +1,922 @@
+{
+  "Ephemeral resources renewal diagnostics silently dropped due to discarded Append return": [
+    {
+      "incident_id": "009e7d08-fc87-4966-bde8-df51c3af96fd",
+      "source_type": "github",
+      "source_external_id": "hashicorp/terraform#38574",
+      "title": "Ephemeral resources: renewal diagnostics silently dropped due to discarded Append return",
+      "status": "resolved",
+      "similarity_score": 0.7198075819130206,
+      "rank": 1
+    },
+    {
+      "incident_id": "c7c743bc-7c5c-4dae-9db0-03c7ed4d4c49",
+      "source_type": "github",
+      "source_external_id": "hashicorp/terraform#38591",
+      "title": "Race condition in ephemeral resources uncovered after minor fix to recover lost diagnostics",
+      "status": "open",
+      "similarity_score": 0.5161571502685547,
+      "rank": 2
+    },
+    {
+      "incident_id": "8ddf5889-686c-44f2-92e0-32f975f34415",
+      "source_type": "github",
+      "source_external_id": "hashicorp/terraform#37587",
+      "title": "Expand `lifecycle {destroy = false}` to be included by resources",
+      "status": "resolved",
+      "similarity_score": 0.5045345124879779,
+      "rank": 3
+    },
+    {
+      "incident_id": "1be003d3-4ec4-4396-82c5-a551bc58c232",
+      "source_type": "github",
+      "source_external_id": "elastic/elasticsearch#150966",
+      "title": "[CI] ReindexRelocationIT testNonSlicedRemoteReindexRelocation failing",
+      "status": "resolved",
+      "similarity_score": 0.47404393553733826,
+      "rank": 4
+    },
+    {
+      "incident_id": "ccb3e09b-ffad-4744-81da-8383ed9c91f4",
+      "source_type": "github",
+      "source_external_id": "hashicorp/terraform#15472",
+      "title": "A lifecycle flag to never refresh resources",
+      "status": "open",
+      "similarity_score": 0.46619442105293274,
+      "rank": 5
+    },
+    {
+      "incident_id": "cf378044-70dd-4da7-bb13-00779cbd575c",
+      "source_type": "github",
+      "source_external_id": "hashicorp/terraform#35763",
+      "title": "Research alternative lifecycles to support resources which can't work with `create_before_destroy`",
+      "status": "resolved",
+      "similarity_score": 0.4449292752188885,
+      "rank": 6
+    },
+    {
+      "incident_id": "3cc0f9eb-4596-4a6b-8915-21006dd9565e",
+      "source_type": "github",
+      "source_external_id": "elastic/elasticsearch#150892",
+      "title": "[CI] DLMFrozenTransitionDisruptionIT testDeleteMountedFrozenIndexBeforeSwap failing",
+      "status": "resolved",
+      "similarity_score": 0.44426077604293823,
+      "rank": 7
+    },
+    {
+      "incident_id": "eb352108-0043-4f86-a7b4-a1d9042bf57b",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31463",
+      "title": "Race condition when reuse existing resources(pvc)",
+      "status": "resolved",
+      "similarity_score": 0.4416996240615845,
+      "rank": 8
+    },
+    {
+      "incident_id": "63169b18-8024-4540-ae88-536f39ed05d0",
+      "source_type": "github",
+      "source_external_id": "elastic/elasticsearch#150213",
+      "title": "RecoveryTarget referenced after already being closed in IT",
+      "status": "resolved",
+      "similarity_score": 0.4413876270420781,
+      "rank": 9
+    },
+    {
+      "incident_id": "d63592f4-a791-496e-a3db-7969e9477341",
+      "source_type": "github",
+      "source_external_id": "elastic/elasticsearch#149759",
+      "title": "[CI] ReindexRethrottleRelocationIT testRethrottleByOriginalTaskIdAfterRelocation failing",
+      "status": "resolved",
+      "similarity_score": 0.43817269802093506,
+      "rank": 10
+    }
+  ],
+  "ZookeeperConsumerConnectorMBean needs to close SimpleConsumer when done": [
+    {
+      "incident_id": "e0cb99b2-cac0-48f7-a73d-deadd47bb53d",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-17",
+      "title": "ZookeeperConsumerConnectorMBean needs to close SimpleConsumer when done",
+      "status": "resolved",
+      "similarity_score": 0.8593055689748798,
+      "rank": 1
+    },
+    {
+      "incident_id": "d635810b-46f3-4e9f-9170-ff3ffca3e7bd",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-29",
+      "title": "avoid reimplementing ZookeeperConsumerConnectorMBean in javaapi.consumer.ZookeeperConsumerConnector",
+      "status": "resolved",
+      "similarity_score": 0.6866342612126922,
+      "rank": 2
+    },
+    {
+      "incident_id": "f872de35-6b8d-4cd5-b0b2-077782934560",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-563",
+      "title": "KafkaScheduler shutdown in ZookeeperConsumerConnector should check for config.autocommit",
+      "status": "resolved",
+      "similarity_score": 0.6544860807367526,
+      "rank": 3
+    },
+    {
+      "incident_id": "0fd3550b-ad37-47dd-ac66-5dde22cd3815",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-362",
+      "title": "ZookeeperConsumerConnector needs to connect to new leader after leadership change",
+      "status": "resolved",
+      "similarity_score": 0.6287764753369763,
+      "rank": 4
+    },
+    {
+      "incident_id": "e60079de-689c-43d2-815c-cda3a953001a",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-11",
+      "title": "The zookeeper based Producer doesn't remove a dead broker from its list while serving a produce request",
+      "status": "resolved",
+      "similarity_score": 0.601635145946132,
+      "rank": 5
+    },
+    {
+      "incident_id": "4434eaed-7740-4788-b3b7-e9c86713c910",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-120",
+      "title": "Code clean up in FetcherRunnable and ZookeeperConsumerConnector",
+      "status": "resolved",
+      "similarity_score": 0.5880367159843445,
+      "rank": 6
+    },
+    {
+      "incident_id": "88a8c421-ae70-4342-bdb9-76ca51552405",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-553",
+      "title": "confusing reference to zk.connect in config/producer.properties",
+      "status": "resolved",
+      "similarity_score": 0.5681438446044922,
+      "rank": 7
+    },
+    {
+      "incident_id": "fad075c1-2039-49b7-88e8-0ea19c7575a7",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-473",
+      "title": "Use getMetadata Api in ZookeeperConsumerConnector",
+      "status": "resolved",
+      "similarity_score": 0.5678118724935141,
+      "rank": 8
+    },
+    {
+      "incident_id": "4bf58b09-6795-4ba3-aefb-b3519d5c9a77",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-94",
+      "title": "KafkaServer can throw a NullPointerException during startup if zookeeper is down",
+      "status": "resolved",
+      "similarity_score": 0.5553776025772095,
+      "rank": 9
+    },
+    {
+      "incident_id": "915da092-7599-426a-b4b0-e39437946a4a",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-88",
+      "title": "Producer perf test fails against localhost with > 10 threads",
+      "status": "resolved",
+      "similarity_score": 0.5521297721785453,
+      "rank": 10
+    }
+  ],
+  "Opt-in UltraLogLog encoding for HyperLogLog less memory same accuracy": [
+    {
+      "incident_id": "b5ee2a77-5ce3-4b7f-a1e8-aa43d051e441",
+      "source_type": "github",
+      "source_external_id": "redis/redis#15293",
+      "title": "[NEW] Opt-in UltraLogLog encoding for HyperLogLog \u2014 ~33% less memory at the same accuracy",
+      "status": "open",
+      "similarity_score": 0.7161071638933275,
+      "rank": 1
+    },
+    {
+      "incident_id": "80211421-abb2-43ff-b210-a40ae7ca0377",
+      "source_type": "github",
+      "source_external_id": "elastic/elasticsearch#131123",
+      "title": "Prefetch rescoring vectors when possible for dense vector",
+      "status": "resolved",
+      "similarity_score": 0.4244557664122728,
+      "rank": 2
+    },
+    {
+      "incident_id": "53ad3a3d-75fa-47c8-afdf-25203740c833",
+      "source_type": "jira",
+      "source_external_id": "CASSANDRA-14549",
+      "title": "Transient Replication: support logged batches",
+      "status": "open",
+      "similarity_score": 0.40610939264297485,
+      "rank": 3
+    },
+    {
+      "incident_id": "f63c6ca0-4a1a-483b-bf56-77ce7f2aa2ff",
+      "source_type": "github",
+      "source_external_id": "redis/redis#14444",
+      "title": "[QUESTION]if the macro \u2018serverLog\u2019 can be used in multi-thread scenario\uff1f",
+      "status": "open",
+      "similarity_score": 0.3930533230304718,
+      "rank": 4
+    },
+    {
+      "incident_id": "bb74ef82-99fa-4145-b00b-4b4c25fdb36a",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-577",
+      "title": "extend DumpLogSegments to verify consistency btw data and index",
+      "status": "resolved",
+      "similarity_score": 0.3891356289386749,
+      "rank": 5
+    },
+    {
+      "incident_id": "83a3e150-57e8-4873-b432-d5606dd9c064",
+      "source_type": "github",
+      "source_external_id": "ray-project/ray#60437",
+      "title": "[core][rdt] Decrease sender side memory-registration overhead by registering per storage instead of per tensor",
+      "status": "resolved",
+      "similarity_score": 0.38516619117058526,
+      "rank": 6
+    },
+    {
+      "incident_id": "4834243c-6b00-480b-bf19-1e2e59af25ae",
+      "source_type": "jira",
+      "source_external_id": "CASSANDRA-13746",
+      "title": "Anti-Compaction log messages do not have enough information",
+      "status": "open",
+      "similarity_score": 0.3844965696334839,
+      "rank": 7
+    },
+    {
+      "incident_id": "35a4ed16-9c0c-470d-9e2a-e2cea208e4b2",
+      "source_type": "jira",
+      "source_external_id": "CASSANDRA-13596",
+      "title": "Separation of commit logs on VM",
+      "status": "resolved",
+      "similarity_score": 0.38425470778290216,
+      "rank": 8
+    },
+    {
+      "incident_id": "461cd02b-f3dd-4a92-8a53-96cf4a92605c",
+      "source_type": "jira",
+      "source_external_id": "KAFKA-614",
+      "title": "DumpLogSegment offset verification is incorrect for compressed messages",
+      "status": "resolved",
+      "similarity_score": 0.3770835770914813,
+      "rank": 9
+    },
+    {
+      "incident_id": "5093809d-6939-4085-bc75-bd386bf253b8",
+      "source_type": "github",
+      "source_external_id": "ray-project/ray#59967",
+      "title": "[Data] SessionFileHandler uses cp1252 encoding on windows resulting in logging errors",
+      "status": "resolved",
+      "similarity_score": 0.3752198815345764,
+      "rank": 10
+    }
+  ],
+  "A cross-cluster TLS policy backed by config maps in other namespaces occasionally fails to sync its certificate discovery data on the gateway": [
+    {
+      "incident_id": "fac523b9-ce50-49e5-9c19-44d1be6fa632",
+      "source_type": "github",
+      "source_external_id": "istio/istio#58427",
+      "title": "Ztunnel gives invalid peer certificate looking for cluster.local with custom TrustDomain and Alias set.",
+      "status": "resolved",
+      "similarity_score": 0.5893510755703176,
+      "rank": 1
+    },
+    {
+      "incident_id": "344c7be7-b353-4115-96b1-0d3be6ccf720",
+      "source_type": "github",
+      "source_external_id": "istio/istio#60197",
+      "title": "BackendTLSPolicy resolves ConfigMap credential as invalid:// during istiod startup (KRT collection ordering race)",
+      "status": "open",
+      "similarity_score": 0.5659992357492912,
+      "rank": 2
+    },
+    {
+      "incident_id": "ff96e83d-b085-4487-a9f0-9f6e44d948cf",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#64",
+      "title": "Secure API endpoint from MITM attacks",
+      "status": "resolved",
+      "similarity_score": 0.5480959684791593,
+      "rank": 3
+    },
+    {
+      "incident_id": "57006187-5bef-4dee-b2d7-8b37ac377744",
+      "source_type": "github",
+      "source_external_id": "istio/istio#59021",
+      "title": "[1.28.1] Gateway API BackendTLSPolicy cross-namespace ConfigMap CAs intermittently fail SDS sync (invalid:// WARMING)",
+      "status": "resolved",
+      "similarity_score": 0.5335325002670288,
+      "rank": 4
+    },
+    {
+      "incident_id": "c7db5adf-37ec-4361-9055-480b15ca279e",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31248",
+      "title": "--insecure-skip-tls-verify not working",
+      "status": "resolved",
+      "similarity_score": 0.5264097420680868,
+      "rank": 5
+    },
+    {
+      "incident_id": "afac7ca3-9764-49bc-b381-bad7708e4e1e",
+      "source_type": "github",
+      "source_external_id": "golang/go#24673",
+      "title": "crypto/tls: provide a way to access local certificate used to set up a connection [freeze exception]",
+      "status": "resolved",
+      "similarity_score": 0.5263760372176157,
+      "rank": 6
+    },
+    {
+      "incident_id": "19ca90e8-20f2-4ade-9fa9-95d7156fcfc3",
+      "source_type": "github",
+      "source_external_id": "istio/istio#59387",
+      "title": "GatewayAPI TLSRoute now in GatewayAPI v1.5.0 baseline",
+      "status": "open",
+      "similarity_score": 0.512691050011454,
+      "rank": 7
+    },
+    {
+      "incident_id": "9a768b89-503c-48e6-b1ca-e768cedce6a8",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138762",
+      "title": "Kubelet serving certificate rotation silently skipped on a subset of nodes (v1.34.4) \u2014 no CSR, no errors, no logs",
+      "status": "resolved",
+      "similarity_score": 0.5063604116439819,
+      "rank": 8
+    },
+    {
+      "incident_id": "bf5ae903-f2ce-4157-ba96-d0791bea003e",
+      "source_type": "github",
+      "source_external_id": "istio/istio#39001",
+      "title": "Invalid Cert Chain when using Plug in CA Certificates",
+      "status": "open",
+      "similarity_score": 0.5045049781197372,
+      "rank": 9
+    },
+    {
+      "incident_id": "acd3e8db-6dfa-4d07-8545-f75d2b6175ec",
+      "source_type": "github",
+      "source_external_id": "golang/go#79967",
+      "title": "crypto/tls: LocalCertificate is populated on resumed TLS <=1.2 server connections",
+      "status": "resolved",
+      "similarity_score": 0.5027810335159302,
+      "rank": 10
+    }
+  ],
+  "An embeddings wrapper for a BGE-style HuggingFace model lost support without anyone being given an alternative to switch to": [
+    {
+      "incident_id": "407c7712-6b3f-4af4-a013-0a49bfbc9ce5",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#29768",
+      "title": "HuggingFaceBgeEmbeddings was marked as deprecated without proper replacement",
+      "status": "resolved",
+      "similarity_score": 0.5148765155599434,
+      "rank": 1
+    },
+    {
+      "incident_id": "2e895cef-c55d-42f0-bb68-252783737116",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#29787",
+      "title": "HuggingFaceEndpointEmbeddings fails with self-hosted inference server and huggingface-hub==0.28.1",
+      "status": "resolved",
+      "similarity_score": 0.4976124464042462,
+      "rank": 2
+    },
+    {
+      "incident_id": "58b60109-8f94-421b-ac49-3a69dee5ffb7",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#22379",
+      "title": "Tools do not work with HuggingFace - Issue either with tutorial or library",
+      "status": "resolved",
+      "similarity_score": 0.4912161827087438,
+      "rank": 3
+    },
+    {
+      "incident_id": "6d5acaaf-7d14-4ff7-b046-22685a09c023",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#36535",
+      "title": "feat(huggingface): support passing extra kwargs to apply_chat_template in ChatHuggingFace",
+      "status": "resolved",
+      "similarity_score": 0.4600472450256381,
+      "rank": 4
+    },
+    {
+      "incident_id": "766a8251-1614-4c85-9b57-b4df9c8e5486",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#30333",
+      "title": "`ChatHuggingface` is reaching out to huggingface when using local `HuggingFaceEndpoint`",
+      "status": "resolved",
+      "similarity_score": 0.4499512046604702,
+      "rank": 5
+    },
+    {
+      "incident_id": "8475aad7-b6ca-4815-8fd5-cf5b0fd63099",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#36726",
+      "title": "Add Perplexity embedding models",
+      "status": "resolved",
+      "similarity_score": 0.4058217108249693,
+      "rank": 6
+    },
+    {
+      "incident_id": "9eb1aeb1-00b7-418f-b759-d8f1a48a983d",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#37840",
+      "title": "Remove IPEX backend of huggingface integration",
+      "status": "resolved",
+      "similarity_score": 0.39197141575984296,
+      "rank": 7
+    },
+    {
+      "incident_id": "5dc4fdad-9c13-49b3-9ca8-96008fd670e1",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#29521",
+      "title": "Missing model field `huggingface_endpoint.py`",
+      "status": "resolved",
+      "similarity_score": 0.3763431534971693,
+      "rank": 8
+    },
+    {
+      "incident_id": "cfa7763e-a5d1-41dc-b576-077c150066a1",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#34134",
+      "title": "HuggingFacePipeline lacks async_client when used with LangGraph Studio",
+      "status": "resolved",
+      "similarity_score": 0.3617288387852222,
+      "rank": 9
+    },
+    {
+      "incident_id": "5cd07ba7-4a2b-45b2-a232-583d376fb5db",
+      "source_type": "github",
+      "source_external_id": "langchain-ai/langchain#37785",
+      "title": "test(huggingface): add missing standard unit tests for ChatHuggingFace",
+      "status": "resolved",
+      "similarity_score": 0.36035469174385326,
+      "rank": 10
+    }
+  ],
+  "The GPU memory figure shown on the cluster monitoring dashboard reflects what's actively in use rather than what was reserved": [
+    {
+      "incident_id": "e0948878-3f89-4265-8d21-4a013c12b0cd",
+      "source_type": "github",
+      "source_external_id": "redis/redis#13973",
+      "title": "[BUG] used_memory_dataset can be exorbitantly higher than used_memory",
+      "status": "resolved",
+      "similarity_score": 0.5390483094396222,
+      "rank": 1
+    },
+    {
+      "incident_id": "daa5ea44-dd5d-43e2-a72e-849a7beeb1a9",
+      "source_type": "jira",
+      "source_external_id": "SPARK-596",
+      "title": "Memory Dashboard",
+      "status": "resolved",
+      "similarity_score": 0.5382705881273046,
+      "rank": 2
+    },
+    {
+      "incident_id": "7c774eff-fb24-4c02-90f5-5a73f52fdcd4",
+      "source_type": "github",
+      "source_external_id": "ray-project/ray#36443",
+      "title": "[Data] Specify memory resource for each operator",
+      "status": "resolved",
+      "similarity_score": 0.5045793947828185,
+      "rank": 3
+    },
+    {
+      "incident_id": "644d35bf-37ac-4b63-b951-612683cc1031",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#132286",
+      "title": "Support resources overcommit for cpu memory",
+      "status": "resolved",
+      "similarity_score": 0.5030177531827844,
+      "rank": 4
+    },
+    {
+      "incident_id": "baf0362c-164f-41da-81ad-fa4d756634b8",
+      "source_type": "github",
+      "source_external_id": "ray-project/ray#61456",
+      "title": "[core][observability] Ray Dashboard per process GRAM usage measures utilization and not allocated memory",
+      "status": "resolved",
+      "similarity_score": 0.48465697513053096,
+      "rank": 5
+    },
+    {
+      "incident_id": "92b7aa84-69d5-4332-aaff-7a1585503587",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138489",
+      "title": "Failure cluster [998d43be...] [sig-node] MemoryQoS [Serial] feature rollback should reset memory protection to 0 when MemoryQoS is disabled",
+      "status": "resolved",
+      "similarity_score": 0.46306509219824177,
+      "rank": 6
+    },
+    {
+      "incident_id": "6a970441-3ff6-4924-937f-246eda8ca3a9",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138650",
+      "title": "Failure cluster [a44417f1...] ci-kubernetes-e2e-gce-device-plugin-gpu and ci-kubernetes-e2e-gce-device-plugin-gpu-1-36 are failing",
+      "status": "resolved",
+      "similarity_score": 0.45539686349649133,
+      "rank": 7
+    },
+    {
+      "incident_id": "ebe4a527-514b-456d-9a45-7fb85591f27c",
+      "source_type": "github",
+      "source_external_id": "prometheus/prometheus#17888",
+      "title": "High memory consumption leading to OOM in Kubernetes - memory usage peaks at 80GB+",
+      "status": "resolved",
+      "similarity_score": 0.44786358190396025,
+      "rank": 8
+    },
+    {
+      "incident_id": "e30f3c8f-8db9-4d7b-8f0a-0282a20bca15",
+      "source_type": "jira",
+      "source_external_id": "SPARK-532",
+      "title": "Log something when no resources have been offered in the cluster",
+      "status": "resolved",
+      "similarity_score": 0.4471132488779286,
+      "rank": 9
+    },
+    {
+      "incident_id": "be55ecf8-9037-4acb-a8e6-a5ad8c659763",
+      "source_type": "github",
+      "source_external_id": "ray-project/ray#40607",
+      "title": "[data]  issues with `locality_with_output` on heterogeneous clusters",
+      "status": "resolved",
+      "similarity_score": 0.4455640678925433,
+      "rank": 10
+    }
+  ],
+  "Helm plugin lifecycle problems: the update command failing, and the plugin version environment variable not being passed to install/update/delete scripts": [
+    {
+      "incident_id": "a4590d23-46a4-4541-81e6-a412d30e948c",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31770",
+      "title": "pass HELM_PLUGIN_VERSION to plugin install/update/delete scripts",
+      "status": "resolved",
+      "similarity_score": 0.7733926638002805,
+      "rank": 1
+    },
+    {
+      "incident_id": "85d65f14-074f-4a1f-8520-25067c462496",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31664",
+      "title": "Helm plugin update fails",
+      "status": "open",
+      "similarity_score": 0.7209094000404729,
+      "rank": 2
+    },
+    {
+      "incident_id": "e9c9da08-973b-4877-866a-981fb903bb57",
+      "source_type": "github",
+      "source_external_id": "helm/helm#12351",
+      "title": "get-helm-3 script is failing on getting \"latest\" release tag",
+      "status": "resolved",
+      "similarity_score": 0.671576142311101,
+      "rank": 3
+    },
+    {
+      "incident_id": "9fc8cedc-a563-405f-a33f-3b22669f607f",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31490",
+      "title": "Helm 4.0.0 cannot install plugin https://github.com/psbds/helm-release-plugin",
+      "status": "open",
+      "similarity_score": 0.6684065263513652,
+      "rank": 4
+    },
+    {
+      "incident_id": "186bdecc-fbb2-4e57-a2e4-3768a8f86eb6",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31627",
+      "title": "--server-side is not respected with helm upgrade --install",
+      "status": "resolved",
+      "similarity_score": 0.667363743028865,
+      "rank": 5
+    },
+    {
+      "incident_id": "a00aae19-0e00-4803-ac2d-bb04fe2d59d1",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31455",
+      "title": "helm template --dependency-update does not update dependencies",
+      "status": "open",
+      "similarity_score": 0.6638700165671132,
+      "rank": 6
+    },
+    {
+      "incident_id": "a21ed44d-ce4f-412a-8eaa-49c09d334ea8",
+      "source_type": "github",
+      "source_external_id": "helm/helm#11310",
+      "title": "Helm supports unix style path in HELM_PLUGINS for loading, but fails when installing new plugins",
+      "status": "open",
+      "similarity_score": 0.6628936924274988,
+      "rank": 7
+    },
+    {
+      "incident_id": "f82bcfc0-1a2e-4c3e-9ab0-0e4b3af6b37f",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31905",
+      "title": "`helm test` return code is 0 on failure",
+      "status": "open",
+      "similarity_score": 0.6557931098814683,
+      "rank": 8
+    },
+    {
+      "incident_id": "1ee6c53c-4e66-4bda-9370-f553ad98c661",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31757",
+      "title": "Helm 4: Emits \"unable to find exact version\" when a version range was specified",
+      "status": "resolved",
+      "similarity_score": 0.6548980864821735,
+      "rank": 9
+    },
+    {
+      "incident_id": "b42a7db3-d281-47ad-bfc6-eb25c1878e2f",
+      "source_type": "github",
+      "source_external_id": "helm/helm#31355",
+      "title": "helm repo update works but helm dep up fail with 401",
+      "status": "resolved",
+      "similarity_score": 0.6522438526153611,
+      "rank": 10
+    }
+  ],
+  "Sentry GitHub/GitLab source integration issues: a GitLab integration problem, and supporting relative path resolution in stack trace sources via the GitHub integration": [
+    {
+      "incident_id": "bc7590a3-e7fc-43ec-bf36-48a942829475",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#93724",
+      "title": "Seer GitLab integration",
+      "status": "open",
+      "similarity_score": 0.7142086029052734,
+      "rank": 1
+    },
+    {
+      "incident_id": "4bffd99b-9263-475d-bcb9-3f59c5a4a554",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#63082",
+      "title": "Better support for relative paths in sources with the GitHub integration: make mappings apply on resolved urls, not sources",
+      "status": "resolved",
+      "similarity_score": 0.6810276508331299,
+      "rank": 2
+    },
+    {
+      "incident_id": "24984dba-7532-4f12-8555-b99761bc835e",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#88085",
+      "title": "Support Github-powered Source Context",
+      "status": "resolved",
+      "similarity_score": 0.6626802287888403,
+      "rank": 3
+    },
+    {
+      "incident_id": "401786fa-2d95-4d25-b3c7-96695c8930cf",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#112917",
+      "title": "GitHub Integration Problem",
+      "status": "resolved",
+      "similarity_score": 0.6585756147756818,
+      "rank": 4
+    },
+    {
+      "incident_id": "28e607c1-9fde-485b-b42c-f5bcb75195b0",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#115178",
+      "title": "GitHub Integration Problem",
+      "status": "resolved",
+      "similarity_score": 0.643883466720581,
+      "rank": 5
+    },
+    {
+      "incident_id": "8b3ea9cf-785b-4aed-9ace-b3ae23e2aa48",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#86675",
+      "title": "Enable Suspect Commits Without Requiring Git Provider Integration",
+      "status": "resolved",
+      "similarity_score": 0.6404378628469799,
+      "rank": 6
+    },
+    {
+      "incident_id": "9ab572dc-4483-496a-8f7e-d4473cef8a19",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#95253",
+      "title": "GitHub Integration Problem",
+      "status": "resolved",
+      "similarity_score": 0.6364632844924927,
+      "rank": 7
+    },
+    {
+      "incident_id": "3103cb05-8fe0-4de8-b33e-7ba73ca1c00f",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#104519",
+      "title": "GitHub Integration Problem",
+      "status": "resolved",
+      "similarity_score": 0.6364632844924927,
+      "rank": 8
+    },
+    {
+      "incident_id": "bc34acbf-ee44-478b-9d6a-f0f12a665025",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#107829",
+      "title": "GitHub Integration Problem",
+      "status": "resolved",
+      "similarity_score": 0.6302626132965088,
+      "rank": 9
+    },
+    {
+      "incident_id": "82435c26-6864-4511-9b4f-364a269f96ad",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#116698",
+      "title": "GitHub Integration Problem",
+      "status": "open",
+      "similarity_score": 0.6302626132965088,
+      "rank": 10
+    }
+  ],
+  "Kubernetes memory management issues: MemoryQoS not setting memory.high for BestEffort pods, and high memory usage in kube-controller-manager from caching full objects": [
+    {
+      "incident_id": "85b855a6-dfba-451b-beab-3ff9ce1cd33a",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#137685",
+      "title": "MemoryQoS does not set memory.high for BestEffort pods on cgroup v2",
+      "status": "resolved",
+      "similarity_score": 0.851235049815768,
+      "rank": 1
+    },
+    {
+      "incident_id": "19ff5b1a-80c4-4c41-bb55-2fc970006bb5",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#115699",
+      "title": "High memory usage of kube-controller-manager for caching full objects",
+      "status": "resolved",
+      "similarity_score": 0.8115273230357588,
+      "rank": 2
+    },
+    {
+      "incident_id": "bb43a798-b8e1-4c64-9836-fd3244ced3dd",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138436",
+      "title": "kubelet: QoS-level memory.min / memory.low is not cleared after MemoryQoS feature gate is disabled (regression from #138430)",
+      "status": "resolved",
+      "similarity_score": 0.7535257633297725,
+      "rank": 3
+    },
+    {
+      "incident_id": "b5811cfc-710e-49db-a95c-fef30971e6a6",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#131319",
+      "title": "Default memory eviction-hard threshold in kubernetes should be set more than `vm.min_free_kbytes`",
+      "status": "resolved",
+      "similarity_score": 0.7123213753317147,
+      "rank": 4
+    },
+    {
+      "incident_id": "ebe4a527-514b-456d-9a45-7fb85591f27c",
+      "source_type": "github",
+      "source_external_id": "prometheus/prometheus#17888",
+      "title": "High memory consumption leading to OOM in Kubernetes - memory usage peaks at 80GB+",
+      "status": "resolved",
+      "similarity_score": 0.7055468138726477,
+      "rank": 5
+    },
+    {
+      "incident_id": "644d35bf-37ac-4b63-b951-612683cc1031",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#132286",
+      "title": "Support resources overcommit for cpu memory",
+      "status": "resolved",
+      "similarity_score": 0.6507437437329456,
+      "rank": 6
+    },
+    {
+      "incident_id": "92b7aa84-69d5-4332-aaff-7a1585503587",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138489",
+      "title": "Failure cluster [998d43be...] [sig-node] MemoryQoS [Serial] feature rollback should reset memory protection to 0 when MemoryQoS is disabled",
+      "status": "resolved",
+      "similarity_score": 0.6287778462436382,
+      "rank": 7
+    },
+    {
+      "incident_id": "fe676285-6139-4eda-afe0-51335c0e207d",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#138431",
+      "title": "kubepods.slice cgroups (memory and cpu) are reset every minute by kubelet",
+      "status": "resolved",
+      "similarity_score": 0.6199276077790505,
+      "rank": 8
+    },
+    {
+      "incident_id": "f22be17c-2368-414b-b042-8cb7d8178f7f",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#135379",
+      "title": "Add pv&pvc cacheManager to dswp in kubelet like secret&confimap",
+      "status": "resolved",
+      "similarity_score": 0.6080582971538139,
+      "rank": 9
+    },
+    {
+      "incident_id": "a12ef7d5-8b1f-42f3-9905-5a57df433abb",
+      "source_type": "github",
+      "source_external_id": "kubernetes/kubernetes#38806",
+      "title": "Pod will be created again and again when we have not enough cpu.",
+      "status": "resolved",
+      "similarity_score": 0.6063370812528595,
+      "rank": 10
+    }
+  ],
+  "credit card payment processing failure in the checkout flow": [
+    {
+      "incident_id": "6218093d-f027-4405-8c17-0c9d912eb0f3",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#85036",
+      "title": "[Pay Now] Clicking pay now prompts to re-input a payment method (even if one is already on file)",
+      "status": "resolved",
+      "similarity_score": 0.5203806472051539,
+      "rank": 1
+    },
+    {
+      "incident_id": "7ae1704a-b986-44e3-9816-be75927253f7",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#106064",
+      "title": "Limit notifications for billing failure in Sentry UI to Org Owner or Billing Member",
+      "status": "resolved",
+      "similarity_score": 0.43705713748931885,
+      "rank": 2
+    },
+    {
+      "incident_id": "37c69a79-03b5-48e8-a2c0-b6b085617c4c",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#86110",
+      "title": "[PAYG/OD] Cap PAYG/OD budget in place upon Cancellation",
+      "status": "resolved",
+      "similarity_score": 0.36011505126953125,
+      "rank": 3
+    },
+    {
+      "incident_id": "af0c4ebe-abae-48e2-8eb2-df19a97040aa",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#76940",
+      "title": "Allow Rate Limit per Billing Cycle",
+      "status": "resolved",
+      "similarity_score": 0.35771435499191284,
+      "rank": 4
+    },
+    {
+      "incident_id": "307fc4b5-b228-4ea6-bcc1-196c48730b72",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#55020",
+      "title": "Alerts about crash-free sessions from specific error",
+      "status": "open",
+      "similarity_score": 0.35199907422065735,
+      "rank": 5
+    },
+    {
+      "incident_id": "7a41eca3-54fe-49fd-a12b-07e8ab20b8a0",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#115105",
+      "title": "Bitbucket integration failing to install with error \"Unable to continue. Please restart the flow.\"",
+      "status": "open",
+      "similarity_score": 0.3518434166908264,
+      "rank": 6
+    },
+    {
+      "incident_id": "17dc1682-4745-4ad4-af11-eea42629a984",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#109771",
+      "title": "Cron check-ins incorrectly marked as timed-out despite successful SDK sends",
+      "status": "open",
+      "similarity_score": 0.3502041697502136,
+      "rank": 7
+    },
+    {
+      "incident_id": "4403c00b-eed8-4650-bb1a-0e17dbd80afc",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#117050",
+      "title": "Recovering an organization fails/is confusing",
+      "status": "resolved",
+      "similarity_score": 0.3465034755168279,
+      "rank": 8
+    },
+    {
+      "incident_id": "6d5bca84-ca2a-4c35-9c59-97676af6081a",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#116118",
+      "title": "Accept invitation flow consumes invite with the currently logged-in account instead of the invited email",
+      "status": "open",
+      "similarity_score": 0.3460239561781915,
+      "rank": 9
+    },
+    {
+      "incident_id": "3cb7b4d3-917d-48e4-9d4d-2a08610512fa",
+      "source_type": "github",
+      "source_external_id": "getsentry/sentry#116564",
+      "title": "Add more details to Cron Check-In Issues",
+      "status": "open",
+      "similarity_score": 0.34479139180234775,
+      "rank": 10
+    }
+  ]
+}

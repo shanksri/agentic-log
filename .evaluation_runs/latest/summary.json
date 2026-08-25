@@ -1,0 +1,17 @@
+{
+  "start_time": "2026-08-14T19:44:14.349109+00:00",
+  "end_time": "2026-08-14T19:47:20.895018+00:00",
+  "duration_seconds": 186.547,
+  "retrieval_queries": 0,
+  "reasoning_scenarios": 0,
+  "judge_evaluations": 0,
+  "warnings": [
+    "Retrieval evaluation skipped (run_retrieval=False).",
+    "Reasoning evaluation skipped (run_reasoning=False).",
+    "Judge evaluation skipped (run_judge=False).",
+    "Failure analysis skipped (run_failure_analysis=False).",
+    "Judge validation skipped (run_validation=False)."
+  ],
+  "errors": [],
+  "generation_queries": 10
+}

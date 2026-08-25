@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "description": "Phase 22D generation/grounding-evaluation subset: 10 queries selected from tests/eval/gold/phase17c_benchmark_v1.json (36 queries), covering all 4 categories (lexical-overlap, paraphrase, multi-concept, no-match-expected), all 3 difficulties (easy, medium, hard), single- and multi-expected-incident queries, and 9 distinct source repos/projects across both GitHub and Jira. Adds a human-authored reference_answer to each query, grounded in the actual incident content read from the live database. The original phase17c_benchmark_v1.json is unmodified; this is a derived, separate file.",
+  "created_at": "2026-07-04T00:00:00Z",
+  "author": "phase-22d",
+  "corpus_fingerprint": null,
+  "queries": [
+    {
+      "id": "v2-lex-01",
+      "query": "Ephemeral resources renewal diagnostics silently dropped due to discarded Append return",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "hashicorp/terraform#38574",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "The renewal failure is caused by an internal bug in Terraform's ephemeral resource handling (internal/terraform/node_resource_ephemeral.go, handleRenewal function): when an ephemeral resource's renewal fails, the resulting error diagnostics are discarded instead of being returned, so Terraform never surfaces the renewal failure or marks the resource unhealthy. Any ephemeral resource that encounters a renewal error is affected. The issue is marked resolved."
+    },
+    {
+      "id": "v2-lex-08",
+      "query": "ZookeeperConsumerConnectorMBean needs to close SimpleConsumer when done",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {
+          "source_type": "jira",
+          "source_external_id": "KAFKA-17",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "The ZookeeperConsumerConnectorMBean does not close its underlying SimpleConsumer connection when it is done being used, leaking the connection. Logged as high severity; the fix has shipped (status: Fixed). Note: the source ticket contains no further diagnostic detail beyond the title and resolution status."
+    },
+    {
+      "id": "v2-lex-03",
+      "query": "Opt-in UltraLogLog encoding for HyperLogLog less memory same accuracy",
+      "category": "lexical-overlap",
+      "difficulty": "easy",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "redis/redis#15293",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "This is a feature proposal, not a bug report: Redis's dense HyperLogLog implementation is fixed at HLL_P=14 (12 KB per key), which dominates memory for workloads keeping many HLL keys (e.g. per-page or per-user unique-visitor counters). The proposal adds UltraLogLog as an opt-in dense encoding for the PF* commands, preserving HLL's properties (commutative, idempotent, mergeable, constant-time add) while using roughly 33% less memory at the same accuracy. As of this record the proposal is open, not yet merged."
+    },
+    {
+      "id": "v2-para-04",
+      "query": "A cross-cluster TLS policy backed by config maps in other namespaces occasionally fails to sync its certificate discovery data on the gateway",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "istio/istio#59021",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "Gateway pods intermittently fail to receive BackendTLSPolicy ConfigMap CAs referenced from a different namespace during SDS delivery, typically surfacing during CSI secret rotation or config changes. An affected pod shows an invalid:// WARMING state in 'istioctl proxy-config secret' even while sibling pods in the same Deployment show the ConfigMap as ACTIVE; traffic to the affected pod fails with TLS errors (503s, 'Secret is not supplied by SDS'), and the pod does not self-recover, staying Running/Ready despite the broken TLS state. Reported against Istio 1.28.1 and tracked as resolved, though the specific code fix is not captured in this record."
+    },
+    {
+      "id": "v2-para-06",
+      "query": "An embeddings wrapper for a BGE-style HuggingFace model lost support without anyone being given an alternative to switch to",
+      "category": "paraphrase",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "langchain-ai/langchain#29768",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "Instantiating HuggingFaceBgeEmbeddings from langchain_community.embeddings (e.g. with a BAAI/bge-m3 model) triggers a LangChainDeprecationWarning stating the class was deprecated in LangChain 0.2.2 and will be removed in 1.0 -- but at the time this was filed, users reported the warning did not clearly point to a working replacement class or import path. Status: resolved."
+    },
+    {
+      "id": "v2-para-10",
+      "query": "The GPU memory figure shown on the cluster monitoring dashboard reflects what's actively in use rather than what was reserved",
+      "category": "paraphrase",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "ray-project/ray#61456",
+          "relevance": 3
+        }
+      ],
+      "reference_answer": "Ray Dashboard's per-process GRAM figure is computed from pynvml.nvmlDeviceGetProcessesUtilizationInfo().memUtil, which measures the percentage of time the GPU memory bus was active (read/write activity), not the amount of memory actually allocated by the process. As a result, the GRAM value shown on the Dashboard diverges from the ray_node_gram_used Prometheus metric, which does reflect real allocation. Reported against Ray 2.54; status: resolved."
+    },
+    {
+      "id": "v2-multi-02",
+      "query": "Helm plugin lifecycle problems: the update command failing, and the plugin version environment variable not being passed to install/update/delete scripts",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "helm/helm#31664",
+          "relevance": 3
+        },
+        {
+          "source_type": "github",
+          "source_external_id": "helm/helm#31770",
+          "relevance": 2
+        }
+      ],
+      "reference_answer": "Two distinct plugin-lifecycle issues, not one: (1) 'helm plugin update <name>' fails with 'failed to update plugin, got error (plugin repo was modified)' -- the install/update process itself writes to the plugin's plugin.yaml inside its git clone, which makes the VCS installer's own dirty-repo check reject the update it just performed. (2) A separate, long-open enhancement request asks Helm to pass the plugin's .version (from plugin.yaml) into install/update/delete scripts, so those scripts don't have to hardcode or guess the version being installed -- this second item is a feature gap, not a failure, and was auto-flagged stale after 90 days of inactivity."
+    },
+    {
+      "id": "v2-multi-06",
+      "query": "Sentry GitHub/GitLab source integration issues: a GitLab integration problem, and supporting relative path resolution in stack trace sources via the GitHub integration",
+      "category": "multi-concept",
+      "difficulty": "medium",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "getsentry/sentry#63082",
+          "relevance": 3
+        },
+        {
+          "source_type": "github",
+          "source_external_id": "getsentry/sentry#100943",
+          "relevance": 2
+        }
+      ],
+      "reference_answer": "Two separate source-integration problems: (1) Sentry's GitHub integration resolves relative paths in JavaScript sourcemaps using an overbroad assumption (e.g. treating '../../../../' as always mapping to the repo root) instead of resolving them relative to the sourcemap's own baseUrl/containing folder, which breaks for files at other nesting depths. (2) Sentry's GitLab integration fails during the OAuth token exchange with a RestrictedIPAddress error ('matches the URL blocklist') on self-hosted instances, even after the user enabled GitLab's 'allow local network requests' options -- the specific blocklist mechanism causing the rejection is not identified in the report."
+    },
+    {
+      "id": "v2-multi-03",
+      "query": "Kubernetes memory management issues: MemoryQoS not setting memory.high for BestEffort pods, and high memory usage in kube-controller-manager from caching full objects",
+      "category": "multi-concept",
+      "difficulty": "hard",
+      "expected_incidents": [
+        {
+          "source_type": "github",
+          "source_external_id": "kubernetes/kubernetes#137685",
+          "relevance": 3
+        },
+        {
+          "source_type": "github",
+          "source_external_id": "kubernetes/kubernetes#115699",
+          "relevance": 2
+        }
+      ],
+      "reference_answer": "Two distinct Kubernetes memory issues: (1) On cgroup v2 nodes with MemoryQoS enabled, kubelet skips setting memory.high entirely for BestEffort pods (both memory requests and limits are 0), leaving it unset/max -- inconsistent with the MemoryQoS KEP formula, which specifies memory.high should be derived from node-allocatable memory for BestEffort pods. (2) kube-controller-manager's memory usage scales with the total size of objects stored in etcd (e.g. large ConfigMaps) rather than with object count, because its generic informers watch and cache full objects for every resource type even though the generic controllers using them only need object metadata."
+    },
+    {
+      "id": "v2-neg-01",
+      "query": "credit card payment processing failure in the checkout flow",
+      "category": "no-match-expected",
+      "difficulty": "hard",
+      "expected_incidents": [],
+      "reference_answer": "No incident in the retrieved corpus corresponds to this query. The tracked corpus covers software infrastructure issues from specific open-source GitHub repositories (e.g. Kubernetes, Terraform, Redis, Istio, Helm, Ray, Sentry, LangChain) and Jira projects (Kafka, Spark, Cassandra); it does not include consumer-facing checkout or payment-processing systems. This query falls outside the scope of the tracked systems, so no relevant root cause can be reported from this corpus."
+    }
+  ]
+}

@@ -234,6 +234,39 @@ inspecting logs.
 The docstring frames the next question as "how to consume this" — answered by Phase 18A/18B
 (routing integration).
 
+### Update — dense floor (post-reset corpus recheck)
+
+Phase 18D's own benchmark (`.benchmarks/phase18d/`) was re-checked with `expand=False`,
+`rerank=False` against a restored corpus to isolate retrieval-strategy effects from LLM query-
+expansion's run-to-run variance (the original benchmark ran expand/rerank ON with independently
+constructed, separately-timed `LLMService` instances per config — non-deterministic, and never
+repeated, so a single-repetition per-query difference between configs wasn't distinguishable from
+sampling noise). The deterministic re-check confirmed a real, reproducible regression: pure RRF
+fusion dropped gold query `v2-para-10`'s correct incident (`ray-project/ray#61456`, dense rank 8)
+out of the top 10 entirely — ten other `ray-project` issues sharing generic terms ("memory", "GPU",
+"dashboard") with the paraphrased query scored on *both* dense and BM25, each earning two RRF
+terms, while the correct incident (absent from BM25's candidate pool — a pure paraphrase with no
+lexical overlap) earned only one and fell below the cutoff.
+
+Checking all 20 gold queries the router sends to hybrid (not just this one) showed this is not a
+"hybrid is worse, avoid it" story: 3 other queries' rankings *improved* under fusion (MRR gains of
+0.5–0.75), and in every improved case the correct incident was present in **both** retrievers'
+candidate pools already — fusion only ever displaced a correct answer when one retriever couldn't
+see it at all. Neither of the router's two corpus-independent signals (token count, lexical
+density) separated the 3 helped queries from the 2 hurt ones, so a routing-level fix would have
+had to sacrifice real wins to prevent the regression — the router (Phase 18A) fundamentally cannot
+see which documents BM25 will return, only the query text.
+
+The fix landed in fusion instead: `_fuse()` now guarantees any document in dense's own
+top-`limit` result set survives into the fused top-`limit` output, even if pure RRF summing would
+have excluded it (displacing the weakest entry that isn't itself a dense-top-`limit` member — see
+`hybrid_search.py`'s "Dense floor" docstring section for the full mechanism and
+`tests/unit/test_hybrid_search.py`'s dense-floor tests). Post-fix, the same deterministic 36-query
+re-check shows hybrid strictly dominating dense on this gold set — identical recall (0.9643, both)
+but better ranking quality (MRR 0.9092 vs. 0.8646, NDCG@10 0.9018 vs. 0.8702) — because the floor
+closed the one loss without touching any of the genuine fusion-driven wins (which never needed
+rescuing in the first place).
+
 ---
 
 ## Phase 18A — Adaptive Retrieval Routing Framework

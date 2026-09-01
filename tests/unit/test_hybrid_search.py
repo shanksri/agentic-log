@@ -234,6 +234,72 @@ def test_both_retrievers_empty_returns_empty_list() -> None:
     assert retriever.retrieve("nonexistent vocabulary") == []
 
 
+# ── Dense floor ──────────────────────────────────────────────────────────────
+
+
+def test_dense_floor_rescues_dense_top_k_candidate_from_elimination() -> None:
+    # dense: A(1), B(2), C(3) -- C is dense's own rank-3, no BM25 presence.
+    # bm25: D(1), E(2), A(3), B(4) -- D, E are BM25-only and, combined with
+    # A/B's own dense ranks, outscore C's single dense-only RRF term even
+    # though C is inside dense's own top-3 and D/E are not in dense's top-3
+    # at all. Without the floor, pure RRF sort would return [A, B, D],
+    # silently dropping C -- the exact v2-para-10 shape (module docstring's
+    # "Dense floor").
+    dense = FakeDenseService(
+        {"q": [_incident_result("A", 0.1), _incident_result("B", 0.2), _incident_result("C", 0.3)]}
+    )
+    bm25 = _bm25(("D", "q q q"), ("E", "q q"), ("A", "q"))
+    retriever = HybridRetriever(dense, bm25, config=HybridConfig(final_limit=3))
+
+    results = retriever.retrieve("q")
+
+    assert {r.document_id for r in results} == {"A", "B", "C"}
+    assert len(results) == 3
+
+
+def test_dense_floor_does_not_expand_result_count_beyond_limit() -> None:
+    dense = FakeDenseService(
+        {"q": [_incident_result("A", 0.1), _incident_result("B", 0.2), _incident_result("C", 0.3)]}
+    )
+    bm25 = _bm25(("D", "q q q"), ("E", "q q"), ("A", "q"))
+    retriever = HybridRetriever(dense, bm25, config=HybridConfig(final_limit=3))
+
+    results = retriever.retrieve("q")
+
+    assert len(results) == 3
+
+
+def test_dense_floor_does_not_disturb_a_naturally_complete_result() -> None:
+    # A regression guard: when dense's own top-K already survives fusion
+    # unchanged (no crowding-out), the floor must be a no-op -- covers every
+    # existing hybrid-benefit case this project measured, where the correct
+    # document already appears on both sides and needs no rescue.
+    dense = FakeDenseService(
+        {"q": [_incident_result("A", 0.1), _incident_result("B", 0.2)]}
+    )
+    bm25 = _bm25(("A", "q"), ("B", "q q"))
+    retriever = HybridRetriever(dense, bm25, config=HybridConfig(final_limit=2))
+
+    results = retriever.retrieve("q")
+
+    assert {r.document_id for r in results} == {"A", "B"}
+
+
+def test_dense_floor_only_protects_ranks_within_limit() -> None:
+    # dense's own rank-3 candidate is NOT protected when limit=2 (dense
+    # alone would not have returned it either at that limit) -- the floor
+    # only guarantees parity with what dense itself would return.
+    dense = FakeDenseService(
+        {"q": [_incident_result("A", 0.1), _incident_result("B", 0.2), _incident_result("C", 0.3)]}
+    )
+    bm25 = _bm25(("D", "q q q"), ("A", "q"))
+    retriever = HybridRetriever(dense, bm25, config=HybridConfig(final_limit=2))
+
+    results = retriever.retrieve("q")
+
+    assert "C" not in {r.document_id for r in results}
+
+
 # ── HybridConfig validation ──────────────────────────────────────────────────
 
 

@@ -95,6 +95,46 @@ Source: `tests/eval/results/canonical_v3a_dense.json`, `tests/eval/results/canon
 
 ---
 
+## 1.5. Hybrid (BM25 + dense, RRF) vs. dense-only
+
+Two generations exist, both against the 36-query `phase17c_benchmark_v1.json` gold set:
+
+**Generation 1 — Phase 18D (2026-06-29, `.benchmarks/phase18d/`), expand=True/rerank=True.** Ran
+Dense, "Always Hybrid," and Adaptive Routing through live, separately-constructed `LLMService`
+instances per config. Dense: recall@10 0.9643, MRR 0.9196, NDCG@10 0.9218. Always-Hybrid: recall@10
+0.9286, MRR 0.9286, NDCG@10 0.9092 (worse recall than dense). Routed: recall@10 0.9643, MRR 0.9643,
+NDCG@10 0.9449 (best of the three). **Caveat:** since expand/rerank fire live per config with no
+repetition, a single-repetition per-query difference between two nominally-identical strategy
+choices isn't distinguishable from LLM sampling noise — this generation alone couldn't establish
+whether Hybrid's aggregate regression, or Routing's aggregate improvement over both, was a real
+strategy effect.
+
+**Generation 2 — deterministic recheck (2026-09-01, `.benchmarks/hybrid_deterministic_recheck.json`),
+expand=False/rerank=False**, run after restoring the corpus (see below) specifically to remove LLM
+variance from the comparison. Confirmed a real, reproducible regression: pure RRF fusion dropped
+query `v2-para-10`'s correct incident entirely out of the top 10 (dense alone ranked it 8th) —
+ten other same-repo issues sharing generic vocabulary with the paraphrased query scored on both
+retrievers and outranked it via double RRF credit. Full root-cause and fix: doc 18's "Update — dense
+floor" note under Phase 17B. Post-fix (dense floor added to `_fuse()` in `hybrid_search.py`), Hybrid
+strictly dominates Dense on this gold set: identical recall@10 (0.9643) but better MRR (0.9092 vs.
+0.8646) and NDCG@10 (0.9018 vs. 0.8702) — fusion's genuine ranking-quality wins (3 other queries,
+MRR gains of 0.5–0.75, all cases where the correct incident was already visible to both retrievers)
+survive untouched, and the one catastrophic loss is closed.
+
+**Corpus caveat on Generation 2's absolute numbers:** this recheck ran after the 2026-08-25 laptop
+reset wiped the database to a 5-incident smoke test; the corpus was re-ingested (16 GitHub repos +
+KAFKA/SPARK/CASSANDRA Jira, ~7,400 incidents vs. the original ~8,000) and the 12 gold-referenced
+issues outside any repo's 500-most-recently-updated window were fetched individually by issue
+number to restore 34/34 gold resolution. The corpus is not byte-identical to Generation 1's, so
+Generation 1 vs. Generation 2 absolute numbers aren't a clean before/after comparison — but the
+dense-floor fix's effect (Hybrid: 0.9286→0.9643 recall, same corpus, same code otherwise) is a
+clean within-generation before/after.
+
+Source: `.benchmarks/phase18d/{dense,hybrid,routed}.json`, `.benchmarks/phase18d/routing_records.json`,
+`.benchmarks/hybrid_deterministic_recheck.json`, `scripts/run_hybrid_deterministic_check.py`.
+
+---
+
 ## 2. Confidence calibration
 
 One run: `tests/eval/results/confidence_v4.json` (2026-06-16), built on top of the
@@ -212,13 +252,16 @@ Source: `.evaluation_runs/history/20260810_172732_phase22d_real_generation_eval/
 
 Called out explicitly rather than estimated:
 
-- **Hybrid (BM25 + dense, RRF) retrieval and adaptive routing** (`app/services/hybrid_search.py`,
-  `routing.py`, `routed_search.py`, `bm25_search.py`) are implemented and described in
-  [docs/architecture/18_adaptive_routing_and_hybrid_confidence.md](architecture/18_adaptive_routing_and_hybrid_confidence.md),
-  but no persisted evaluation run in `tests/eval/results/` or `.evaluation_runs/` has
-  `hybrid: true`. Per docs/README.md, `/evaluation/*`'s orchestrator construction "still
-  deliberately pins a plain dense `IncidentSearchService` for reproducible benchmarking" — hybrid
-  retrieval quality is documented but not measured.
+- **Adaptive routing (Adaptive Routing config specifically) with expand/rerank isolated from LLM
+  noise.** Section 1.5 covers a deterministic (`expand=False`) Dense-vs-Hybrid recheck, but the
+  three-way comparison including Adaptive Routing has only ever been run with `expand=True`
+  (Phase 18D, Generation 1) — it is not yet known whether Routing's apparent aggregate edge over
+  both Dense and Hybrid alone in that run reflects real routing-policy value or was itself
+  partly attributable to LLM query-expansion variance across the three separately-timed configs.
+  Per docs/README.md, `/evaluation/*`'s orchestrator construction "still deliberately pins a plain
+  dense `IncidentSearchService` for reproducible benchmarking" — hybrid/routing quality is
+  documented and now partially measured (Section 1.5), but not through the standard `/evaluation/*`
+  pipeline.
 - **Reranking's effect in isolation.** Every persisted rerank run also has query expansion on
   (`expansion: true, reranking: true` together) versus a dense-only baseline — there is no
   `expansion: true, reranking: false` (or vice versa) run to attribute the gain/loss to one
@@ -256,3 +299,5 @@ Called out explicitly rather than estimated:
 | `tests/eval/gold_queries.json` | v1 gold format, 24 queries — used by Section 1 & 2 |
 | `tests/eval/gold/phase17c_benchmark_v1.json` | v2 gold format, 36 queries — source of the Section 4 subset |
 | `tests/eval/gold/phase22d_generation_v1.json` | v2 gold format + reference answers, 10-query subset — used by Section 4 |
+| `.benchmarks/phase18d/{dense,hybrid,routed}.json` | Dense/Hybrid/Routing, 36-query gold set, expand+rerank ON (Section 1.5, Gen. 1) |
+| `.benchmarks/hybrid_deterministic_recheck.json` | Dense/Hybrid/Routing per-query recheck, expand/rerank OFF (Section 1.5, Gen. 2, post dense-floor fix) |

@@ -63,6 +63,9 @@ HybridRetriever(dense, bm25, config=HybridConfig(...))
             deduplicating by document id as part of the same pass
             (see "Candidate deduplication" below)
     4. sort by (-rrf_score, document_id), truncate to `limit`
+    5. dense floor: re-admit any of dense's own top-`limit` documents that
+       step 4 excluded, evicting the weakest non-dense-protected entries to
+       make room (see "Dense floor" below)
     -> list[HybridSearchResult]
 ```
 
@@ -153,6 +156,43 @@ If either retriever's own result list happens to contain a duplicate
 philosophy already used by the dense pipeline's own candidate merge (doc
 12) and by ``IdentityResolver``'s defensive relevance-grade handling
 (Phase 16C).
+
+# Dense floor: protecting dense's own top-K from full elimination
+
+A pure "sum ranks, sort, truncate" RRF pipeline has a failure mode this
+project measured directly (doc 18's Phase 18D benchmark, query
+``v2-para-10`` against the live corpus): a document dense ranks well inside
+its own top-K can be *completely* pushed out of the fused top-K by several
+other documents that rank only moderately on *both* sides. Each of those
+weaker-but-doubly-present documents sums two mediocre RRF terms; the
+correct document, absent from BM25 entirely (a plain paraphrase with no
+exact lexical overlap), earns only one term and can end up ranked below the
+cutoff even though dense alone would have returned it.
+
+The fix is not a smarter *routing* decision — the router (doc 18A) only
+ever sees query text, never which documents BM25 will actually return, so
+no pre-retrieval signal can tell it that *this specific* long query will
+suffer this failure while a structurally similar one benefits from fusion
+(measured concretely: 3 of the 5 queries whose ranking changed under fusion
+in the Phase 18D re-check were *improved* by fusion, not hurt by it — a
+routing rule blunt enough to avoid the 1 bad case would also forfeit those
+3 good ones). The fix belongs in fusion itself: **any document present in
+dense's own top-``limit`` result set is guaranteed a place somewhere in the
+fused top-``limit`` output**, even if a pure RRF sort would have excluded
+it. If the natural RRF ranking already includes it, nothing changes. If
+not, it displaces the weakest *non-protected* (i.e. not also a dense-top-K
+member) entry already selected.
+
+This deliberately does **not** protect BM25's own top-K the same way —
+doc 18A's router already sends short, exact-match-shaped queries (stack
+traces, error signatures, quoted identifiers) to BM25 alone, not hybrid;
+hybrid's role is reinforcing/re-ranking dense's candidate set with lexical
+signal, not the reverse. Protecting dense specifically is also why this
+never removes fusion's genuine value: in every case observed where fusion
+*improved* ranking, the correct document was present in both retrievers'
+candidate pools already (getting real, undiluted RRF credit) — the floor
+only ever activates for a document invisible to one side, which is exactly
+the scenario that produced the regression.
 
 # Configuration design
 
@@ -308,7 +348,7 @@ def _fuse(
     # see module docstring's "Candidate deduplication".
     all_document_ids = set(dense_rank_by_id) | set(bm25_rank_by_id)
 
-    fused: list[HybridSearchResult] = []
+    fused_by_id: dict[str, HybridSearchResult] = {}
     for document_id in all_document_ids:
         dense_rank = dense_rank_by_id.get(document_id)
         bm25_rank = bm25_rank_by_id.get(document_id)
@@ -317,16 +357,57 @@ def _fuse(
             score += 1.0 / (rrf_k + dense_rank)
         if bm25_rank is not None:
             score += 1.0 / (rrf_k + bm25_rank)
-        fused.append(
-            HybridSearchResult(
-                document_id=document_id,
-                rrf_score=score,
-                dense_rank=dense_rank,
-                bm25_rank=bm25_rank,
-                dense_result=dense_result_by_id.get(document_id),
-                bm25_result=bm25_result_by_id.get(document_id),
-            )
+        fused_by_id[document_id] = HybridSearchResult(
+            document_id=document_id,
+            rrf_score=score,
+            dense_rank=dense_rank,
+            bm25_rank=bm25_rank,
+            dense_result=dense_result_by_id.get(document_id),
+            bm25_result=bm25_result_by_id.get(document_id),
         )
 
-    ranked = sorted(fused, key=lambda result: (-result.rrf_score, result.document_id))
-    return ranked[:limit]
+    ranked = sorted(
+        fused_by_id.values(), key=lambda result: (-result.rrf_score, result.document_id)
+    )
+    top = ranked[:limit]
+
+    # Dense floor — see module docstring's "Dense floor" section. Bounded by
+    # construction: dense_rank_by_id has at most `len(dense_results)` entries,
+    # and only ranks <= limit qualify, so there are always <= limit protected
+    # ids -- never more than `top` has room for.
+    protected_ids = {doc_id for doc_id, rank in dense_rank_by_id.items() if rank <= limit}
+    return _apply_dense_floor(top, fused_by_id, protected_ids)
+
+
+def _apply_dense_floor(
+    top: list[HybridSearchResult],
+    fused_by_id: dict[str, HybridSearchResult],
+    protected_ids: set[str],
+) -> list[HybridSearchResult]:
+    """Guarantee every document in ``protected_ids`` (dense's own
+    top-``limit`` result set) survives into ``top``, even if pure RRF
+    ranking excluded it. No-ops when nothing is missing.
+    """
+    top_ids = {result.document_id for result in top}
+    missing = [fused_by_id[doc_id] for doc_id in protected_ids if doc_id not in top_ids]
+    if not missing:
+        return top
+
+    # Rescue the best-dense-ranked missing candidates first.
+    missing.sort(key=lambda result: result.dense_rank)  # dense_rank is never None here
+    result_list = list(top)
+    for candidate in missing:
+        evict_index = next(
+            (
+                i
+                for i in range(len(result_list) - 1, -1, -1)
+                if result_list[i].document_id not in protected_ids
+            ),
+            None,
+        )
+        if evict_index is None:
+            break  # every remaining slot is already protected; nothing left to evict
+        result_list[evict_index] = candidate
+
+    result_list.sort(key=lambda result: (-result.rrf_score, result.document_id))
+    return result_list

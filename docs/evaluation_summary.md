@@ -232,19 +232,37 @@ incidents/contexts per query, per-metric skip reasons, and the negative-control 
 behavior) is published as an artifact:
 <https://claude.ai/code/artifact/26146007-c2e8-4c05-ad76-43b4f3bc0358>.
 
-**Negative control finding (both runs, query `v2-neg-01`):** the system does **not** correctly
-decline out-of-corpus queries. Retrieval still returns its top-k nearest incidents by cosine
-distance (there is no relevance floor), and the answer-generation LLM treats them as evidence
-rather than recognizing none of them describe the queried system — it fabricates plausible-sounding
-root causes instead of stating "no matching incident." Faithfulness correctly flags this at
-**0.0** in both runs (the grounding LLM catches that the claims aren't supported by context), and
-BERTScore vs. the reference "no match" answer is the lowest or near-lowest of all 10 queries in
-both runs. This is a real, reproduced (not one-off) behavior gap between what the system does and
-what the reference answer expects.
+**Negative control finding (both runs, query `v2-neg-01`) — FIXED 2026-09-01.** The system did
+**not** correctly decline out-of-corpus queries. Retrieval still returned its top-k nearest
+incidents by cosine distance (there was no relevance floor), and the answer-generation LLM treated
+them as evidence rather than recognizing none of them described the queried system — it fabricated
+plausible-sounding root causes instead of stating "no matching incident." Faithfulness correctly
+flagged this at **0.0** in both runs (the grounding LLM caught that the claims weren't supported by
+context), and BERTScore vs. the reference "no match" answer was the lowest or near-lowest of all 10
+queries in both runs. This was a real, reproduced (not one-off) behavior gap between what the
+system did and what the reference answer expected.
+
+**Fix:** `app/evaluation/generation_harness.py`'s `evaluate_generation()` now classifies the top1
+retrieval similarity score (`app.services.confidence.classify_confidence` — doc 14's existing,
+calibrated 0.40/0.55 thresholds, unmodified) *before* calling the answer-generation LLM. LOW
+confidence (top1 < 0.40, or zero results) skips the LLM call entirely and substitutes a fixed
+`LOW_CONFIDENCE_DECLINE_ANSWER` string — a pre-LLM gate on an independently-computed retrieval
+score, not a prompt instruction asking the model to decline itself (which a fabrication that
+already happened can't be un-fabricated by asking nicely). See `hybrid_search.py`-style rationale
+in the module's own "Low-confidence decline gate" docstring section.
+
+**Live re-verification (2026-09-01, `scripts/verify_decline_gate.py`, real retrieval/LLM/embeddings
+against the restored corpus — see doc 18's corpus-reset note):** `v2-neg-01` now declines
+(`top1_score=0.361`, correctly below the 0.40 threshold) without ever calling the LLM. Faithfulness
+0.0 → **0.333**; BERTScore F1 0.399 (prior run) → **0.525**. All 9 real-match queries in the same
+run still generate normally (none spuriously declined) — mean BERTScore F1 across the full 10-query
+set: 0.562; mean faithfulness (9 scored, 1 malformed-response skip unrelated to this fix): 0.572.
+Full per-query output: `.benchmarks/decline_gate_verification.json`.
 
 Source: `.evaluation_runs/history/20260810_172732_phase22d_real_generation_eval/generation_report.json`,
 `.evaluation_runs/history/20260814_194720_phase22d_real_generation_eval_v2/generation_report.json`
-(also mirrored to `.evaluation_runs/latest/`).
+(also mirrored to `.evaluation_runs/latest/`; both pre-fix), `.benchmarks/decline_gate_verification.json`
+(post-fix), `tests/unit/test_generation_harness.py`'s decline-gate tests.
 
 ---
 

@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import pytest
 
 from app.evaluation.generation_harness import (
+    LOW_CONFIDENCE_DECLINE_ANSWER,
     GenerationEvaluationConfig,
     GenerationEvaluationMode,
     LLMServiceAnswerGenerator,
@@ -27,8 +28,8 @@ def _incident(title: str, *, resolution: str = "restarted the broker") -> Simple
     return SimpleNamespace(title=title, resolution_summary=resolution, status="resolved")
 
 
-def _result(title: str) -> SimpleNamespace:
-    return SimpleNamespace(incident=_incident(title))
+def _result(title: str, *, similarity_score: float = 0.9) -> SimpleNamespace:
+    return SimpleNamespace(incident=_incident(title), similarity_score=similarity_score)
 
 
 class FakeSearchService:
@@ -153,6 +154,9 @@ def test_missing_reference_skips_bertscore_but_grounding_still_runs() -> None:
 
 
 def test_missing_retrieved_context_skips_grounding_but_bertscore_still_runs() -> None:
+    # No retrieved context also means LOW retrieval confidence (no results at
+    # all), so this now exercises the decline gate too: the LLM is never
+    # called, and BERTScore is computed against the canned decline answer.
     search = FakeSearchService()  # returns [] for every query
     generator = FakeAnswerGenerator({"broker down": "restart the kafka broker"})
     llm = ScriptedLLM([])  # must never be consulted
@@ -166,8 +170,11 @@ def test_missing_retrieved_context_skips_grounding_but_bertscore_still_runs() ->
 
     result = report.results[0]
     assert result.num_contexts == 0
-    # BERTScore computed despite no context.
-    assert result.generation.bert_score_f1 == pytest.approx(1.0)
+    assert generator.calls == []  # decline gate — LLM never invoked
+    assert result.generated_answer == LOW_CONFIDENCE_DECLINE_ANSWER
+    # BERTScore computed despite no context (against the decline answer).
+    assert result.generation is not None
+    assert result.generation.bert_score_f1 is not None
     # Every grounding metric undefined; no LLM call burned.
     grounding = result.grounding
     assert grounding.faithfulness is None
@@ -176,6 +183,7 @@ def test_missing_retrieved_context_skips_grounding_but_bertscore_still_runs() ->
     assert grounding.context_recall is None
     assert grounding.context_entity_recall is None
     assert any("no retrieved context" in n for n in result.notes)
+    assert any("answer declined" in n for n in result.notes)
     assert llm.calls == []
 
 
@@ -205,7 +213,9 @@ def test_fully_configured_query_scores_both_halves() -> None:
 
 
 def test_generation_failure_is_recorded_not_raised() -> None:
-    search = FakeSearchService()
+    # HIGH-confidence retrieval so the decline gate doesn't short-circuit
+    # before the (raising) LLM call is ever reached.
+    search = FakeSearchService({"broker down": [_result("Kafka broker crash")]})
     generator = FakeAnswerGenerator(raises=True)
     dataset = _dataset((_gold_query(reference="some reference"),))
 
@@ -298,6 +308,64 @@ def test_search_called_with_configured_k_and_call_site() -> None:
     assert search.calls == [
         {"query": "broker down", "limit": 7, "call_site": "generation_evaluation"}
     ]
+
+
+# ── Low-confidence decline gate (Phase 22D follow-up) ──────────────────────────
+
+
+def test_low_confidence_retrieval_declines_without_calling_llm() -> None:
+    search = FakeSearchService(
+        {"broker down": [_result("unrelated incident", similarity_score=0.2)]}
+    )
+    generator = FakeAnswerGenerator({"broker down": "a fabricated root cause"})
+    dataset = _dataset((_gold_query(reference="no matching incident exists"),))
+
+    report = evaluate_generation(
+        dataset, search, generator, token_embedder=OneHotTokenEmbedder(),
+    )
+
+    result = report.results[0]
+    assert generator.calls == []  # the LLM must never see this query
+    assert result.generated_answer == LOW_CONFIDENCE_DECLINE_ANSWER
+    assert result.skipped is False  # still answered (with the decline), not skipped
+    assert result.generation is not None  # BERTScore still runs against the decline
+    assert any("answer declined" in n and "LOW" in n for n in result.notes)
+
+
+def test_medium_confidence_retrieval_still_calls_llm() -> None:
+    # Just above the LOW boundary (0.40): MEDIUM, not LOW -- must NOT decline.
+    search = FakeSearchService(
+        {"broker down": [_result("Kafka broker crash", similarity_score=0.45)]}
+    )
+    generator = FakeAnswerGenerator({"broker down": "restart the kafka broker"})
+    dataset = _dataset((_gold_query(reference="restart the kafka broker"),))
+
+    report = evaluate_generation(dataset, search, generator)
+
+    result = report.results[0]
+    assert len(generator.calls) == 1
+    assert result.generated_answer == "restart the kafka broker"
+
+
+def test_only_top1_score_gates_decline_lower_ranked_results_ignored() -> None:
+    # A strong rank-1 match with a weak rank-2 alongside it must still
+    # generate normally -- the gate reads only the top1 score, matching
+    # classify_confidence's own contract (doc 14).
+    search = FakeSearchService(
+        {
+            "broker down": [
+                _result("Kafka broker crash", similarity_score=0.9),
+                _result("unrelated incident", similarity_score=0.1),
+            ]
+        }
+    )
+    generator = FakeAnswerGenerator({"broker down": "restart the kafka broker"})
+    dataset = _dataset((_gold_query(reference="restart the kafka broker"),))
+
+    report = evaluate_generation(dataset, search, generator)
+
+    assert len(generator.calls) == 1
+    assert report.results[0].generated_answer == "restart the kafka broker"
 
 
 # ── Context rendering ─────────────────────────────────────────────────────────

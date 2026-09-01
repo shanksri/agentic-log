@@ -82,6 +82,30 @@ by mode) are decided once, not repeated.
 - A raising answer-generation call → recorded as failed, run continues
   (same per-item isolation Phase 21E applies to judge calls).
 
+# Low-confidence decline gate (Phase 22D follow-up)
+
+Before calling ``answer_generator.generate_answer()``, the top1 retrieval
+similarity score of ``search_service.search()``'s results is classified via
+``app.services.confidence.classify_confidence`` (doc 14's calibrated
+0.40/0.55 thresholds — unmodified, the same thresholds production search
+already uses). LOW confidence (top1 < 0.40, or no results at all) means the
+retrieved incidents are not a genuine match, so the LLM is never invoked at
+all: ``answer`` becomes a fixed ``LOW_CONFIDENCE_DECLINE_ANSWER`` string
+instead, and a note records why. This is deliberately a pre-LLM gate, not a
+prompt instruction asking the LLM to decline itself — a fabrication that
+already happened past that point can't be un-fabricated by asking nicely,
+and gating on the retrieval score (computed independently of the LLM) means
+the decline is deterministic and correct by construction rather than
+depending on the model reliably following an instruction. The declined
+answer still flows through BERTScore/grounding scoring unchanged like any
+other answer — that's how this behavior gets verified: a declined answer
+should score well against a "no match" reference and trivially high on
+Faithfulness (it makes no claims the context doesn't support). This is a
+generation-time gate only, distinct from and unrelated to the confidence
+signal already threaded through the Phase 19 multi-agent investigation
+agents (which is a separate, already-confidence-aware code path — see
+``investigation_agent.py`` / ``hypothesis_investigation.py`` / etc.).
+
 # What this module does NOT implement
 
 - No metrics (delegated to generation_metrics / grounding_metrics).
@@ -129,8 +153,27 @@ from app.evaluation.grounding_metrics import (
     faithfulness,
     measure_stability,
 )
+from app.services.confidence import CONFIDENCE_LOW, classify_confidence
 
 DEFAULT_GENERATION_K = 5
+
+# Phase 22D follow-up: retrieval confidence gate on answer generation. The
+# system previously fabricated a plausible-sounding root cause even when
+# nothing in the corpus genuinely matched (docs/evaluation_summary.md
+# Section 4's negative-control finding, reproduced on both persisted runs).
+# Rather than trust the LLM to recognize this itself, gate BEFORE the LLM
+# call on the same top1-similarity confidence signal doc 14 already
+# calibrated (LOW <=> top1 < 0.40, a threshold validated to cleanly separate
+# match/no-match on the confidence_v4 gold set) -- LOW confidence never
+# reaches the LLM at all, so it can't be talked into fabricating regardless
+# of prompt wording. This also skips the LLM call entirely, saving cost on
+# queries the corpus can't answer.
+LOW_CONFIDENCE_DECLINE_ANSWER = (
+    "No incident in the retrieved corpus corresponds to this query with "
+    "sufficient confidence. The most similar retrieved incidents score "
+    "below this system's confidence threshold, so no root cause is "
+    "reported from this corpus."
+)
 
 _GROUNDING_METRIC_NAMES = (
     "faithfulness",
@@ -503,6 +546,7 @@ def evaluate_generation(
             )
             continue
 
+        decline_note: str | None = None
         try:
             retrieved = search_service.search(
                 gold_query.query, limit=k, call_site="generation_evaluation"
@@ -511,7 +555,19 @@ def evaluate_generation(
             joined = (
                 "\n\n".join(contexts) if contexts else "(no similar incidents retrieved)"
             )
-            answer = answer_generator.generate_answer(gold_query.query, joined)
+
+            top1_score = (
+                getattr(retrieved[0], "similarity_score", None) if retrieved else None
+            )
+            confidence_level = classify_confidence(top1_score)
+            if confidence_level == CONFIDENCE_LOW:
+                answer = LOW_CONFIDENCE_DECLINE_ANSWER
+                decline_note = (
+                    f"answer declined: retrieval confidence LOW "
+                    f"(top1_score={top1_score!r}) — LLM not called"
+                )
+            else:
+                answer = answer_generator.generate_answer(gold_query.query, joined)
         except Exception as exc:  # noqa: BLE001 — per-query isolation, see docstring
             num_failed += 1
             results.append(
@@ -532,6 +588,8 @@ def evaluate_generation(
 
         num_answered += 1
         notes: list[str] = []
+        if decline_note is not None:
+            notes.append(decline_note)
 
         generation_metrics: GenerationMetrics | None = None
         if gold_query.reference_answer is not None:

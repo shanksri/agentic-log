@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from app.evaluation.run_repository import FileRunRepositoryMixin
+from app.evaluation.run_repository import FileRunRepositoryMixin, PersistenceError
 
 
 @dataclass(frozen=True)
@@ -46,6 +46,26 @@ def test_save_duplicate_raises_value_error(tmp_path: Path) -> None:
     run = _FakeRun(run_id="dup", timestamp="t", payload="a")
     repo.save(run)
     with pytest.raises(ValueError, match="already exists"):
+        repo.save(run)
+
+
+def test_save_write_failure_raises_typed_persistence_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Phase 24B: a disk-level write failure (disk full, permission error)
+    during the actual write must surface as a typed PersistenceError, not a
+    raw OSError -- unlike the pre-existing ValueError branches above (invalid
+    id / duplicate), which are unaffected by this change.
+    """
+    repo = _repo(tmp_path)
+    run = _FakeRun(run_id="20260701_000000_test", timestamp="t", payload="hello")
+
+    def _raise(self: Path, *args: object, **kwargs: object) -> None:
+        raise OSError("[Errno 28] No space left on device")
+
+    monkeypatch.setattr(Path, "write_text", _raise)
+
+    with pytest.raises(PersistenceError, match="20260701_000000_test"):
         repo.save(run)
 
 
@@ -186,3 +206,81 @@ def test_experiment_repository_delete_with_traversal_run_id_returns_false(tmp_pa
 
     assert repo.delete("../outside_run") is False
     assert marker.exists()
+
+
+# ── ExperimentRepository.save() write failures (Phase 24B) ─────────────────
+
+
+def test_experiment_repository_write_text_failure_raises_persistence_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.evaluation.experiment_tracking import ExperimentRepository
+
+    repo = ExperimentRepository(base_dir=tmp_path / "evaluation_runs")
+
+    def _raise(self: Path, *args: object, **kwargs: object) -> None:
+        raise OSError("[Errno 28] No space left on device")
+
+    monkeypatch.setattr(Path, "write_text", _raise)
+
+    with pytest.raises(PersistenceError):
+        repo.save(_minimal_pipeline_result(), experiment_name="disk-full", git_commit="")
+
+    # No half-written run should be discoverable afterward.
+    assert repo.list_runs() == ()
+
+
+def test_experiment_repository_copytree_failure_raises_persistence_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The history/<run_id>/ files themselves write successfully; only the
+    final `_overwrite_latest` copytree step fails."""
+    import shutil
+
+    from app.evaluation.experiment_tracking import ExperimentRepository
+
+    repo = ExperimentRepository(base_dir=tmp_path / "evaluation_runs")
+
+    def _raise(*args: object, **kwargs: object) -> None:
+        raise OSError("[Errno 13] Permission denied")
+
+    monkeypatch.setattr(shutil, "copytree", _raise)
+
+    with pytest.raises(PersistenceError):
+        repo.save(_minimal_pipeline_result(), experiment_name="copy-fails", git_commit="")
+
+
+def test_experiment_repository_rmtree_failure_raises_persistence_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """rmtree only runs on the SECOND save (when latest/ already exists from
+    the first) -- covers the other half of `_overwrite_latest`."""
+    import shutil
+
+    from app.evaluation.experiment_tracking import ExperimentRepository
+
+    repo = ExperimentRepository(base_dir=tmp_path / "evaluation_runs")
+    repo.save(_minimal_pipeline_result(), experiment_name="first", git_commit="")
+
+    def _raise(*args: object, **kwargs: object) -> None:
+        raise OSError("[Errno 13] Permission denied")
+
+    monkeypatch.setattr(shutil, "rmtree", _raise)
+
+    with pytest.raises(PersistenceError):
+        repo.save(_minimal_pipeline_result(), experiment_name="second", git_commit="")
+
+
+def test_experiment_repository_save_success_unaffected_by_error_handling(tmp_path: Path) -> None:
+    """Regression guard: the success path (no failure injected) is
+    byte-for-byte unchanged by the Phase 24B try/except wrapper."""
+    from app.evaluation.experiment_tracking import ExperimentRepository
+
+    repo = ExperimentRepository(base_dir=tmp_path / "evaluation_runs")
+    run_id = repo.save(_minimal_pipeline_result(), experiment_name="ok", git_commit="")
+
+    assert run_id is not None
+    run = repo.load(run_id)
+    assert run is not None
+    assert run.metadata.run_id == run_id
+    assert (tmp_path / "evaluation_runs" / "latest" / "metadata.json").exists()

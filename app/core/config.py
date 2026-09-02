@@ -1,20 +1,33 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Phase 24A: the development-only DB default and the .env.example placeholder
+# API key. Named here (not just inlined in the field defaults) so the
+# production-config validator below can check against the exact same values
+# without duplicating the literals.
+_DEV_DATABASE_URL_DEFAULT = "postgresql+psycopg://postgres:postgres@localhost:5432/incidents"
+_PLACEHOLDER_API_KEY = "changeme-generate-a-real-secret"
+_LOCALHOST_MARKERS = ("localhost", "127.0.0.1")
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    database_url: str = Field(
-        default="postgresql+psycopg://postgres:postgres@localhost:5432/incidents"
-    )
+    # Phase 24A: distinguishes development from production so a handful of
+    # settings below (docs/OpenAPI exposure, the production-config validator)
+    # can be gated by it. Does not itself change any retrieval/generation/
+    # routing/agent behavior — nothing else in the codebase reads this field.
+    environment: Literal["development", "production"] = "development"
+
+    database_url: str = Field(default=_DEV_DATABASE_URL_DEFAULT)
     github_token: str | None = None
     embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
-    embedding_dimensions: int = 384
+    embedding_dimensions: int = Field(default=384, gt=0)
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
     log_level: str = "INFO"
@@ -56,16 +69,44 @@ class Settings(BaseSettings):
         default=True,
         description="Global kill switch — False disables all rate limiting (health is always unlimited regardless).",
     )
-    rate_limit_search_per_minute: int = 100
-    rate_limit_agent_per_minute: int = 20
-    rate_limit_evaluation_query_per_minute: int = 20
-    rate_limit_evaluation_retrieval_per_minute: int = 5
-    rate_limit_evaluation_reasoning_per_minute: int = 5
-    rate_limit_evaluation_full_per_minute: int = 2
-    rate_limit_interactive_evaluation_per_minute: int = 20
-    rate_limit_incidents_per_minute: int = 100
-    rate_limit_ingestion_per_minute: int = 10
-    rate_limit_evaluation_runs_per_minute: int = 60
+    rate_limit_search_per_minute: int = Field(default=100, gt=0)
+    rate_limit_agent_per_minute: int = Field(default=20, gt=0)
+    rate_limit_evaluation_query_per_minute: int = Field(default=20, gt=0)
+    rate_limit_evaluation_retrieval_per_minute: int = Field(default=5, gt=0)
+    rate_limit_evaluation_reasoning_per_minute: int = Field(default=5, gt=0)
+    rate_limit_evaluation_full_per_minute: int = Field(default=2, gt=0)
+    rate_limit_interactive_evaluation_per_minute: int = Field(default=20, gt=0)
+    rate_limit_incidents_per_minute: int = Field(default=100, gt=0)
+    rate_limit_ingestion_per_minute: int = Field(default=10, gt=0)
+    rate_limit_evaluation_runs_per_minute: int = Field(default=60, gt=0)
+
+    # ── Phase 24A: production-only configuration validation ────────────────
+    #
+    # Development/test behavior is completely unaffected: this validator is
+    # a no-op unless ENVIRONMENT=production is explicitly set. It fails at
+    # Settings construction time (process startup), not at first request, so
+    # a misconfigured production deploy never silently serves traffic with a
+    # weak/default DB or an unset API key.
+    @model_validator(mode="after")
+    def _validate_production_config(self) -> Settings:
+        if self.environment != "production":
+            return self
+
+        if not self.api_key or self.api_key == _PLACEHOLDER_API_KEY:
+            raise ValueError(
+                "ENVIRONMENT=production requires API_KEY to be set to a real "
+                "secret (it is currently unset or still the .env.example "
+                "placeholder). Generate one with e.g. `openssl rand -hex 32`."
+            )
+
+        if any(marker in self.database_url for marker in _LOCALHOST_MARKERS):
+            raise ValueError(
+                "ENVIRONMENT=production requires DATABASE_URL to point at a "
+                "real database, not localhost/127.0.0.1 (the development "
+                "default)."
+            )
+
+        return self
 
 
 @lru_cache

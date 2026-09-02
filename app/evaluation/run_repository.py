@@ -28,6 +28,16 @@ from app.evaluation.serialization import from_jsonable, to_jsonable
 logger = logging.getLogger(__name__)
 
 
+class PersistenceError(RuntimeError):
+    """Raised when writing a run to disk fails (disk full, permission
+    error, or another OS-level write failure) — typed so callers can
+    distinguish "the run couldn't be saved" from an unrelated bug, matching
+    ``LLMResponseError``/``EmbeddingServiceError``'s pattern (Phase 24B).
+    Read paths are unaffected: a corrupted/missing file on read already
+    degrades to ``None`` + a logged warning, not an exception (unchanged).
+    """
+
+
 class InMemoryRunRepositoryMixin:
     """Process-local, non-persistent storage: ``save``/``get``/``list_runs``/
     ``latest``/``delete`` over an in-memory ``dict`` keyed by ``run_id``.
@@ -90,7 +100,12 @@ class FileRunRepositoryMixin:
             raise ValueError(f"run id {run.run_id!r} is not a valid identifier")
         if path.exists():
             raise ValueError(f"a run with id {run.run_id!r} already exists")
-        path.write_text(json.dumps(to_jsonable(run), indent=2), encoding="utf-8")
+        try:
+            path.write_text(json.dumps(to_jsonable(run), indent=2), encoding="utf-8")
+        except OSError as exc:
+            raise PersistenceError(
+                f"Failed to write run {run.run_id!r} to {path}: {exc}"
+            ) from exc
 
     def get(self, run_id: str) -> Any | None:
         path = self._path_for(run_id)

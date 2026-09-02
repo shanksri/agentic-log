@@ -523,6 +523,66 @@ def test_full_pipeline_persist_saves_run(monkeypatch) -> None:
         app.dependency_overrides.clear()
 
 
+def test_full_pipeline_persist_failure_surfaces_visibly_and_is_logged(
+    monkeypatch, caplog
+) -> None:
+    """Phase 24B: repo.save() raising during /evaluation/full must no longer
+    be silently swallowed (`except Exception: pass`) -- it should surface in
+    the response's `errors` list (matching /evaluation/retrieval and
+    /evaluation/reasoning's existing behavior for the identical failure
+    class) and be logged server-side, while the successful evaluation
+    results in the response are otherwise unaffected.
+    """
+    pipeline_result = _make_pipeline_result()
+    client, fake_repo = _client()
+
+    def _raise_on_save(*args: object, **kwargs: object):
+        raise RuntimeError("disk full")
+
+    monkeypatch.setattr(fake_repo, "save", _raise_on_save)
+    try:
+        with patch(
+            "app.evaluation.evaluation_pipeline.EvaluationPipeline.run",
+            return_value=pipeline_result,
+        ):
+            with caplog.at_level("ERROR"):
+                resp = client.post(
+                    "/evaluation/full",
+                    json={"persist": True, "judge": "none", "experiment_name": "boom"},
+                )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["run_id"] is None
+        assert any("Persistence failed" in e and "disk full" in e for e in data["errors"])
+        assert any("persistence failed" in record.message.lower() for record in caplog.records)
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_full_pipeline_persist_success_unaffected_by_failure_handling(monkeypatch) -> None:
+    """Regression guard: the success path (persist works) is byte-for-byte
+    unchanged by the Phase 24B fix -- run_id populated, no spurious entries
+    in errors.
+    """
+    pipeline_result = _make_pipeline_result()
+    client, fake_repo = _client()
+    try:
+        with patch(
+            "app.evaluation.evaluation_pipeline.EvaluationPipeline.run",
+            return_value=pipeline_result,
+        ):
+            resp = client.post(
+                "/evaluation/full",
+                json={"persist": True, "judge": "none", "experiment_name": "api-full-ok"},
+            )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["run_id"] is not None
+        assert data["errors"] == []
+    finally:
+        app.dependency_overrides.clear()
+
+
 def test_full_pipeline_with_retrieval_report(monkeypatch) -> None:
     ret = _make_minimal_retrieval_report()
     pipeline_result = _make_pipeline_result(retrieval_report=ret)
@@ -873,6 +933,85 @@ def test_build_orchestrator_constructs_without_typeerror() -> None:
 
     orchestrator = _build_orchestrator(None)
     assert isinstance(orchestrator, MultiAgentInvestigationOrchestrator)
+
+
+# ── `_build_*` helper exception logging (Phase 24B) ────────────────────────────
+#
+# Contract: all four helpers below swallow any construction failure and
+# return None (unchanged) so the pipeline degrades to a recorded warning
+# rather than failing the request. Before Phase 24B they did this via a bare
+# `except Exception: return None` with zero server-side trace of *why*. Each
+# test below confirms both halves: the None-return/degraded-behavior
+# contract is unchanged, AND the swallowed exception is now logged.
+
+
+def test_build_answer_generator_logs_and_returns_none_on_failure(monkeypatch, caplog) -> None:
+    from app.api.routes.evaluation import _build_answer_generator
+
+    def _raise(*args: object, **kwargs: object):
+        raise ValueError("no OPENAI_API_KEY")
+
+    monkeypatch.setattr("app.services.llm_service.LLMService", _raise)
+    with caplog.at_level("ERROR"):
+        result = _build_answer_generator()
+
+    assert result is None
+    assert any("answer generator unavailable" in r.message.lower() for r in caplog.records)
+
+
+def test_build_token_embedder_logs_and_returns_none_on_failure(monkeypatch, caplog) -> None:
+    from app.api.routes.evaluation import _build_token_embedder
+
+    def _raise(*args: object, **kwargs: object):
+        raise ValueError("embedding backend down")
+
+    monkeypatch.setattr(
+        "app.evaluation.generation_metrics.SentenceTransformerTokenEmbedder", _raise
+    )
+    with caplog.at_level("ERROR"):
+        result = _build_token_embedder()
+
+    assert result is None
+    assert any("token embedder unavailable" in r.message.lower() for r in caplog.records)
+
+
+def test_build_grounding_llm_logs_and_returns_none_on_failure(monkeypatch, caplog) -> None:
+    from app.api.routes.evaluation import _build_grounding_llm
+
+    def _raise(*args: object, **kwargs: object):
+        raise ValueError("no OPENAI_API_KEY")
+
+    monkeypatch.setattr("app.services.llm_service.LLMService", _raise)
+    with caplog.at_level("ERROR"):
+        result = _build_grounding_llm()
+
+    assert result is None
+    assert any("grounding llm unavailable" in r.message.lower() for r in caplog.records)
+
+
+def test_build_sentence_embedder_logs_and_returns_none_on_failure(monkeypatch, caplog) -> None:
+    from app.api.routes.evaluation import _build_sentence_embedder
+
+    def _raise(*args: object, **kwargs: object):
+        raise ValueError("embedding backend down")
+
+    monkeypatch.setattr("app.services.embedding_service.get_embedding_service", _raise)
+    with caplog.at_level("ERROR"):
+        result = _build_sentence_embedder()
+
+    assert result is None
+    assert any("sentence embedder unavailable" in r.message.lower() for r in caplog.records)
+
+
+def test_build_helpers_succeed_unaffected_by_logging_change() -> None:
+    """Regression guard: the success path for all four helpers is unchanged
+    -- they still return a real, usable object when construction succeeds.
+    """
+    from app.api.routes.evaluation import _build_sentence_embedder, _build_token_embedder
+    from app.services.embedding_service import EmbeddingService
+
+    assert isinstance(_build_sentence_embedder(), EmbeddingService)
+    assert _build_token_embedder() is not None
 
 
 # ── POST /evaluation/full — generation (Phase 22A) ────────────────────────────

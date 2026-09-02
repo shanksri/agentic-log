@@ -120,7 +120,8 @@ All settings are read from environment variables (or a `.env` file) via `app/cor
 
 | Variable | Default | Notes |
 |---|---|---|
-| `DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/incidents` | Required |
+| `ENVIRONMENT` | `development` | `production` additionally requires `API_KEY` to be a real secret and `DATABASE_URL` to not point at localhost — `Settings()` raises at startup otherwise (Phase 24A). `production` also disables `/docs`, `/redoc`, `/openapi.json` |
+| `DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/incidents` | Required in production (must not be the localhost default there) |
 | `GITHUB_TOKEN` | — | Optional; avoids GitHub API rate limits |
 | `OPENAI_API_KEY` | — | Required for `/agent/*` and any LLM-backed evaluation |
 | `OPENAI_MODEL` | `gpt-4o-mini` | |
@@ -340,4 +341,6 @@ See [`docs/architecture/16`](docs/architecture/16_current_limitations.md) for th
 [`docs/architecture/17`](docs/architecture/17_future_roadmap.md) for the prioritized roadmap. Notable
 ones: BM25/Hybrid retrieval requires a process restart to see newly-ingested incidents (the index is
 built once and cached, not incrementally updated); the evaluation platform is reachable via its REST
-API and CLI scripts but not wired into automatic CI; no rate limiting on any endpoint yet.
+API and CLI scripts but not wired into automatic CI; rate limiting (Phase 23C, see
+[Rate limiting](#rate-limiting)) is in-memory and process-local, correct only as long as the
+deployment stays single-process (the current `Dockerfile`/`docker-compose.yml` already do).

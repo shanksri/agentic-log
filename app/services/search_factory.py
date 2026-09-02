@@ -39,6 +39,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.models import Incident
 from app.services.bm25_search import BM25Document, BM25Retriever
+from app.services.embedding_service import get_embedding_service
 from app.services.hybrid_search import HybridRetriever
 from app.services.llm_service import LLMService
 from app.services.routed_search import RoutedSearchConfig, RoutedSearchService
@@ -97,7 +98,9 @@ def build_routed_search_service(
     (default ``False`` — dense-only behavior, unchanged from before this
     module existed, unless explicitly opted in).
     """
-    dense = IncidentSearchService(db, llm_service=llm_service)
+    dense = IncidentSearchService(
+        db, embedding_service=get_embedding_service(), llm_service=llm_service
+    )
     bm25 = get_bm25_retriever(db)
     hybrid = HybridRetriever(dense, bm25)
     routing_engine = RoutingEngine(DefaultRuleBasedRoutingPolicy())

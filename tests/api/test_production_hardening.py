@@ -354,6 +354,47 @@ def test_get_incident_db_unavailable_returns_503() -> None:
         _clear()
 
 
+def test_pool_exhaustion_timeout_returns_503_not_500() -> None:
+    """Phase 24B: sqlalchemy.exc.TimeoutError (raised on connection-pool
+    exhaustion) is NOT a subclass of OperationalError, so before the
+    platform-wide DB handler was broadened to SQLAlchemyError this fell
+    through to the generic 500 handler instead of the more correct 503.
+    """
+    from sqlalchemy.exc import TimeoutError as SQLAlchemyTimeoutError
+
+    db = MagicMock()
+    db.scalars.side_effect = SQLAlchemyTimeoutError(
+        "QueuePool limit of size 5 overflow 10 reached, connection timed out"
+    )
+    client = _client(db)
+    try:
+        resp = client.get("/incidents")
+        assert resp.status_code == 503
+        assert "QueuePool" not in resp.text
+        assert resp.json() == {"detail": "Database is temporarily unavailable. Please retry shortly."}
+    finally:
+        _clear()
+
+
+def test_other_sqlalchemy_error_also_returns_503_not_500() -> None:
+    """Same broadened-handler coverage for a DB-layer error that also isn't
+    an OperationalError (e.g. an embedding-dimension mismatch would surface
+    as sqlalchemy.exc.DataError) -- DataError is used here as a
+    representative non-OperationalError SQLAlchemyError subtype.
+    """
+    from sqlalchemy.exc import DataError
+
+    db = MagicMock()
+    db.scalars.side_effect = DataError("SELECT 1", {}, Exception("expected 384 dimensions, not 768"))
+    client = _client(db)
+    try:
+        resp = client.get("/incidents")
+        assert resp.status_code == 503
+        assert "768" not in resp.text
+    finally:
+        _clear()
+
+
 # ── Evaluation: run_id / experiment_name malformed identifiers ──────────────
 
 

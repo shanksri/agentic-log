@@ -51,6 +51,7 @@ from pathlib import Path
 from typing import Any
 
 from app.evaluation.evaluation_pipeline import EvaluationPipelineResult
+from app.evaluation.run_repository import PersistenceError
 
 # ── Run ID ────────────────────────────────────────────────────────────────────
 
@@ -328,50 +329,62 @@ class ExperimentRepository:
         )
 
         run_dir = self._history / rid
-        run_dir.mkdir(parents=True, exist_ok=True)
 
-        # metadata
-        _write_json(run_dir / "metadata.json", _to_jsonable(meta))
+        # Phase 24B: every operation below is disk I/O (mkdir, JSON writes,
+        # the latest/ rmtree+copytree) and previously had no error handling
+        # at all — a disk-full/permission/interrupted-write failure would
+        # propagate a raw OSError/shutil exception to whatever called
+        # save() (unlike the read paths below, which already degrade
+        # cleanly). Wrapped in one typed PersistenceError so every caller
+        # gets a consistent, identifiable failure instead of an assortment
+        # of raw filesystem exceptions. No behavior change on success.
+        try:
+            run_dir.mkdir(parents=True, exist_ok=True)
 
-        # execution summary
-        _write_json(run_dir / "summary.json", _to_jsonable(result.execution_summary))
+            # metadata
+            _write_json(run_dir / "metadata.json", _to_jsonable(meta))
 
-        # main reports (skip None)
-        report_map: dict[str, Any] = {
-            "retrieval_report": result.retrieval_report,
-            "reasoning_report": result.reasoning_report,
-            "judge_report": result.judge_report,
-            "quality_report": result.quality_report,
-            "validation_report": result.judge_validation_report,
-            "regression_report": (
-                result.retrieval_regression or result.reasoning_regression
-            ),
-            "generation_report": result.generation_report,  # Phase 22A
-        }
-        serialised: dict[str, dict[str, Any] | None] = {}
-        for key, obj in report_map.items():
-            if obj is not None:
-                data = _to_jsonable(obj)
-                _write_json(run_dir / _REPORT_FILES[key], data)
-                serialised[key] = data
-            else:
-                serialised[key] = None
+            # execution summary
+            _write_json(run_dir / "summary.json", _to_jsonable(result.execution_summary))
 
-        # convenience failure files (filter only; never recompute)
-        ret_data = serialised.get("retrieval_report")
-        reas_data = serialised.get("reasoning_report")
-        judge_data = serialised.get("judge_report")
+            # main reports (skip None)
+            report_map: dict[str, Any] = {
+                "retrieval_report": result.retrieval_report,
+                "reasoning_report": result.reasoning_report,
+                "judge_report": result.judge_report,
+                "quality_report": result.quality_report,
+                "validation_report": result.judge_validation_report,
+                "regression_report": (
+                    result.retrieval_regression or result.reasoning_regression
+                ),
+                "generation_report": result.generation_report,  # Phase 22A
+            }
+            serialised: dict[str, dict[str, Any] | None] = {}
+            for key, obj in report_map.items():
+                if obj is not None:
+                    data = _to_jsonable(obj)
+                    _write_json(run_dir / _REPORT_FILES[key], data)
+                    serialised[key] = data
+                else:
+                    serialised[key] = None
 
-        failed_q = _failed_queries(ret_data) if ret_data else []
-        failed_r = _failed_reasoning(reas_data) if reas_data else []
-        disagree = _judge_disagreements(judge_data) if judge_data else []
+            # convenience failure files (filter only; never recompute)
+            ret_data = serialised.get("retrieval_report")
+            reas_data = serialised.get("reasoning_report")
+            judge_data = serialised.get("judge_report")
 
-        _write_json(run_dir / "failed_queries.json", failed_q)
-        _write_json(run_dir / "failed_reasoning.json", failed_r)
-        _write_json(run_dir / "judge_disagreements.json", disagree)
+            failed_q = _failed_queries(ret_data) if ret_data else []
+            failed_r = _failed_reasoning(reas_data) if reas_data else []
+            disagree = _judge_disagreements(judge_data) if judge_data else []
 
-        # overwrite latest/ atomically (copy the whole directory)
-        self._overwrite_latest(run_dir)
+            _write_json(run_dir / "failed_queries.json", failed_q)
+            _write_json(run_dir / "failed_reasoning.json", failed_r)
+            _write_json(run_dir / "judge_disagreements.json", disagree)
+
+            # overwrite latest/ atomically (copy the whole directory)
+            self._overwrite_latest(run_dir)
+        except OSError as exc:
+            raise PersistenceError(f"Failed to persist run {rid!r}: {exc}") from exc
 
         return rid
 

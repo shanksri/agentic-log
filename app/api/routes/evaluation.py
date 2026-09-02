@@ -344,10 +344,10 @@ def _build_search_service(db):
     detail) is logged server-side only; the client sees a generic message.
     """
     try:
-        from app.services.embedding_service import EmbeddingService
+        from app.services.embedding_service import get_embedding_service
         from app.services.search import IncidentSearchService
 
-        return IncidentSearchService(db=db, embedding_service=EmbeddingService())
+        return IncidentSearchService(db=db, embedding_service=get_embedding_service())
     except Exception as exc:  # noqa: BLE001
         logger.exception("Search service unavailable")
         raise HTTPException(
@@ -364,9 +364,9 @@ def _build_orchestrator(db):
         )
         from app.services.llm_service import LLMService
         from app.services.search import IncidentSearchService
-        from app.services.embedding_service import EmbeddingService
+        from app.services.embedding_service import get_embedding_service
 
-        search = IncidentSearchService(db=db, embedding_service=EmbeddingService())
+        search = IncidentSearchService(db=db, embedding_service=get_embedding_service())
         llm = LLMService()
         return MultiAgentInvestigationOrchestrator(db, search_service=search, llm_service=llm)
     except Exception as exc:  # noqa: BLE001
@@ -397,6 +397,7 @@ def _build_answer_generator():
 
         return LLMServiceAnswerGenerator(LLMService())
     except Exception:  # noqa: BLE001
+        logger.exception("Answer generator unavailable — generation will be skipped")
         return None
 
 
@@ -408,10 +409,11 @@ def _build_token_embedder():
     """
     try:
         from app.evaluation.generation_metrics import SentenceTransformerTokenEmbedder
-        from app.services.embedding_service import EmbeddingService
+        from app.services.embedding_service import get_embedding_service
 
-        return SentenceTransformerTokenEmbedder(EmbeddingService())
+        return SentenceTransformerTokenEmbedder(get_embedding_service())
     except Exception:  # noqa: BLE001
+        logger.exception("Token embedder unavailable — BERTScore will be undefined")
         return None
 
 
@@ -426,6 +428,7 @@ def _build_grounding_llm():
 
         return LLMService()
     except Exception:  # noqa: BLE001
+        logger.exception("Grounding LLM unavailable — grounding metrics will be skipped")
         return None
 
 
@@ -436,10 +439,11 @@ def _build_sentence_embedder():
     is then None with a recorded note).
     """
     try:
-        from app.services.embedding_service import EmbeddingService
+        from app.services.embedding_service import get_embedding_service
 
-        return EmbeddingService()
+        return get_embedding_service()
     except Exception:  # noqa: BLE001
+        logger.exception("Sentence embedder unavailable — answer_relevancy will be skipped")
         return None
 
 
@@ -892,11 +896,17 @@ def run_full_pipeline(
         raise HTTPException(status_code=500, detail="Evaluation pipeline failed.") from exc
 
     run_id: str | None = None
+    persistence_errors: list[str] = []
     if request.persist:
         try:
             run_id = repo.save(result, experiment_name=request.experiment_name)
         except Exception as exc:  # noqa: BLE001
-            pass  # non-fatal
+            # Phase 24B: previously silently swallowed (`pass`) — now matches
+            # the visible-surfacing + logging behavior /evaluation/retrieval
+            # and /evaluation/reasoning already use for the identical
+            # failure class (repo.save() raising).
+            logger.exception("Evaluation run persistence failed")
+            persistence_errors.append(f"Persistence failed: {exc!r}")
 
     s = result.execution_summary
     return FullPipelineResponse(
@@ -911,7 +921,7 @@ def run_full_pipeline(
         reasoning_regression=_to_dict(result.reasoning_regression) if result.reasoning_regression else None,
         execution_summary=_to_dict(s),
         warnings=list(s.warnings),
-        errors=list(s.errors),
+        errors=list(s.errors) + persistence_errors,
         generation_report=(
             _to_dict(result.generation_report) if result.generation_report else None
         ),

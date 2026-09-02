@@ -7,9 +7,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.routes import agent, evaluation, evaluation_interactive, health, incidents, ingestion, search
+from app.core.config import settings
 from app.core.logging import configure_logging
 
 configure_logging()
@@ -39,11 +40,26 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("shutdown: database connection pool disposed")
 
 
+# Phase 24A: /docs, /redoc, and /openapi.json are public and unauthenticated
+# by FastAPI's own default (they aren't behind any router's require_api_key
+# dependency). That's fine in development, but in production it exposes the
+# full API surface/schema to anyone unauthenticated, so all three are
+# disabled outright rather than gated some other way. Every business route's
+# actual auth/rate-limiting is unaffected either way. Extracted as a pure
+# function (rather than inlined) so it's directly unit-testable without
+# reloading this module or its FastAPI app.
+def _docs_urls(environment: str) -> dict[str, str | None]:
+    if environment == "production":
+        return {"docs_url": None, "redoc_url": None, "openapi_url": None}
+    return {"docs_url": "/docs", "redoc_url": "/redoc", "openapi_url": "/openapi.json"}
+
+
 app = FastAPI(
     title="Enterprise Incident Intelligence Platform",
     version="0.1.0",
     description="Phase 1 GitHub incident ingestion and semantic incident search.",
     lifespan=lifespan,
+    **_docs_urls(settings.environment),
 )
 app.include_router(health.router)
 app.include_router(agent.router)
@@ -65,8 +81,19 @@ app.include_router(evaluation_interactive.router)
 # applied platform-wide as a safety net.
 
 
-@app.exception_handler(OperationalError)
-async def database_unavailable_handler(request: Request, exc: OperationalError) -> JSONResponse:
+@app.exception_handler(SQLAlchemyError)
+async def database_unavailable_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+    # Phase 24B: broadened from OperationalError (DB connection/network
+    # failures only) to SQLAlchemyError, its common base — OperationalError
+    # is NOT the base of every DB-layer failure that should read as "service
+    # temporarily unavailable" rather than a generic bug: pool-exhaustion
+    # timeouts (sqlalchemy.exc.TimeoutError) and embedding-dimension
+    # mismatches (sqlalchemy.exc.DataError) were previously falling through
+    # to the generic 500 handler below instead of this one. Audited first
+    # (see Phase 24B report): OperationalError is the only SQLAlchemy
+    # exception type referenced anywhere else in this codebase or its
+    # tests, so no existing behavior intentionally depended on any other
+    # subtype reaching the generic 500 handler instead of this one.
     logger.exception("Database operation failed for %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=503,

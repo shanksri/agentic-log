@@ -8,10 +8,12 @@ project this size — ships its own rigorous evaluation platform (retrieval metr
 accuracy, LLM-as-judge, RAGAS-style grounding metrics, diagnostics/health dashboards) to measure
 whether any of that actually works.
 
-This is not a toy RAG demo. It's ~23 phases of incremental, tested development: real ingestion
+This is not a toy RAG demo. It's 24 phases of incremental, tested development: real ingestion
 pipelines, hybrid retrieval with adaptive routing, a genuine multi-agent orchestrator (not a single
-prompt), a purpose-built evaluation harness, and a hardening pass (input validation, graceful
-degradation, load/performance testing, security review) aimed at production readiness.
+prompt), a purpose-built evaluation harness, and two hardening passes (input validation, graceful
+degradation, load/performance testing, security review, environment-aware configuration, and
+failure-handling audits) aimed at production readiness. See
+[Project status](#project-status) for exactly what's done and what's next.
 
 ## What it does, end to end
 
@@ -64,15 +66,17 @@ Most "agentic RAG" projects are one LLM call deciding when to retrieve. This pla
 ## Tech stack
 
 FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL + pgvector + `pg_trgm` · SentenceTransformers ·
-OpenAI API · Docker / docker-compose · pytest (1,200+ tests) · Python 3.12
+OpenAI API · Docker / docker-compose · pytest (1,375 tests) · Python 3.12
 
 ## Documentation map
 
 This README is the entry point. The full engineering reference — written for someone joining the
-project cold — lives in [`docs/README.md`](docs/README.md) and 22 numbered architecture docs
-(`docs/architecture/01`–`22`), covering everything from ingestion and normalization through
-retrieval, the multi-agent investigation framework, and the evaluation platform's REST API. Start
-there for depth; this file is the map.
+project cold — lives in [`docs/README.md`](docs/README.md) and 23 numbered architecture docs
+(`docs/architecture/01`–`23`), covering everything from ingestion and normalization through
+retrieval, the multi-agent investigation framework, the evaluation platform's REST API, and Phase 23
+production hardening. Start there for depth; this file is the map. (Phase 24's configuration and
+error-handling hardening, below, postdates that numbered doc series and is documented only here and
+inline in the code it touches.)
 
 ## Project structure
 
@@ -87,9 +91,9 @@ app/
   services/          Embedding, LLM, retrieval (dense/BM25/hybrid/routed), the 4 investigation agents
   evaluation/        Gold datasets, harnesses, metrics, judges, experiment tracking, diagnostics — 37 modules
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
-docs/                Full architecture documentation (22 numbered docs + index)
+docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py
-tests/               1,200+ tests: tests/unit, tests/api, tests/eval
+tests/               1,375 tests: tests/unit, tests/api, tests/eval
 Dockerfile, docker-compose.yml   Multi-stage build, non-root user, healthcheck (Phase 23)
 ```
 
@@ -283,7 +287,7 @@ only genuine duplication.
 ## Running tests
 
 ```bash
-python -m pytest              # full suite — 1,200+ tests
+python -m pytest              # full suite — 1,375 tests
 python -m pytest tests/unit    # unit tests only (no HTTP layer)
 python -m pytest tests/api     # FastAPI route tests (TestClient, no real DB/LLM)
 python -m ruff check .         # lint
@@ -291,6 +295,13 @@ python -m ruff check .         # lint
 
 Every test runs against fakes/mocks for the database, LLM, and embedding backends — no live
 Postgres or OpenAI credentials are needed to run the suite.
+
+**Latest verified result: 1,374 passed, 1 known pre-existing failure** —
+`tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` fails in a
+fresh checkout because it depends on `.evaluation_runs/history/metadata.json`, a local file this
+environment's history doesn't have (unrelated to application code — every other test in that file,
+and everything else in the suite, passes). Not yet fixed; tracked as a known issue rather than
+worked around.
 
 ## Load testing and performance profiling
 
@@ -328,8 +339,112 @@ A dedicated validation-and-hardening pass, on top of the feature-complete platfo
   `docker-compose.yml` added (the README referenced them before they existed); a `/health/ready`
   probe and app lifespan (startup DB check, clean shutdown) added.
 
-1,200+ tests cover empty/malformed/oversized/unicode input, invalid UUIDs, missing resources,
-simulated DB/LLM/embedding/upstream failures, and corrupted evaluation data.
+1,200+ tests (at the time of that phase) cover empty/malformed/oversized/unicode input, invalid
+UUIDs, missing resources, simulated DB/LLM/embedding/upstream failures, and corrupted evaluation
+data.
+
+## Production hardening (Phase 24)
+
+A second hardening pass, split into two sub-phases, focused on configuration correctness and
+failure-handling gaps that only surface under real operating conditions rather than input
+validation:
+
+**Phase 24A — configuration & environment:**
+- An explicit `ENVIRONMENT` setting (`development`/`production`, see the Configuration table above).
+  Development behavior is completely unchanged; `production` fails fast at process startup — not at
+  first request — if `API_KEY` is unset or still the placeholder value, or if `DATABASE_URL` still
+  points at localhost.
+- `Field(gt=0)` validation on every rate-limit setting and `EMBEDDING_DIMENSIONS`, so an invalid
+  value (e.g. `0` or negative from a typo'd environment variable) is rejected at startup instead of
+  producing undefined behavior at runtime.
+- `/docs`, `/redoc`, and `/openapi.json` (public and unauthenticated by FastAPI's own default) are
+  disabled outright when `ENVIRONMENT=production`.
+
+**Phase 24B — application reliability & error handling:** an audit-then-fix pass across API error
+handling, database failures, LLM/embedding failures, the multi-agent investigation path, evaluation
+failures, and resource lifecycle. Most of the platform's existing failure handling held up under
+audit (typed exceptions, no secret/traceback leakage, per-query/per-metric fault isolation in the
+evaluation harnesses); five concrete gaps were fixed:
+- **Embedding model caching** — `EmbeddingService` is now cached process-wide (mirroring the
+  existing BM25 index cache), so the SentenceTransformer model is no longer reloaded from scratch on
+  every `/search/*` and `/agent/investigate` request.
+- **`/evaluation/full` persistence failures** — a failed run-save previously returned a bare
+  `run_id: null` with no explanation and nothing in the server logs. It now surfaces in the
+  response's `errors` list and is logged, matching how `/evaluation/retrieval` and
+  `/evaluation/reasoning` already handle the identical failure.
+- **Silent `_build_*` helper failures** — four internal helpers in the evaluation API that degrade
+  gracefully to `None` (missing OpenAI key, etc.) now log the exception they swallow, instead of
+  giving zero server-side trace of why generation/grounding was skipped.
+- **DB exception classification** — the platform-wide database exception handler was broadened from
+  `OperationalError` to its common base, `SQLAlchemyError`, so connection-pool exhaustion and
+  embedding-dimension-mismatch errors return `503` (service temporarily unavailable) instead of a
+  generic `500`.
+- **Typed persistence errors** — writing an evaluation run to disk (`ExperimentRepository`,
+  `FileRunRepositoryMixin`) previously had no error handling on the write path at all (only reads
+  were hardened); a disk-full or permission failure now raises one typed `PersistenceError` instead
+  of a raw filesystem exception.
+
+Two related, real gaps were identified but deliberately **not** fixed in this pass, since fixing
+them means changing behavior rather than just handling failure more cleanly: the multi-agent
+orchestrator has no fault isolation between hypotheses or iterations (one LLM failure partway
+through discards all completed work for that investigation), and there is no retry/backoff for
+transient LLM failures (a single rate-limit or timeout fails the whole call). Both are documented,
+scoped, and left for a future phase rather than bundled in here.
+
+72 new tests cover both sub-phases (48 for 24A's configuration validation, 24 for 24B's failure
+paths); combined with everything before it, the full suite is 1,375 tests (see
+[Running tests](#running-tests)).
+
+## Evaluation findings
+
+Phase 22's evaluation work went beyond running the metrics — it stress-tested whether the
+platform's confidence signal actually means what it's assumed to mean, and found a real gap:
+
+**Dense-retrieval confidence is not a validated abstention mechanism.** The existing
+`classify_confidence` thresholds (0.40/0.55) were originally calibrated against 4 negative-control
+queries that were all clearly out-of-domain (payments, mobile push, spreadsheets, VPN). A follow-up
+evaluation built 20 **hard negatives** — queries that deliberately share vocabulary or a general
+topic with something already in the corpus (e.g. a Helm values-merging question near a real Helm
+values bug) without describing the same underlying incident — and re-ran calibration against the
+live corpus. Result: top-1 dense similarity alone does **not** cleanly separate genuine matches from
+these harder negatives. 11 of 20 hard negatives scored in the "HIGH" confidence band — the same band
+genuine matches occupy — and no single threshold in the tested range achieved both good precision
+and good recall against them, unlike the clean separation the original 4-negative calibration
+showed. One genuine, verified positive match in the current corpus scores *below* the current LOW
+boundary, which is the concrete shape of the precision/recall tension: raising the threshold to
+catch more hard negatives would also start rejecting real matches.
+
+This does not mean confidence scoring is broken or unused — it's real, computed, and already
+threaded through the investigation agents and (as of Phase 22D) gates the generation step against
+the clearest failures (very low similarity). What it means is narrower and more honest: **top-1
+similarity alone should not be presented as a solved or fully validated "don't answer when
+unsure" mechanism.** It catches the easy case reliably; it does not reliably catch a topically
+adjacent but substantively different incident. Whether a second signal (a cheap LLM relevance check,
+score-distribution shape, corpus-relative ranking) closes this gap is an open, explicitly
+unresolved question — two candidate signals (rank-1-to-rank-2 gap, source diversity) were tested and
+did not cleanly separate the two classes either. See
+`docs/architecture/14_confidence_calibration.md` for the original calibration this finding builds
+on; the hard-negative dataset is `tests/eval/gold_queries_hard_negatives_v1.json` (each entry
+records the nearest real incident it was probed against and why it isn't a genuine match), the
+calibration runner is `tests/eval/run_phase22f_confidence_calibration.py`, and the full per-query
+results are in `tests/eval/results/phase22f_confidence_calibration.json`.
+
+## Security & operational notes
+
+Consolidated pointer to what's implemented — each is covered in more depth in its own section above:
+
+- **Authentication** — Bearer API-key auth on every business endpoint, fail-closed if unconfigured.
+  See [Authentication](#authentication).
+- **Rate limiting** — per-endpoint-group, per-caller limits with `Retry-After`/`X-RateLimit-*`
+  headers. See [Rate limiting](#rate-limiting).
+- **Environment-aware configuration** — `ENVIRONMENT=production` enforces a real `API_KEY` and a
+  non-localhost `DATABASE_URL` at startup, and disables `/docs`/`/redoc`/`/openapi.json`. See
+  [Configuration](#configuration) and [Production hardening (Phase 24)](#production-hardening-phase-24).
+- **Non-root Docker runtime** — the `Dockerfile` runs the application as a dedicated non-root
+  `appuser`, multi-stage build (no build toolchain in the runtime image), with a container
+  healthcheck. See [Production hardening (Phase 23)](#production-hardening-phase-23).
+- **No secrets in the repository** — `.env` is gitignored; only `.env.example` (placeholder values)
+  is committed.
 
 ## Corpus (at time of writing)
 
@@ -343,4 +458,28 @@ ones: BM25/Hybrid retrieval requires a process restart to see newly-ingested inc
 built once and cached, not incrementally updated); the evaluation platform is reachable via its REST
 API and CLI scripts but not wired into automatic CI; rate limiting (Phase 23C, see
 [Rate limiting](#rate-limiting)) is in-memory and process-local, correct only as long as the
-deployment stays single-process (the current `Dockerfile`/`docker-compose.yml` already do).
+deployment stays single-process (the current `Dockerfile`/`docker-compose.yml` already do); top-1
+dense-similarity confidence does not reliably separate genuine matches from topically-adjacent hard
+negatives and should not be treated as a validated abstention mechanism (see
+[Evaluation findings](#evaluation-findings)); the multi-agent investigation orchestrator has no
+fault isolation between hypotheses/iterations and there is no retry/backoff for transient LLM
+failures (both identified in the Phase 24B audit, deliberately not fixed in that pass — see
+[Production hardening (Phase 24)](#production-hardening-phase-24)).
+
+## Project status
+
+**Core engineering implementation is substantially complete through Phase 24.** Ingestion, hybrid
+retrieval with adaptive routing, the four-agent investigation loop, the evaluation platform
+(retrieval/reasoning/generation/grounding metrics, LLM-as-judge, diagnostics), and two hardening
+passes (Phase 23's input validation/graceful-degradation/load-testing, Phase 24's environment
+configuration and failure-handling audit) are all implemented and covered by the current 1,375-test
+suite (1,374 passing — see [Running tests](#running-tests)).
+
+What's genuinely open, not glossed over: the confidence-calibration gap above is real and
+unresolved, not a solved problem being undersold; two failure-handling gaps in the investigation
+orchestrator (noted above) were identified and deliberately deferred rather than fixed; and the
+platform has not yet been deployed anywhere beyond local Docker Compose — no staging/production
+environment, no CI pipeline running the suite automatically, no live deployment verification.
+
+The current checkpoint (`Complete production hardening Phase 24`) is intentionally paused here,
+before that next phase, specifically to get an accurate, honest snapshot in place first.

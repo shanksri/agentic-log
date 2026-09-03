@@ -1,0 +1,1157 @@
+{
+  "repetitions": 5,
+  "model": "gpt-4o-mini",
+  "temperature": 0.2,
+  "num_queries": 35,
+  "prompt_source": "scripts\\probe_llm_relevance_gate.py",
+  "runtime_seconds": 206.4,
+  "usage": {
+    "num_calls": 175,
+    "prompt_tokens": 30435,
+    "completion_tokens": 5327,
+    "estimated_cost_usd": 0.0078
+  },
+  "per_repetition_rates": [
+    {
+      "tp": 20,
+      "fn": 1,
+      "fp": 0,
+      "tn": 11,
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "fpr": 0.0
+    },
+    {
+      "tp": 20,
+      "fn": 1,
+      "fp": 0,
+      "tn": 11,
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "fpr": 0.0
+    },
+    {
+      "tp": 20,
+      "fn": 1,
+      "fp": 0,
+      "tn": 11,
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "fpr": 0.0
+    },
+    {
+      "tp": 20,
+      "fn": 1,
+      "fp": 0,
+      "tn": 11,
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "fpr": 0.0
+    },
+    {
+      "tp": 20,
+      "fn": 1,
+      "fp": 0,
+      "tn": 11,
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "fpr": 0.0
+    }
+  ],
+  "aggregate": {
+    "precision": {
+      "values": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "min": 1.0,
+      "max": 1.0,
+      "confidence": "high"
+    },
+    "recall": {
+      "values": [
+        0.9523809523809523,
+        0.9523809523809523,
+        0.9523809523809523,
+        0.9523809523809523,
+        0.9523809523809523
+      ],
+      "mean": 0.9523809523809523,
+      "std_dev": 0.0,
+      "min": 0.9523809523809523,
+      "max": 0.9523809523809523,
+      "confidence": "high"
+    },
+    "fpr": {
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "confidence": "high"
+    }
+  },
+  "queries": [
+    {
+      "id": "v2-lex-01",
+      "group": "POSITIVE",
+      "top1_score": 0.7198075819130206,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "hashicorp/terraform#38574"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident describes the same failure in the same component with the same mechanism.",
+        "The retrieved incident describes the same failure in the same component with the same mechanism.",
+        "The retrieved incident describes the same failure in the same component with the same mechanism.",
+        "The retrieved incident describes the same failure in the same component with the same mechanism.",
+        "The retrieved incident describes the same failure in the same component with the same mechanism."
+      ]
+    },
+    {
+      "id": "v2-lex-02",
+      "group": "POSITIVE",
+      "top1_score": 0.9301312607448559,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137685"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident describes the same issue with MemoryQoS and memory.high for BestEffort pods on cgroup v2.",
+        "Both the current problem statement and the retrieved past incident describe the same issue with MemoryQoS not setting memory.high for BestEffort pods on cgroup v2.",
+        "Both the current problem statement and the retrieved past incident describe the same issue with MemoryQoS not setting memory.high for BestEffort pods on cgroup v2.",
+        "Both the current problem statement and the retrieved past incident describe the same issue with MemoryQoS not setting memory.high for BestEffort pods on cgroup v2.",
+        "Both the current problem statement and the retrieved past incident describe the same issue with MemoryQoS not setting memory.high for BestEffort pods on cgroup v2."
+      ]
+    },
+    {
+      "id": "v2-lex-03",
+      "group": "POSITIVE",
+      "top1_score": 0.7161071638933275,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "redis/redis#15293"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both the current problem statement and the retrieved incident address the same feature of UltraLogLog encoding for HyperLogLog with a focus on memory efficiency and accuracy.",
+        "Both the current problem statement and the retrieved incident address the same feature of UltraLogLog encoding for HyperLogLog with a focus on memory usage and accuracy.",
+        "Both the current problem statement and the retrieved incident address the same feature of UltraLogLog encoding for HyperLogLog with a focus on memory usage and accuracy.",
+        "Both the current problem statement and the retrieved incident address the same feature of UltraLogLog encoding for HyperLogLog with a focus on memory usage and accuracy.",
+        "Both the current problem statement and the retrieved incident address the same feature of UltraLogLog encoding for HyperLogLog with a focus on memory usage and accuracy."
+      ]
+    },
+    {
+      "id": "v2-lex-04",
+      "group": "POSITIVE",
+      "top1_score": 0.7580379391886045,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "istio/istio#59021"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve intermittent failures of SDS sync related to the same BackendTLSPolicy and ConfigMap CAs.",
+        "Both incidents involve the same failure of cross-namespace ConfigMap CAs failing SDS sync in the Gateway API BackendTLSPolicy.",
+        "Both incidents involve the same issue with Gateway API BackendTLSPolicy cross-namespace ConfigMap CAs failing SDS sync.",
+        "Both incidents involve the same failure related to Gateway API BackendTLSPolicy cross-namespace ConfigMap CAs failing SDS sync.",
+        "Both incidents involve intermittent failures of SDS sync related to the same BackendTLSPolicy and ConfigMap CAs."
+      ]
+    },
+    {
+      "id": "v2-lex-05",
+      "group": "POSITIVE",
+      "top1_score": 0.949601948261261,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137356"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents describe a deadlock during the kube-apiserver upgrade from v1.32 to v1.33 caused by admission webhooks and ServiceCIDR.",
+        "Both incidents describe a deadlock during the kube-apiserver upgrade from v1.32 to v1.33 caused by admission webhooks and ServiceCIDR.",
+        "Both incidents describe a deadlock during the kube-apiserver upgrade from v1.32 to v1.33 caused by admission webhooks and ServiceCIDR.",
+        "Both incidents describe a deadlock during the kube-apiserver upgrade from v1.32 to v1.33 caused by admission webhooks and ServiceCIDR.",
+        "Both incidents describe the same deadlock issue during the kube-apiserver upgrade related to admission webhooks and ServiceCIDR."
+      ]
+    },
+    {
+      "id": "v2-lex-06",
+      "group": "POSITIVE",
+      "top1_score": 0.8272152543067932,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "langchain-ai/langchain#29768"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident directly matches the current problem statement.",
+        "The retrieved incident directly matches the current problem statement.",
+        "The retrieved incident directly matches the current problem statement.",
+        "The retrieved incident directly matches the current problem statement.",
+        "The retrieved incident directly matches the current problem statement."
+      ]
+    },
+    {
+      "id": "v2-lex-07",
+      "group": "POSITIVE",
+      "top1_score": 0.7941648960113525,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "hashicorp/terraform#36500"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident has the same title and describes the same issue with the s3 backend and sso session.",
+        "The retrieved incident has the same title and describes the same issue with the s3 backend and sso session.",
+        "The retrieved incident has the same title and describes the same issue with the s3 backend and sso session.",
+        "The retrieved incident has the same title and describes the same issue with the s3 backend and sso session.",
+        "The retrieved incident has the same title and describes the same issue with the s3 backend and sso session."
+      ]
+    },
+    {
+      "id": "v2-lex-08",
+      "group": "POSITIVE",
+      "top1_score": 0.8593055689748798,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "KAFKA-17"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident has the same title and describes the same issue with the same component.",
+        "The retrieved incident has the same title and describes the same issue with the same component.",
+        "The retrieved incident has the same title and describes the same issue with the same component.",
+        "The retrieved incident is the same issue as the current problem statement.",
+        "The retrieved incident has the same title and describes the same issue with the same component."
+      ]
+    },
+    {
+      "id": "v2-lex-09",
+      "group": "POSITIVE",
+      "top1_score": 0.8695769906044006,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#138622"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents describe the same failure in CoreDNS due to the same race condition.",
+        "The retrieved incident describes the exact same failure and mechanism as the current problem statement.",
+        "The retrieved incident describes the same failure in CoreDNS due to the same race condition.",
+        "Both incidents describe the same failure in CoreDNS caused by the flannel subnet.env race condition.",
+        "The retrieved incident describes the exact same failure in CoreDNS due to the same mechanism."
+      ]
+    },
+    {
+      "id": "v2-lex-10",
+      "group": "POSITIVE",
+      "top1_score": 0.7065178330828064,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "redis/redis#15318"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident has the same title and context as the current problem statement.",
+        "The retrieved incident has the same title and context as the current problem statement.",
+        "The retrieved incident has the same title and context as the current problem statement.",
+        "The retrieved incident has the same title and context as the current problem statement.",
+        "The retrieved incident has the same title and focus on the same feature."
+      ]
+    },
+    {
+      "id": "v2-lex-11",
+      "group": "POSITIVE",
+      "top1_score": 0.8640974245013356,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "helm/helm#31664"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents describe the same failure regarding Helm plugin updates.",
+        "Both incidents describe the same failure regarding Helm plugin updates.",
+        "Both incidents describe the same failure related to Helm plugin updates.",
+        "Both incidents describe the same failure regarding Helm plugin updates.",
+        "Both incidents describe the same failure of Helm plugin updates."
+      ]
+    },
+    {
+      "id": "v2-lex-12",
+      "group": "POSITIVE",
+      "top1_score": 0.760386370431971,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "ray-project/ray#61456"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident has the same title and describes the same issue with the Ray Dashboard's GRAM usage measurement.",
+        "The retrieved incident has the same title and describes the same issue with GRAM usage measurement.",
+        "The retrieved incident has the same title and describes the same issue with the Ray Dashboard's GRAM usage measurement.",
+        "The retrieved incident has the same title and describes the same issue with the Ray Dashboard's GRAM usage measurement.",
+        "The retrieved incident has the same title and describes the same issue with the Ray Dashboard's GRAM usage measurement."
+      ]
+    },
+    {
+      "id": "v2-para-01",
+      "group": "POSITIVE",
+      "top1_score": 0.8642030954360962,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "hashicorp/terraform#36500"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve the S3 state backend not utilizing the AWS SSO session when a named profile is specified.",
+        "Both incidents involve the S3 backend not utilizing the AWS SSO session when a named profile is specified.",
+        "Both incidents involve the S3 backend not utilizing the AWS SSO session when a named profile is specified.",
+        "Both incidents involve the S3 state backend not utilizing the AWS SSO session when a named profile is specified.",
+        "Both incidents involve the S3 backend not utilizing the AWS SSO session when a named profile is specified."
+      ]
+    },
+    {
+      "id": "v2-para-02",
+      "group": "POSITIVE",
+      "top1_score": 0.645987672092,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137685"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve the failure of memory management for BestEffort workloads on cgroup v2.",
+        "Both incidents involve the failure of memory management for BestEffort workloads on cgroup v2.",
+        "Both incidents involve the failure of memory management for BestEffort workloads on cgroup v2.",
+        "Both the current problem and the past incident involve the failure of memory management for BestEffort workloads on cgroup v2.",
+        "Both incidents involve the failure of memory management for BestEffort workloads on cgroup v2."
+      ]
+    },
+    {
+      "id": "v2-para-04",
+      "group": "POSITIVE",
+      "top1_score": 0.5893510755703176,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "istio/istio#58427"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves an invalid peer certificate issue, not a syncing failure of certificate discovery data.",
+        "The past incident involves an invalid peer certificate issue, not a failure to sync certificate discovery data.",
+        "The past incident involves an invalid peer certificate issue, not a failure to sync certificate discovery data.",
+        "The past incident involves an invalid peer certificate issue, not a sync failure of certificate discovery data.",
+        "The past incident involves an invalid peer certificate issue, not a failure to sync certificate discovery data."
+      ]
+    },
+    {
+      "id": "v2-para-05",
+      "group": "POSITIVE",
+      "top1_score": 0.6555287837982178,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137356"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve deadlocks caused by admission webhooks interacting with new default-enabled features during Kubernetes API server upgrades.",
+        "Both incidents involve deadlocks caused by admission webhooks interacting with default-enabled features during Kubernetes API server upgrades.",
+        "Both incidents involve deadlocks related to admission hooks and default-enabled features during Kubernetes API server upgrades.",
+        "Both incidents involve a deadlock caused by admission webhooks interacting with new default-enabled APIs during a Kubernetes API server upgrade.",
+        "Both incidents involve deadlocks caused by admission hooks interacting with new default-enabled features during Kubernetes API server upgrades."
+      ]
+    },
+    {
+      "id": "v2-para-07",
+      "group": "POSITIVE",
+      "top1_score": 0.6458590030670166,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#138622"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve DNS pods being affected by a timing issue related to subnet configuration.",
+        "Both incidents involve DNS pods being affected by a timing issue related to network overlay configuration.",
+        "Both incidents involve DNS pods being affected by a timing issue related to subnet configuration.",
+        "Both incidents involve DNS pods being affected by a timing issue related to network overlay configuration.",
+        "Both incidents involve DNS pods being affected by a timing issue related to network overlay configuration."
+      ]
+    },
+    {
+      "id": "v2-para-10",
+      "group": "POSITIVE",
+      "top1_score": 0.5723669187803923,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "ray-project/ray#48086"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident relates to pinned memory for transfers, not GPU memory usage reporting.",
+        "The past incident is about pinned memory for transfers, not GPU memory usage reporting.",
+        "The past incident pertains to pinned memory for transfers, not GPU memory usage reporting.",
+        "The past incident relates to memory transfer support, not GPU memory usage reporting.",
+        "The past incident addresses pinned memory for transfers, not GPU memory usage reporting."
+      ]
+    },
+    {
+      "id": "v2-multi-01",
+      "group": "POSITIVE",
+      "top1_score": 0.6926287595850981,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "istio/istio#60122"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve issues with BackendTLSPolicy and DestinationRule interactions.",
+        "Both incidents involve issues with BackendTLSPolicy and DestinationRule interactions.",
+        "Both incidents involve issues with BackendTLSPolicy and DestinationRule interactions.",
+        "Both incidents involve issues with BackendTLSPolicy and DestinationRule interactions.",
+        "Both incidents involve issues with BackendTLSPolicy and DestinationRule interactions."
+      ]
+    },
+    {
+      "id": "v2-multi-02",
+      "group": "POSITIVE",
+      "top1_score": 0.7733926638002805,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "helm/helm#31770"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve issues with passing the plugin version to install/update/delete scripts.",
+        "Both incidents involve issues with passing the plugin version environment variable during the plugin lifecycle commands.",
+        "Both incidents involve issues with passing the plugin version environment variable to scripts.",
+        "Both incidents involve issues with passing the plugin version environment variable to scripts.",
+        "Both incidents involve issues with passing the plugin version environment variable to scripts."
+      ]
+    },
+    {
+      "id": "v2-multi-03",
+      "group": "POSITIVE",
+      "top1_score": 0.851235049815768,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137685"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve MemoryQoS not setting memory.high for BestEffort pods.",
+        "Both incidents involve the failure of MemoryQoS to set memory.high for BestEffort pods.",
+        "Both incidents involve MemoryQoS not setting memory.high for BestEffort pods.",
+        "Both incidents involve the failure of MemoryQoS to set memory.high for BestEffort pods.",
+        "Both incidents involve the failure of MemoryQoS to set memory.high for BestEffort pods."
+      ]
+    },
+    {
+      "id": "v2-multi-04",
+      "group": "POSITIVE",
+      "top1_score": 0.8076848983764648,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "ray-project/ray#62535"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident specifically addresses worker startup failures causing deadlocks, not actor task retries or infinite hangs.",
+        "The retrieved incident specifically addresses deadlocks caused by worker startup failures, not actor task retries or infinite hangs.",
+        "The retrieved incident specifically addresses deadlocks caused by worker startup failures, not actor task retries or infinite hangs.",
+        "The retrieved incident specifically addresses deadlocks caused by worker startup failures, not actor task retries or infinite hangs.",
+        "The retrieved incident specifically addresses deadlocks caused by worker startup failures, not actor task retries or infinite hangs."
+      ]
+    },
+    {
+      "id": "v2-multi-05",
+      "group": "POSITIVE",
+      "top1_score": 0.7638409874534032,
+      "top1_is_expected": true,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137356"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve deadlocks caused by admission webhooks and new default-enabled APIs during Kubernetes apiserver upgrades.",
+        "Both incidents involve deadlocks caused by admission webhooks and new default-enabled APIs during a Kubernetes apiserver upgrade.",
+        "Both incidents involve deadlocks caused by admission webhooks and new default-enabled APIs during a kube-apiserver upgrade.",
+        "Both incidents involve deadlocks caused by admission webhooks and new default-enabled APIs during a kube-apiserver upgrade.",
+        "Both incidents involve deadlocks caused by admission webhooks and new default-enabled APIs during a kube-apiserver upgrade."
+      ]
+    },
+    {
+      "id": "v2-multi-06",
+      "group": "POSITIVE",
+      "top1_score": 0.6823344434003369,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "getsentry/sentry#119300"
+      ],
+      "decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "unanimous": true,
+      "majority_decision": true,
+      "agreement": 1.0,
+      "mean": 1.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "Both incidents involve a GitLab integration problem.",
+        "Both incidents involve a GitLab integration problem.",
+        "Both incidents involve a GitLab integration problem.",
+        "Both incidents involve issues with GitLab integration.",
+        "Both incidents involve a GitLab integration problem."
+      ]
+    },
+    {
+      "id": "hard-neg-networking-01",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.6885890139831288,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#129617"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident describes DNS latency related to a CoreDNS pod deletion, not intermittent failures in DNS resolution across availability zones.",
+        "The past incident describes DNS latency due to a deleted pod, not intermittent resolution failures.",
+        "The past incident describes DNS latency due to a deleted pod, not intermittent resolution failures across availability zones.",
+        "The past incident describes DNS latency due to a deleted pod, not intermittent resolution failures across availability zones.",
+        "The past incident describes DNS latency due to a deleted pod, not intermittent resolution failures across availability zones."
+      ]
+    },
+    {
+      "id": "hard-neg-config-01",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.7563474178314209,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "helm/helm#31291"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a values file set to an empty object, which is a different issue than silent overrides with multiple values files.",
+        "The past incident involves a values file being set to an empty object, which is a different issue than silent overrides with multiple files.",
+        "The past incident involves a values file being set to an empty object, not multiple values files with the same key.",
+        "The past incident involves a values file set to an empty object, which is a different issue than silent ignoring of overrides.",
+        "The past incident involves a values file set to an empty object, which is a different issue than silent ignoring of overrides."
+      ]
+    },
+    {
+      "id": "hard-neg-deployment-01",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.7462057622548497,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#137356"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a deadlock issue due to new APIs, not a deprecation issue affecting a custom admission webhook.",
+        "The past incident involves a deadlock issue due to new APIs, not a deprecation issue affecting a custom admission webhook.",
+        "The past incident involves a deadlock issue due to new APIs, not a deprecation issue affecting a custom admission webhook.",
+        "The retrieved incident involves a deadlock issue rather than a problem with API version deprecation.",
+        "The past incident involves a deadlock issue due to new APIs, not a deprecation issue with a custom admission webhook."
+      ]
+    },
+    {
+      "id": "hard-neg-monitoring-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.6382877826690674,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "prometheus/prometheus#11784"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a failure in sending samples, while the current problem is about displaying zero metrics after a migration.",
+        "The past incident involves remote write not sending samples, while the current problem is about metrics showing flat zeros after migration.",
+        "The past incident involves remote write not sending samples, while the current problem is about metrics showing flat zeros after migration.",
+        "The past incident involves remote write not sending samples, while the current problem is about metrics showing flat zeros after migration.",
+        "The past incident involves a failure in sending samples, while the current problem is about displaying zero metrics after a migration."
+      ]
+    },
+    {
+      "id": "hard-neg-k8s-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.6147389641559753,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "kubernetes/kubernetes#140858"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a StatefulSet and scale-up issues, not the HorizontalPodAutoscaler and scale-down failures.",
+        "The past incident involves a StatefulSet and a failed scale-up, while the current problem involves a HorizontalPodAutoscaler failing to scale down.",
+        "The retrieved incident involves a StatefulSet and a failed scale-up, while the current problem is about a HorizontalPodAutoscaler failing to scale down.",
+        "The incidents involve different Kubernetes resources and scaling behaviors.",
+        "The retrieved incident involves a StatefulSet and a failed scale-up, while the current problem involves a HorizontalPodAutoscaler failing to scale down."
+      ]
+    },
+    {
+      "id": "hard-neg-networking-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.6624584600378965,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "istio/istio#60667"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The retrieved incident does not relate to sidecar injection or PodSecurityPolicy.",
+        "The retrieved incident pertains to a connection security policy issue, not sidecar injection failures.",
+        "The retrieved incident does not address sidecar injection or PodSecurityPolicy issues.",
+        "The retrieved incident does not relate to sidecar injection or PodSecurityPolicy.",
+        "The retrieved incident does not relate to sidecar injection or PodSecurityPolicy."
+      ]
+    },
+    {
+      "id": "hard-neg-integrations-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.5501966804383216,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "langchain-ai/langchain#37673"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a generator input issue, not a timeout in a tool-calling loop.",
+        "The past incident involves a generator input issue, while the current problem is about a timeout in a tool-calling loop.",
+        "The retrieved incident involves a generator input issue, not a timeout in a tool-calling loop.",
+        "The past incident involves a generator input exhaustion issue, not a timeout in a tool-calling loop.",
+        "The past incident involves a generator input issue, not a timeout in a tool-calling loop."
+      ]
+    },
+    {
+      "id": "hard-neg-database-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.682167649269104,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "redis/redis#15181"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident describes a connection failure issue, not a failover delay during primary election.",
+        "The past incident describes a connection failure issue, not a failover delay during primary election.",
+        "The past incident describes a reconnect storm on connection failure, not a delay in failover during primary election.",
+        "The past incident describes a connection failure issue, not a failover delay.",
+        "The past incident describes a reconnect storm due to connection failure, not a delay in failover during primary election."
+      ]
+    },
+    {
+      "id": "hard-neg-api-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.7795246374890438,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "microsoft/TypeScript#18717"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident does not specify the same issue with type narrowing in a discriminated union.",
+        "The past incident refers to union type inference failure, not specifically type narrowing.",
+        "The past incident refers to union type inference failure, not specifically incorrect type narrowing.",
+        "The past incident refers to union type inference failure, not specifically type narrowing.",
+        "The past incident describes a union type inference failure, not specifically incorrect type narrowing."
+      ]
+    },
+    {
+      "id": "hard-neg-config-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.7218390703201294,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "hashicorp/terraform#23655"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves a lock created by the Terraform console, not a CI pipeline cancellation.",
+        "The past incident involves a lock created by the Terraform console, not a CI pipeline cancellation.",
+        "The past incident involves a lock created by the Terraform console, not a CI pipeline cancellation.",
+        "The past incident involves a lock created by the Terraform console, not a CI pipeline cancellation.",
+        "The past incident involves a lock created by the Terraform console, not a CI pipeline."
+      ]
+    },
+    {
+      "id": "hard-neg-deployment-02",
+      "group": "HARD_NEGATIVE",
+      "top1_score": 0.5869187362838638,
+      "top1_is_expected": false,
+      "retrieval_stable": true,
+      "top1_incidents": [
+        "apache/airflow#62050"
+      ],
+      "decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "unanimous": true,
+      "majority_decision": false,
+      "agreement": 1.0,
+      "mean": 0.0,
+      "std_dev": 0.0,
+      "evaluator_confidence": "high",
+      "reasons": [
+        "The past incident involves bulk failures due to a missing DAG, not a silent skip after a timezone change.",
+        "The past incident involves bulk failures due to a missing DAG, not a silent skip after a timezone change.",
+        "The incidents involve different failure mechanisms and conditions.",
+        "The past incident involves bulk failures due to a missing DAG, not a silent skip after a timezone change.",
+        "The past incident involves bulk failures due to a missing DAG, not a silent skip after a timezone change."
+      ]
+    }
+  ]
+}

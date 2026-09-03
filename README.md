@@ -26,7 +26,7 @@ grounding metrics. The interesting results are the negative ones:
   (a targeted LLM relevance check) measures well but **is not shipped**, because one promising run
   isn't a validated signal — see [Evaluation findings](#evaluation-findings).
 
-24 phases of incremental, tested development (1,375 tests), plus two production-hardening passes.
+24 phases of incremental, tested development (1,382 tests), plus two production-hardening passes.
 See [Project status](#project-status) for what's done, what's open, and what's deliberately not
 claimed.
 
@@ -98,7 +98,7 @@ incident-management export is a new collector and normalizer with nothing downst
 ## Tech stack
 
 FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL + pgvector + `pg_trgm` · SentenceTransformers ·
-OpenAI API · Docker / docker-compose · pytest (1,375 tests) · Python 3.12
+OpenAI API · Docker / docker-compose · pytest (1,382 tests) · Python 3.12
 
 ## Documentation map
 
@@ -125,7 +125,7 @@ app/
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
 docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py
-tests/               1,375 tests: tests/unit, tests/api, tests/eval
+tests/               1,382 tests: tests/unit, tests/api, tests/eval
 Dockerfile, docker-compose.yml   Multi-stage build, non-root user, healthcheck (Phase 23)
 ```
 
@@ -319,7 +319,7 @@ only genuine duplication.
 ## Running tests
 
 ```bash
-python -m pytest              # full suite — 1,375 tests
+python -m pytest              # full suite — 1,382 tests
 python -m pytest tests/unit    # unit tests only (no HTTP layer)
 python -m pytest tests/api     # FastAPI route tests (TestClient, no real DB/LLM)
 python -m ruff check .         # lint
@@ -328,7 +328,7 @@ python -m ruff check .         # lint
 Every test runs against fakes/mocks for the database, LLM, and embedding backends — no live
 Postgres or OpenAI credentials are needed to run the suite.
 
-**Latest verified result: 1,374 passed, 1 known pre-existing failure** —
+**Latest verified result: 1,381 passed, 1 known pre-existing failure** —
 `tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` fails in a
 fresh checkout because it depends on `.evaluation_runs/history/metadata.json`, a local file this
 environment's history doesn't have (unrelated to application code — every other test in that file,
@@ -424,7 +424,7 @@ transient LLM failures (a single rate-limit or timeout fails the whole call). Bo
 scoped, and left for a future phase rather than bundled in here.
 
 72 new tests cover both sub-phases (48 for 24A's configuration validation, 24 for 24B's failure
-paths); combined with everything before it, the full suite is 1,375 tests (see
+paths); combined with everything before it, the full suite is 1,382 tests (see
 [Running tests](#running-tests)).
 
 ## Evaluation findings
@@ -468,13 +468,31 @@ baseline of 0/11 — today every one gets a confident answer) and **20/21 genuin
 kept**, where "genuine match" means retrieval actually surfaced the expected incident. Precision
 1.00, recall 0.95, at roughly one second and one cheap LLM call per query.
 
-That is a real result, and it is deliberately **not wired in yet**, because it isn't yet a validated
-one: n=35 is small, it's a single run at non-zero temperature with repeated-run variance unmeasured
-(this project has evaluator-stability tooling precisely for that, and it hasn't been pointed at this
-question), and the hard negatives were authored by the same person now measuring against them, which
-is exactly the kind of setup that flatters a result. The honest status is "promising candidate,
-pending the same scrutiny everything else here got." Probe:
-`scripts/probe_llm_relevance_gate.py`; results: `.benchmarks/llm_relevance_gate_probe.json`.
+**Its run-to-run stability has since been measured, and it is exact.** Re-running the identical
+experiment 5 times (175 LLM calls) using this project's own evaluator-stability tooling
+(`measure_stability`, the same HIGH/MEDIUM/LOW variance bands applied to grounding metrics):
+**zero queries changed decision** across all repetitions. Precision, recall, and FPR each had a
+standard deviation of exactly 0.0 (evaluator confidence HIGH on every query). The single false
+rejection is stable rather than stochastic — `v2-multi-04` was rejected in all 5 runs, with a
+consistent stated reason, so it's a genuine limitation on multi-concept queries where top-1 covers
+only part of the question, not noise. Notably the decisions are also **not** explainable as a
+re-parameterized similarity threshold: the gate rejected a hard negative scoring 0.780 while keeping
+a genuine match scoring 0.646, so it separates on something orthogonal to the score it's meant to
+supplement.
+
+It is nonetheless **still not wired in**, because stability is not validity. Two limits remain, and
+the second is the serious one: n=35 is small, and the hard negatives were authored by finding a real
+incident and writing a query that shares its topic but differs in mechanism — which is precisely the
+distinction the gate's prompt asks it to make. Comparing the gate's stated reasons against the
+dataset's own authoring notes shows them converging on nearly the same sentences ("a values file set
+to an empty object, not multiple values files with the same key"). The gate never sees those notes —
+it receives only the query and the retrieved incident's title/status/resolution, so there is no
+literal leakage — but the test set was *constructed* around the criterion being tested, so this
+result demonstrates the gate works on hard negatives of this construction, not that it generalizes to
+naturally-occurring queries. Closing that requires hard negatives authored independently of the
+gate's criterion. Probes: `scripts/probe_llm_relevance_gate.py`,
+`scripts/probe_llm_relevance_gate_stability.py`; results:
+`.benchmarks/llm_relevance_gate_probe.json`, `.benchmarks/llm_relevance_gate_stability.json`.
 
 This does not mean confidence scoring is broken or unused — it's real, computed, and already
 threaded through the investigation agents and (as of Phase 22D) gates the generation step against
@@ -535,8 +553,8 @@ failures (both identified in the Phase 24B audit, deliberately not fixed in that
 retrieval with adaptive routing, the four-agent investigation loop, the evaluation platform
 (retrieval/reasoning/generation/grounding metrics, LLM-as-judge, diagnostics), and two hardening
 passes (Phase 23's input validation/graceful-degradation/load-testing, Phase 24's environment
-configuration and failure-handling audit) are all implemented and covered by the current 1,375-test
-suite (1,374 passing — see [Running tests](#running-tests)).
+configuration and failure-handling audit) are all implemented and covered by the current 1,382-test
+suite (1,381 passing — see [Running tests](#running-tests)).
 
 What's genuinely open, not glossed over: the confidence-calibration gap above is real and
 unresolved, not a solved problem being undersold; two failure-handling gaps in the investigation

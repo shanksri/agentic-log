@@ -1,0 +1,207 @@
+{
+  "version": "1.0.0",
+  "description": "Phase 22F: hard negative controls for confidence calibration. Each query deliberately shares vocabulary/topical territory with real incidents in the corpus (verified via live dense search, see 'nearest_real_incident' below) without describing the same underlying problem. Companion dataset to tests/eval/gold_queries.json's 4 easy negatives -- these are NOT a replacement, both are evaluated together in Phase 22F. Probed against the live corpus with scripts/phase22f_probe_hard_negatives.py; raw probe output in scripts/phase22f_hard_negative_probe_results.json.",
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "queries": [
+    {
+      "id": "hard-neg-payment-01",
+      "query": "Stripe webhook signature verification fails intermittently for subscription renewal events",
+      "query_type": "hard-negative-expected",
+      "category": "payment/billing",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:istio/istio#60774 \"webhook caBundle not updated after migrating serving cert to istio-csr\" (top1=0.4224)",
+      "why_not_represented": "Corpus has zero payment-processing or Stripe-related content at all; the match is purely on the shared word 'webhook' plus generic signature/certificate-verification vocabulary from an unrelated Istio cert-rotation bug.",
+      "adjacent_topic_family": "Istio webhook/certificate infrastructure (unrelated domain, coincidental lexical overlap only)"
+    },
+    {
+      "id": "hard-neg-auth-01",
+      "query": "OAuth2 refresh token silently expires causing repeated re-login prompts in the web console",
+      "query_type": "hard-negative-expected",
+      "category": "authentication/authorization",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:getsentry/sentry#120727 \"Creating an org auth token through UI hangs, creates duplicates\" (top1=0.4487)",
+      "why_not_represented": "The nearest match is about a UI bug creating duplicate auth tokens, not a refresh-token expiry/re-login-loop problem -- different failure mode entirely, related only by the general 'auth token' vocabulary.",
+      "adjacent_topic_family": "Sentry's own auth-token management UI"
+    },
+    {
+      "id": "hard-neg-monitoring-01",
+      "query": "PagerDuty alert routing sends duplicate incident pages to the same on-call engineer",
+      "query_type": "hard-negative-expected",
+      "category": "monitoring/alerts",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:prometheus/prometheus#17924 \"Wrong filtering on alerts/rules page\" (top1=0.4540)",
+      "why_not_represented": "Nearest match is a Prometheus UI filtering bug on an alerts listing page, not an alert-routing/deduplication/paging problem, and doesn't involve PagerDuty at all.",
+      "adjacent_topic_family": "Prometheus's own alerts-page UI (not alert delivery/routing)"
+    },
+    {
+      "id": "hard-neg-k8s-01",
+      "query": "Container restarts constantly due to an OOMKilled event triggered by a memory leak in a sidecar proxy",
+      "query_type": "hard-negative-expected",
+      "category": "kubernetes/containers",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:kubernetes/kubernetes#138760 \"In-place container memory resize does not work when pod is in status OOMKilled\" (top1=0.5264)",
+      "why_not_represented": "Nearest match is about the in-place-resize feature not working once a pod is already OOMKilled -- a resize-API bug, not a sidecar memory leak causing repeated OOM kills.",
+      "adjacent_topic_family": "Kubernetes OOMKilled pod-lifecycle mechanics"
+    },
+    {
+      "id": "hard-neg-networking-01",
+      "query": "DNS resolution intermittently fails for pods running in a different availability zone",
+      "query_type": "hard-negative-expected",
+      "category": "networking",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:kubernetes/kubernetes#129617 \"DNS latency when a CoreDNS pod is deleted\" (top1=0.6886)",
+      "why_not_represented": "Nearest match is CoreDNS latency triggered specifically by pod deletion, not a cross-availability-zone resolution failure -- same DNS subsystem, different trigger and symptom.",
+      "adjacent_topic_family": "Kubernetes CoreDNS reliability"
+    },
+    {
+      "id": "hard-neg-integrations-01",
+      "query": "Slack integration fails to post messages after workspace token rotation",
+      "query_type": "hard-negative-expected",
+      "category": "integrations",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:getsentry/sentry#122790 \"Alert Slack notifications sent out of order (Resolved arrives before Critical/Warning)\" (top1=0.4797)",
+      "why_not_represented": "Nearest match is a message-ordering bug in an already-working Slack integration, not a token-rotation-breaks-delivery failure.",
+      "adjacent_topic_family": "Sentry's Slack alerting integration"
+    },
+    {
+      "id": "hard-neg-database-01",
+      "query": "PostgreSQL replication lag spikes during nightly vacuum causing read replica staleness",
+      "query_type": "hard-negative-expected",
+      "category": "databases",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "jira:CASSANDRA-14728 \"Transient Replication 4.x: follow-up work\" (top1=0.4975)",
+      "why_not_represented": "Corpus has no PostgreSQL content and no VACUUM-related issue; match is purely on the generic word 'replication' against unrelated Cassandra/Kafka replication-internals tickets.",
+      "adjacent_topic_family": "Cassandra/Kafka replication internals (different database systems entirely)"
+    },
+    {
+      "id": "hard-neg-api-01",
+      "query": "GraphQL query depth limit rejects legitimate nested queries from the mobile client",
+      "query_type": "hard-negative-expected",
+      "category": "apis",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "jira:CASSANDRA-14620 \"Make it possible for full query log to only record queries for a given subrange\" (top1=0.4328)",
+      "why_not_represented": "Corpus has no GraphQL content at all; match is purely on the generic word 'query' against a CQL query-logging feature request.",
+      "adjacent_topic_family": "Cassandra CQL query tooling (unrelated to GraphQL)"
+    },
+    {
+      "id": "hard-neg-config-01",
+      "query": "Helm chart values override silently ignored when using multiple values files with the same key",
+      "query_type": "hard-negative-expected",
+      "category": "configuration",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:helm/helm#31291 \"Values file set to '{}' cannot overwrite\" (top1=0.7563)",
+      "why_not_represented": "Same general Helm values-precedence subsystem, but the real issue is about an empty-object value blocking an override; this query is about multiple values files silently losing a shared key -- a different specific merge bug. BORDERLINE: flagged in analysis as the closest call in this dataset -- a domain expert could reasonably argue these are close enough to be 'the same class of bug.'",
+      "adjacent_topic_family": "Helm values-file merge/precedence (very close domain -- borderline case, see analysis)"
+    },
+    {
+      "id": "hard-neg-deployment-01",
+      "query": "Kubernetes cluster upgrade from 1.28 to 1.29 breaks a custom admission webhook due to API version deprecation",
+      "query_type": "hard-negative-expected",
+      "category": "deployment/upgrades",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:kubernetes/kubernetes#137356 \"kube-apiserver upgrade from v1.32 to v1.33 can deadlock due to admission webhooks and new, default-enabled APIs like ServiceCIDR\" (top1=0.7462)",
+      "why_not_represented": "Different specific versions and different failure mechanism (apiserver deadlock vs. a custom webhook breaking from API deprecation), but same general 'version upgrade breaks admission webhooks' theme. BORDERLINE: flagged in analysis alongside hard-neg-config-01 as an ambiguous case.",
+      "adjacent_topic_family": "Kubernetes admission-webhook/upgrade compatibility (very close domain -- borderline case, see analysis)"
+    },
+    {
+      "id": "hard-neg-payment-02",
+      "query": "Recurring invoice generation skips a billing cycle for annual subscription plans",
+      "query_type": "hard-negative-expected",
+      "category": "payment/billing",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:getsentry/sentry#122811 \"Trigger billing/usage alerts if I am forecast to go over my quota for the month\" (top1=0.3602)",
+      "why_not_represented": "Nearest match is a usage-quota alerting feature request, not an invoice-generation/billing-cycle-skip bug.",
+      "adjacent_topic_family": "Sentry's own usage/billing-quota alerting"
+    },
+    {
+      "id": "hard-neg-auth-02",
+      "query": "Multi-factor authentication SMS codes arrive after the expiration window in the login flow",
+      "query_type": "hard-negative-expected",
+      "category": "authentication/authorization",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:getsentry/sentry#122437 \"SAML2 Login Dark mode\" (top1=0.3124)",
+      "why_not_represented": "Nearest match is a cosmetic dark-mode styling bug on a SAML login page -- unrelated to SMS/MFA delivery timing.",
+      "adjacent_topic_family": "Sentry's own SSO/login UI (weak overlap -- this one behaved more like an easy negative empirically, see analysis)"
+    },
+    {
+      "id": "hard-neg-monitoring-02",
+      "query": "Grafana dashboard panels show flat zero metrics after a Prometheus remote_write endpoint migration",
+      "query_type": "hard-negative-expected",
+      "category": "monitoring/alerts",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:prometheus/prometheus#11784 \"Remote write stop sending samples\" (top1=0.6383)",
+      "why_not_represented": "Same remote_write subsystem, but the real issue is samples not being sent at all (a sender-side bug); this query is about dashboards reading zero AFTER an endpoint migration -- a different specific trigger and observation point (Grafana vs. Prometheus internals).",
+      "adjacent_topic_family": "Prometheus remote_write reliability"
+    },
+    {
+      "id": "hard-neg-k8s-02",
+      "query": "HorizontalPodAutoscaler fails to scale down replicas even after CPU utilization drops below target",
+      "query_type": "hard-negative-expected",
+      "category": "kubernetes/containers",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:kubernetes/kubernetes#140858 \"A StatefulSet cannot be correctly scaled down after a failed scale-up\" (top1=0.6147)",
+      "why_not_represented": "Different controller (StatefulSet manual/declarative scaling vs. HPA's CPU-target-driven autoscaling) and different trigger (a prior failed scale-up vs. CPU dropping below target).",
+      "adjacent_topic_family": "Kubernetes pod-count scaling mechanics"
+    },
+    {
+      "id": "hard-neg-networking-02",
+      "query": "Istio Envoy sidecar injection fails silently for pods in a namespace with a custom PodSecurityPolicy",
+      "query_type": "hard-negative-expected",
+      "category": "networking",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:istio/istio#60667 \"Clarification on connection_security_policy=unknown\" (top1=0.6625)",
+      "why_not_represented": "Real issue is a documentation/clarification question about a security-policy config value; this query is about sidecar injection silently failing under a PodSecurityPolicy -- different mechanism, different symptom.",
+      "adjacent_topic_family": "Istio sidecar/security-policy configuration"
+    },
+    {
+      "id": "hard-neg-integrations-02",
+      "query": "LangChain agent tool-calling loop times out when chained with a custom retriever that wraps an external vector store",
+      "query_type": "hard-negative-expected",
+      "category": "integrations",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:langchain-ai/langchain#37673 \"VectorStore.add_texts exhausts generator inputs before creating documents\" (top1=0.5502)",
+      "why_not_represented": "Real issue is an ingestion-time generator-exhaustion bug in add_texts; this query is about an agent tool-calling timeout during retrieval -- different component (ingestion vs. agent loop) and different failure mode.",
+      "adjacent_topic_family": "LangChain vector-store integration layer"
+    },
+    {
+      "id": "hard-neg-database-02",
+      "query": "Redis cluster failover takes over 30 seconds causing client connection timeouts during primary election",
+      "query_type": "hard-negative-expected",
+      "category": "databases",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:redis/redis#15181 \"[BUG] Cluster bus outbound reconnect storm on connection failure (no backoff)\" (top1=0.6822)",
+      "why_not_represented": "Real issue is a reconnect-storm caused by missing backoff on the cluster bus; this query is about failover/primary-election latency -- related cluster-reliability territory, different specific mechanism.",
+      "adjacent_topic_family": "Redis cluster failover reliability"
+    },
+    {
+      "id": "hard-neg-api-02",
+      "query": "TypeScript compiler emits incorrect type narrowing for a discriminated union inside a generic function",
+      "query_type": "hard-negative-expected",
+      "category": "apis",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:microsoft/TypeScript#18717 \"Union type inference failure in generic function\" (top1=0.7795)",
+      "why_not_represented": "Both concern union-type handling inside generic functions, but the real issue is inference failure, not narrowing of a discriminated union specifically. BORDERLINE: the highest-scoring item in this dataset and the closest call -- flagged explicitly in analysis.",
+      "adjacent_topic_family": "TypeScript generic/union type-checking (very close domain -- borderline case, see analysis)"
+    },
+    {
+      "id": "hard-neg-config-02",
+      "query": "Terraform state lock is not released after a CI pipeline is cancelled mid-apply",
+      "query_type": "hard-negative-expected",
+      "category": "configuration",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:hashicorp/terraform#23655 \"Terraform console creates a lock that does not go away before it's closed\" (top1=0.7218)",
+      "why_not_represented": "Real issue is `terraform console` leaving a stale lock; this query is about a CI-pipeline cancellation mid-`apply` leaving a stale lock -- different command/trigger, same general state-locking subsystem.",
+      "adjacent_topic_family": "Terraform state-locking subsystem"
+    },
+    {
+      "id": "hard-neg-deployment-02",
+      "query": "Airflow DAG scheduler silently skips a task instance after a timezone configuration change",
+      "query_type": "hard-negative-expected",
+      "category": "deployment/upgrades",
+      "expected_incident_ids": [],
+      "nearest_real_incident": "github:apache/airflow#62050 \"Scheduler bulk-fails all scheduled tasks when serialized DAG is transiently missing\" (top1=0.5869)",
+      "why_not_represented": "Real issue is a bulk-fail triggered by a transiently-missing serialized DAG; this query is about a single task silently skipped after a timezone config change -- different trigger and different failure shape (silent skip vs. bulk fail).",
+      "adjacent_topic_family": "Airflow scheduler task-instance handling"
+    }
+  ]
+}

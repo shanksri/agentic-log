@@ -1,0 +1,1502 @@
+{
+  "hard-neg-payment-01": {
+    "query": "Stripe webhook signature verification fails intermittently for subscription renewal events",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.422363017656624,
+        "source_type": "github",
+        "source_external_id": "istio/istio#60774",
+        "title": "webhook caBundle not updated after migrating serving cert to istio-csr"
+      },
+      {
+        "rank": 2,
+        "score": 0.3980591418672631,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17751",
+        "title": "Add Certificate-Based OAuth Support for Azure AD Remote Write"
+      },
+      {
+        "rank": 3,
+        "score": 0.39235634253285345,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#38273",
+        "title": "PGP key refresh broke signature verification for tools using go-crypto/openpgp/v2"
+      },
+      {
+        "rank": 4,
+        "score": 0.38817418954680094,
+        "source_type": "github",
+        "source_external_id": "istio/istio#59989",
+        "title": "x509: certificate signed by unknown authority with vault webhook"
+      },
+      {
+        "rank": 5,
+        "score": 0.37811638778101386,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-501",
+        "title": "getOfffset Api needs to return different latest offset to regular and follower consumers"
+      },
+      {
+        "rank": 6,
+        "score": 0.3741851300972545,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-89",
+        "title": "consumer should initialize to a valid offset"
+      },
+      {
+        "rank": 7,
+        "score": 0.3684059271691478,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122561",
+        "title": "Duplicate x509 public certificate in Auth settings"
+      },
+      {
+        "rank": 8,
+        "score": 0.3678174255220732,
+        "source_type": "github",
+        "source_external_id": "golang/go#81210",
+        "title": "crypto/tls:gofips140-certified: TestBogoSuiteFIPSEMS/enforced failures"
+      },
+      {
+        "rank": 9,
+        "score": 0.3663613955543762,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-420",
+        "title": "maintain HW correctly with only 1 replica in ISR"
+      },
+      {
+        "rank": 10,
+        "score": 0.3633651300233447,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141439",
+        "title": "kubelet: `dropCacheFor` does not invalidate name-keyed trust bundle cache entries when the ClusterTrustBundle has a `spec.signerName`"
+      }
+    ]
+  },
+  "hard-neg-auth-01": {
+    "query": "OAuth2 refresh token silently expires causing repeated re-login prompts in the web console",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.44866600938642054,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#120727",
+        "title": "Creating an org auth token through UI hangs, creates duplicates"
+      },
+      {
+        "rank": 2,
+        "score": 0.43914226060257866,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38661",
+        "title": "`ChatAnthropic`: support a callable / token-provider for `api_key` (auto-refreshing credentials, e.g. Azure Entra ID) like `ChatOpenAI` does"
+      },
+      {
+        "rank": 3,
+        "score": 0.39564237620578024,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71395",
+        "title": "First authenticated request after MySQL idle disconnect returns 500: RevokedToken.is_revoked runs on a stale session before FAB's recovery (#62919) can kick in"
+      },
+      {
+        "rank": 4,
+        "score": 0.37777812745831874,
+        "source_type": "github",
+        "source_external_id": "helm/helm#31000",
+        "title": "helm registry login on OCI registry failing on v3.18.3"
+      },
+      {
+        "rank": 5,
+        "score": 0.3708558832578799,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122462",
+        "title": "Allow org:ci token creation via OAuth access tokens"
+      },
+      {
+        "rank": 6,
+        "score": 0.37067893918282224,
+        "source_type": "github",
+        "source_external_id": "redis/redis#15640",
+        "title": "[BUG] AUTH failure reply is silently dropped when the client already has pending replies (PROTOCOL DESYNC)"
+      },
+      {
+        "rank": 7,
+        "score": 0.35991815567504504,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39897",
+        "title": "perplexity: Responses API path drops the cache token counts Perplexity reports, so `input_token_details` is always empty"
+      },
+      {
+        "rank": 8,
+        "score": 0.35628757737353045,
+        "source_type": "github",
+        "source_external_id": "helm/helm#31262",
+        "title": "Authentication issue against private non-OCI repos during `helm dependency update` when providing credentials via cli options"
+      },
+      {
+        "rank": 9,
+        "score": 0.34249250121392694,
+        "source_type": "github",
+        "source_external_id": "istio/istio#59950",
+        "title": "how to - rewrite headers from envoyExtAuthzHttp"
+      },
+      {
+        "rank": 10,
+        "score": 0.3400170302380907,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39737",
+        "title": "langchain-profiles refresh corrupts strings containing JSON literal substrings"
+      }
+    ]
+  },
+  "hard-neg-monitoring-01": {
+    "query": "PagerDuty alert routing sends duplicate incident pages to the same on-call engineer",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.45397305762928464,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17924",
+        "title": "Wrong filtering on alerts/rules page"
+      },
+      {
+        "rank": 2,
+        "score": 0.43491077423095703,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#4440",
+        "title": "Feat Req: Autorefresh for alerts page"
+      },
+      {
+        "rank": 3,
+        "score": 0.4127309672396806,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#16830",
+        "title": "Prometheus3: Filter of alerts page unresponsive"
+      },
+      {
+        "rank": 4,
+        "score": 0.4080466141645205,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#65505",
+        "title": "Support webhooks for spike protection alerts so partners can build alerts for these too"
+      },
+      {
+        "rank": 5,
+        "score": 0.38124603033065796,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71471",
+        "title": "Operator extra links don't work per attempt"
+      },
+      {
+        "rank": 6,
+        "score": 0.37682629365764364,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#4510",
+        "title": "Distinguish not-yet-evaluated alert from empty alert"
+      },
+      {
+        "rank": 7,
+        "score": 0.3670971691608429,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17482",
+        "title": "When missing data do not send RESOLVED alerts"
+      },
+      {
+        "rank": 8,
+        "score": 0.35480423512408565,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122977",
+        "title": "Alert with tag + priority filter doesn't fire despite conditions are met"
+      },
+      {
+        "rank": 9,
+        "score": 0.3499717712402344,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17254",
+        "title": "Performance regression on Alerts with new UI on 3.50"
+      },
+      {
+        "rank": 10,
+        "score": 0.3496527671813965,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17008",
+        "title": "why alerting rule would not execute history alert?"
+      }
+    ]
+  },
+  "hard-neg-k8s-01": {
+    "query": "Container restarts constantly due to an OOMKilled event triggered by a memory leak in a sidecar proxy",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.5264449276460688,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#138760",
+        "title": "In-place container memory resize does not work when pod is in status OOMKilled"
+      },
+      {
+        "rank": 2,
+        "score": 0.5209915172167314,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#140716",
+        "title": "Pods evicted/drained are reported as terminated.reason=OOMKilled with exitCode 143 (no memory pressure)"
+      },
+      {
+        "rank": 3,
+        "score": 0.5040113480094479,
+        "source_type": "github",
+        "source_external_id": "istio/istio#60689",
+        "title": "Sidecar container not reloading certificates after re-issue/expiration"
+      },
+      {
+        "rank": 4,
+        "score": 0.5000348538191488,
+        "source_type": "github",
+        "source_external_id": "istio/istio#42850",
+        "title": "ambient needs alternative to holdApplicationUntilProxyStarts"
+      },
+      {
+        "rank": 5,
+        "score": 0.49178995167583106,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#133472",
+        "title": "Pod crashloop backoff isn't entered until after the first restart"
+      },
+      {
+        "rank": 6,
+        "score": 0.4890460524247293,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14310",
+        "title": "[BUG] Cluster: Unbounded memory growth and OOM under high PUBLISH load"
+      },
+      {
+        "rank": 7,
+        "score": 0.4878372106600659,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141599",
+        "title": "Persistent sandbox name reservation lock leak in containerd triggered by interrupted CNI execution (calico signal: killed), Pod infinite recreate loop"
+      },
+      {
+        "rank": 8,
+        "score": 0.4858253146953977,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141069",
+        "title": "Memory Manager pod-scope restore compares container blocks with the pod request"
+      },
+      {
+        "rank": 9,
+        "score": 0.48523379818301815,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17888",
+        "title": "High memory consumption leading to OOM in Kubernetes - memory usage peaks at 80GB+"
+      },
+      {
+        "rank": 10,
+        "score": 0.4815747881404995,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14762",
+        "title": "[BUG] Memory Leakage Issue in the Redis Sentinel"
+      }
+    ]
+  },
+  "hard-neg-networking-01": {
+    "query": "DNS resolution intermittently fails for pods running in a different availability zone",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.6885890139831288,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#129617",
+        "title": "DNS latency when a CoreDNS pod is deleted"
+      },
+      {
+        "rank": 2,
+        "score": 0.6311925273422891,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#140844",
+        "title": "kubelet copies IPv6 link-local scoped nameservers from the node resolv.conf into pods where they cannot work"
+      },
+      {
+        "rank": 3,
+        "score": 0.589085961038712,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#137556",
+        "title": "Deprecate kube-dns"
+      },
+      {
+        "rank": 4,
+        "score": 0.5845335373560476,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#138622",
+        "title": "CoreDNS restart loop / FailedCreatePodSandBox due to flannel subnet.env race condition"
+      },
+      {
+        "rank": 5,
+        "score": 0.5717391882253661,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14042",
+        "title": "REPLICAOF Fails with Kubernetes Service FQDN but Succeeds with IP"
+      },
+      {
+        "rank": 6,
+        "score": 0.5673198361802209,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#42735",
+        "title": "Kubelet CNI nsenter failure"
+      },
+      {
+        "rank": 7,
+        "score": 0.5598332548240877,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#132635",
+        "title": "The UDP entries still in Conntrack tables when Pod is in terminating"
+      },
+      {
+        "rank": 8,
+        "score": 0.5379439271721893,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#52039",
+        "title": "[network-policy] add e2e tests for ipBlock"
+      },
+      {
+        "rank": 9,
+        "score": 0.5334693471509617,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#131116",
+        "title": "Deployment/Replicaset rapidly creating new pods when kubelet marks pod as failed due to out-of-sync"
+      },
+      {
+        "rank": 10,
+        "score": 0.5233775945451743,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71743",
+        "title": "KubernetesPodOperator durable reattach can reconnect to a different pod when the pod name is reused"
+      }
+    ]
+  },
+  "hard-neg-integrations-01": {
+    "query": "Slack integration fails to post messages after workspace token rotation",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.4796719849109683,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122790",
+        "title": "Alert Slack notifications sent out of order (Resolved arrives before Critical/Warning)"
+      },
+      {
+        "rank": 2,
+        "score": 0.4166081001396187,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#32835",
+        "title": "core: `ToolMessage.status` is not preserved by `core.messages.utils.convert_to_messages`"
+      },
+      {
+        "rank": 3,
+        "score": 0.40908783132361437,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39756",
+        "title": "[langchain-deepseek] ChatDeepSeek raises KeyError('messages') with use_responses_api=True"
+      },
+      {
+        "rank": 4,
+        "score": 0.4032468440083776,
+        "source_type": "github",
+        "source_external_id": "redis/redis#15586",
+        "title": "LMOVEM emits reversed keyspace notification order when source and destination are the same key"
+      },
+      {
+        "rank": 5,
+        "score": 0.3912822902202634,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39637",
+        "title": "ChatDeepSeek drops cache-read tokens from usage_metadata (top-level prompt_cache_hit_tokens not mapped)"
+      },
+      {
+        "rank": 6,
+        "score": 0.38758957386017123,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39626",
+        "title": "ChatAnthropic cannot use Anthropic Workload Identity Federation: empty api_key suppresses the SDK credential chain"
+      },
+      {
+        "rank": 7,
+        "score": 0.3832906256144928,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39634",
+        "title": "ChatXAI usage_metadata violates total_tokens == input_tokens + output_tokens for reasoning models"
+      },
+      {
+        "rank": 8,
+        "score": 0.3795916438102749,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122406",
+        "title": "GitHub issue action settings remain stuck loading in new Issue Alert"
+      },
+      {
+        "rank": 9,
+        "score": 0.37537907811278637,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39897",
+        "title": "perplexity: Responses API path drops the cache token counts Perplexity reports, so `input_token_details` is always empty"
+      },
+      {
+        "rank": 10,
+        "score": 0.372047297480542,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#120727",
+        "title": "Creating an org auth token through UI hangs, creates duplicates"
+      }
+    ]
+  },
+  "hard-neg-database-01": {
+    "query": "PostgreSQL replication lag spikes during nightly vacuum causing read replica staleness",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.4974793495250145,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14728",
+        "title": "Transient Replication 4.x: follow-up work"
+      },
+      {
+        "rank": 2,
+        "score": 0.49667882919311523,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-450",
+        "title": "Test in sync replica changes due to slow or stuck followers"
+      },
+      {
+        "rank": 3,
+        "score": 0.49152278900146484,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-191",
+        "title": "Investigate removing the synchronization in Log.flush"
+      },
+      {
+        "rank": 4,
+        "score": 0.4672946372873057,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-567",
+        "title": "Replication Data Loss in Mirror Maker Bouncing testcase"
+      },
+      {
+        "rank": 5,
+        "score": 0.45364779233932495,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14549",
+        "title": "Transient Replication: support logged batches"
+      },
+      {
+        "rank": 6,
+        "score": 0.4500851035118103,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-550",
+        "title": "Wildcarded consumption is single-threaded"
+      },
+      {
+        "rank": 7,
+        "score": 0.4492149353027344,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-741",
+        "title": "Improve log cleaning dedupe buffer efficiency"
+      },
+      {
+        "rank": 8,
+        "score": 0.44777488708496094,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14617",
+        "title": "Corruption in schema changes due to clock jumps"
+      },
+      {
+        "rank": 9,
+        "score": 0.4460892443550566,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-445",
+        "title": "Message replication with failures"
+      },
+      {
+        "rank": 10,
+        "score": 0.4445424708996739,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14799",
+        "title": "Separate Materialized View reads from Client reads in cfstats"
+      }
+    ]
+  },
+  "hard-neg-api-01": {
+    "query": "GraphQL query depth limit rejects legitimate nested queries from the mobile client",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.4327628692671217,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14620",
+        "title": "Make it possible for full query log to only record queries for a given subrange"
+      },
+      {
+        "rank": 2,
+        "score": 0.4280553801026721,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-13794",
+        "title": "Fix short read protection logic for querying more rows"
+      },
+      {
+        "rank": 3,
+        "score": 0.42708203631150576,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14567",
+        "title": "CQL query returns different results in 2.2.5 and 3.0.15"
+      },
+      {
+        "rank": 4,
+        "score": 0.4236341588606207,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-13864",
+        "title": "Failure to execute cql script  using cqlsh with nested SOURCE on cassandra 3.11.0"
+      },
+      {
+        "rank": 5,
+        "score": 0.41659932087065976,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-13991",
+        "title": "NullPointerException when querying a table with a previous state"
+      },
+      {
+        "rank": 6,
+        "score": 0.4068374744847447,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14403",
+        "title": "Inconsistent query results for different sort orders (ORDER BY)"
+      },
+      {
+        "rank": 7,
+        "score": 0.3942316237550013,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-13988",
+        "title": "Add a timeout field to EXECUTE / QUERY / BATCH messages"
+      },
+      {
+        "rank": 8,
+        "score": 0.38958193187929013,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14235",
+        "title": "ReadFailure Error -- Large Unbound Query"
+      },
+      {
+        "rank": 9,
+        "score": 0.38143621308371867,
+        "source_type": "jira",
+        "source_external_id": "CASSANDRA-14956",
+        "title": "Paged Range Slice queries with DISTINCT can drop rows from results"
+      },
+      {
+        "rank": 10,
+        "score": 0.38123811707042254,
+        "source_type": "github",
+        "source_external_id": "elastic/elasticsearch#157300",
+        "title": "ES|QL federation query on large Parquet dataset causes node restart instead of graceful failure"
+      }
+    ]
+  },
+  "hard-neg-config-01": {
+    "query": "Helm chart values override silently ignored when using multiple values files with the same key",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.7563474178314209,
+        "source_type": "github",
+        "source_external_id": "helm/helm#31291",
+        "title": "Values file set to \"{}\" cannot overwrite"
+      },
+      {
+        "rank": 2,
+        "score": 0.7257926680383885,
+        "source_type": "github",
+        "source_external_id": "helm/helm#12511",
+        "title": "Values precedence in helm 3.13.1"
+      },
+      {
+        "rank": 3,
+        "score": 0.6904224937902407,
+        "source_type": "github",
+        "source_external_id": "helm/helm#31643",
+        "title": "Regression in map values merging in helm v4"
+      },
+      {
+        "rank": 4,
+        "score": 0.6818915199106038,
+        "source_type": "github",
+        "source_external_id": "helm/helm#4782",
+        "title": "Feature request: add possibility to specify a values file inside a packaged chart"
+      },
+      {
+        "rank": 5,
+        "score": 0.6773509585067918,
+        "source_type": "github",
+        "source_external_id": "helm/helm#9817",
+        "title": "Allow import-values to use all values from a sub chart"
+      },
+      {
+        "rank": 6,
+        "score": 0.6772648096084595,
+        "source_type": "github",
+        "source_external_id": "helm/helm#30587",
+        "title": "Nulled values in subchart are not merged correctly in 13.17.1"
+      },
+      {
+        "rank": 7,
+        "score": 0.67156982421875,
+        "source_type": "github",
+        "source_external_id": "helm/helm#30999",
+        "title": "Bug: Helm template dissimilar behavior in Chart and depended chart"
+      },
+      {
+        "rank": 8,
+        "score": 0.6682809591293335,
+        "source_type": "github",
+        "source_external_id": "helm/helm#11144",
+        "title": "Helm diff always shows up as different values (quote/unquote) after upgrading a chart. Rendered chart and deployment history doesn't match."
+      },
+      {
+        "rank": 9,
+        "score": 0.6629727482795715,
+        "source_type": "github",
+        "source_external_id": "helm/helm#8489",
+        "title": "`helm lint` fails when global values are used in subcharts"
+      },
+      {
+        "rank": 10,
+        "score": 0.6602392601681685,
+        "source_type": "github",
+        "source_external_id": "helm/helm#12677",
+        "title": "Values precedence in Helm is an incompatibility mess!"
+      }
+    ]
+  },
+  "hard-neg-deployment-01": {
+    "query": "Kubernetes cluster upgrade from 1.28 to 1.29 breaks a custom admission webhook due to API version deprecation",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.7462057622548497,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#137356",
+        "title": "kube-apiserver upgrade from v1.32 to v1.33 can deadlock due to admission webhooks and new, default-enabled APIs like ServiceCIDR"
+      },
+      {
+        "rank": 2,
+        "score": 0.6306950294142927,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#52185",
+        "title": "Storage upgrade mechanism"
+      },
+      {
+        "rank": 3,
+        "score": 0.6139033666906745,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#102818",
+        "title": "Graceful node shutdown conflicts with unattended-upgrades package"
+      },
+      {
+        "rank": 4,
+        "score": 0.6029078601057624,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141473",
+        "title": "Kubelet restart preserves stale readiness for a replaced container when the API server status is outdated"
+      },
+      {
+        "rank": 5,
+        "score": 0.5881430997677922,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141283",
+        "title": "compatibility-versions-feature-gate-test always fails since the 1.37 cut: validator ignores MinCompatibilityVersion"
+      },
+      {
+        "rank": 6,
+        "score": 0.5838849792549037,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141455",
+        "title": "Deprecate /openapi/v2 Endpoint"
+      },
+      {
+        "rank": 7,
+        "score": 0.5801559936907306,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141457",
+        "title": "webhook authorizer cache poisoning DoS via oversized fieldSelector/labelSelector"
+      },
+      {
+        "rank": 8,
+        "score": 0.5739189552213639,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#137741",
+        "title": "Failure cluster [26e5cd3a...] apiserver startup timeout too low"
+      },
+      {
+        "rank": 9,
+        "score": 0.5687244791552745,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#69023",
+        "title": "Restore kubernetes-client 36.x support in cncf.kubernetes and google providers (401 auth regression)"
+      },
+      {
+        "rank": 10,
+        "score": 0.5671597381138967,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#47184",
+        "title": "Deprecated '--runonce' of kubelet"
+      }
+    ]
+  },
+  "hard-neg-payment-02": {
+    "query": "Recurring invoice generation skips a billing cycle for annual subscription plans",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.36023492454082295,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122811",
+        "title": "Trigger billing/usage alerts if I am forecast to go over my quota for the month"
+      },
+      {
+        "rank": 2,
+        "score": 0.33021338817913914,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-32",
+        "title": "consumer picks up wrong offset during rebalance"
+      },
+      {
+        "rank": 3,
+        "score": 0.31917514572440076,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#62050",
+        "title": "Scheduler bulk-fails all scheduled tasks when serialized DAG is transiently missing"
+      },
+      {
+        "rank": 4,
+        "score": 0.3129313401620787,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-89",
+        "title": "consumer should initialize to a valid offset"
+      },
+      {
+        "rank": 5,
+        "score": 0.3118675649166107,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71234",
+        "title": "Calendar view computes planned runs for cron timetables in UTC, ignoring the DAG's configured timezone"
+      },
+      {
+        "rank": 6,
+        "score": 0.29823172092437744,
+        "source_type": "jira",
+        "source_external_id": "SPARK-868",
+        "title": "Document fair scheduler"
+      },
+      {
+        "rank": 7,
+        "score": 0.29094610864245296,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#38954",
+        "title": "aws_savingsplans_savings_plan: Create fails/hangs and never persists to state for No Upfront plans and future purchase_time"
+      },
+      {
+        "rank": 8,
+        "score": 0.2866750657558441,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-26",
+        "title": "Be more defensive in managing offset in the consumer"
+      },
+      {
+        "rank": 9,
+        "score": 0.28444103691333367,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-267",
+        "title": "Enhance ProducerPerformance to generate unique random Long value for payload"
+      },
+      {
+        "rank": 10,
+        "score": 0.27703486221820994,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-693",
+        "title": "Consumer rebalance fails if no leader available for a partition and stops all fetchers"
+      }
+    ]
+  },
+  "hard-neg-auth-02": {
+    "query": "Multi-factor authentication SMS codes arrive after the expiration window in the login flow",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.31244697235682817,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#122437",
+        "title": "SAML2 Login Dark mode"
+      },
+      {
+        "rank": 2,
+        "score": 0.30981711686747626,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71395",
+        "title": "First authenticated request after MySQL idle disconnect returns 500: RevokedToken.is_revoked runs on a stale session before FAB's recovery (#62919) can kick in"
+      },
+      {
+        "rank": 3,
+        "score": 0.3026230272504058,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#82543",
+        "title": "Feature Request: Remote Config Option for Session Replay Sample Rate in Mobile SDKs"
+      },
+      {
+        "rank": 4,
+        "score": 0.29940853718468374,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71829",
+        "title": "New AzureAuthManager with multi team support"
+      },
+      {
+        "rank": 5,
+        "score": 0.29583100701385745,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38661",
+        "title": "`ChatAnthropic`: support a callable / token-provider for `api_key` (auto-refreshing credentials, e.g. Azure Entra ID) like `ChatOpenAI` does"
+      },
+      {
+        "rank": 6,
+        "score": 0.29549036648926985,
+        "source_type": "github",
+        "source_external_id": "getsentry/sentry#120727",
+        "title": "Creating an org auth token through UI hangs, creates duplicates"
+      },
+      {
+        "rank": 7,
+        "score": 0.2922987887503161,
+        "source_type": "github",
+        "source_external_id": "istio/istio#59200",
+        "title": "Request Authn support toggling on require_expiration"
+      },
+      {
+        "rank": 8,
+        "score": 0.29005961745799846,
+        "source_type": "github",
+        "source_external_id": "golang/go#80663",
+        "title": "proposal: crypto/passkey: new package"
+      },
+      {
+        "rank": 9,
+        "score": 0.2761878802664357,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#16524",
+        "title": "To enable authentication in Prometheus in Kubernetes environment."
+      },
+      {
+        "rank": 10,
+        "score": 0.2739587858939899,
+        "source_type": "jira",
+        "source_external_id": "KAFKA-385",
+        "title": "RequestPurgatory enhancements - expire/checkSatisfy issue; add jmx beans"
+      }
+    ]
+  },
+  "hard-neg-monitoring-02": {
+    "query": "Grafana dashboard panels show flat zero metrics after a Prometheus remote_write endpoint migration",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.6382877826690674,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#11784",
+        "title": "Remote write stop sending samples"
+      },
+      {
+        "rank": 2,
+        "score": 0.6174864172935486,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#7218",
+        "title": "mixin: remote-write grafana dashboard should graph write latencies"
+      },
+      {
+        "rank": 3,
+        "score": 0.6045064926147461,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17384",
+        "title": "Remote write fails to scale after 3.7 upgrade in some clusters"
+      },
+      {
+        "rank": 4,
+        "score": 0.6028231023059437,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#11571",
+        "title": "Remote-write should check that label names are valid"
+      },
+      {
+        "rank": 5,
+        "score": 0.6018407582139528,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#10022",
+        "title": "Feature request: add a \"features supported\" API"
+      },
+      {
+        "rank": 6,
+        "score": 0.5999289751052856,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#10644",
+        "title": "Issues with promtool and metric cardinality analysis"
+      },
+      {
+        "rank": 7,
+        "score": 0.5973619462631984,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17666",
+        "title": "Prom-remote-write not working properly"
+      },
+      {
+        "rank": 8,
+        "score": 0.587934136390686,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#18358",
+        "title": "promtool: `push metrics <url>` always suffixes the path in the url with `/api/v1/write`"
+      },
+      {
+        "rank": 9,
+        "score": 0.5826651702722816,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#17920",
+        "title": "Prometheus does not capture metrics from AWS Batch job tasks with `aws_sd_config` and role: ecs"
+      },
+      {
+        "rank": 10,
+        "score": 0.5786191397493824,
+        "source_type": "github",
+        "source_external_id": "prometheus/prometheus#3351",
+        "title": "Support labels/{label}/values and labels through the remote read API"
+      }
+    ]
+  },
+  "hard-neg-k8s-02": {
+    "query": "HorizontalPodAutoscaler fails to scale down replicas even after CPU utilization drops below target",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.6147389641559753,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#140858",
+        "title": "A StatefulSet cannot be correctly scaled down after a failed scale-up"
+      },
+      {
+        "rank": 2,
+        "score": 0.5636807680130005,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141491",
+        "title": "After node scale-out, the anti-affinity pods between two pods are scheduled to the newly added node."
+      },
+      {
+        "rank": 3,
+        "score": 0.5526223182678223,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141064",
+        "title": "in-place resizing of Guaranteed pods breaks conformance tests if \"static\" CPU Manager policy is used"
+      },
+      {
+        "rank": 4,
+        "score": 0.5404316782951355,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141606",
+        "title": "[InPlacePodLevelResourcesVerticalScaling] In-place pod resize events do not capture pod-level resources"
+      },
+      {
+        "rank": 5,
+        "score": 0.5316516160964966,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#140989",
+        "title": "CPU Manager AllocatePod re-allocates restored pod CPUs after kubelet restart"
+      },
+      {
+        "rank": 6,
+        "score": 0.5246035016954991,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141022",
+        "title": "High volume of Pod lifecycle events during scale tests causes API Server throttling (APF rejections) and etcd bloat"
+      },
+      {
+        "rank": 7,
+        "score": 0.5188462138175964,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#132851",
+        "title": "[FG:InPlacePodVerticalScaling] race condition with PodResizeInProgress condition"
+      },
+      {
+        "rank": 8,
+        "score": 0.505905300026817,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#140719",
+        "title": "[FG: InPlacePodVerticalScalingExclusiveCPUs] Improve `KeepOnly` function efficiency"
+      },
+      {
+        "rank": 9,
+        "score": 0.5034774541854858,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#141334",
+        "title": "kuberuntime: subtracting pod overhead after CPU cgroup conversion is lossy (quota and shares)"
+      },
+      {
+        "rank": 10,
+        "score": 0.5023146271705627,
+        "source_type": "github",
+        "source_external_id": "kubernetes/kubernetes#138505",
+        "title": "HPA tolerance check causes unexpected scale-up during rolling updates"
+      }
+    ]
+  },
+  "hard-neg-networking-02": {
+    "query": "Istio Envoy sidecar injection fails silently for pods in a namespace with a custom PodSecurityPolicy",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.6624584600378965,
+        "source_type": "github",
+        "source_external_id": "istio/istio#60667",
+        "title": "Clarification on connection_security_policy=unknown"
+      },
+      {
+        "rank": 2,
+        "score": 0.6415852949168762,
+        "source_type": "github",
+        "source_external_id": "istio/istio#54090",
+        "title": "Unable to get the istio gateway verify the pods enabled with https"
+      },
+      {
+        "rank": 3,
+        "score": 0.615831242104625,
+        "source_type": "github",
+        "source_external_id": "istio/istio#59584",
+        "title": "Virtual Machine Sidecar not utilizing east-west gateway"
+      },
+      {
+        "rank": 4,
+        "score": 0.6041921849021734,
+        "source_type": "github",
+        "source_external_id": "istio/istio#51873",
+        "title": "Unable to limit the upstream connections from sidecar to app container"
+      },
+      {
+        "rank": 5,
+        "score": 0.6021595116568496,
+        "source_type": "github",
+        "source_external_id": "istio/istio#58769",
+        "title": "Support \"Pod-level Resources\" (KEP-1287) with configurable padding"
+      },
+      {
+        "rank": 6,
+        "score": 0.6003673553028918,
+        "source_type": "github",
+        "source_external_id": "istio/istio#59000",
+        "title": "Consider replacing the Istio sidecar injector with a `MutationAdmissionPolicy` (CEL based, built into K8s API)"
+      },
+      {
+        "rank": 7,
+        "score": 0.5916737981134303,
+        "source_type": "github",
+        "source_external_id": "istio/istio#54081",
+        "title": "Ingressgateway cache pod ip although pod is deleted, access with this IP and bring 503 for several hours."
+      },
+      {
+        "rank": 8,
+        "score": 0.5896866810695355,
+        "source_type": "github",
+        "source_external_id": "istio/istio#60139",
+        "title": "Istio Sidecar config route exclude"
+      },
+      {
+        "rank": 9,
+        "score": 0.5836318035564698,
+        "source_type": "github",
+        "source_external_id": "istio/istio#58429",
+        "title": "Sidecar Inbound EnvoyFilter with max_connection_duration causes 503 errors and connection resets"
+      },
+      {
+        "rank": 10,
+        "score": 0.5832142730695917,
+        "source_type": "github",
+        "source_external_id": "istio/istio#60689",
+        "title": "Sidecar container not reloading certificates after re-issue/expiration"
+      }
+    ]
+  },
+  "hard-neg-integrations-02": {
+    "query": "LangChain agent tool-calling loop times out when chained with a custom retriever that wraps an external vector store",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.5501966804383216,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#37673",
+        "title": "VectorStore.add_texts exhausts generator inputs before creating documents"
+      },
+      {
+        "rank": 2,
+        "score": 0.5451280799584446,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38843",
+        "title": "Agent Performance Degradation and Infinite Reasoning Loop with enable_thinking=true"
+      },
+      {
+        "rank": 3,
+        "score": 0.5241340711196713,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38989",
+        "title": "core: `get_usage_metadata_callback` keeps tracking after the `with` block raises"
+      },
+      {
+        "rank": 4,
+        "score": 0.5215859127989965,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39882",
+        "title": "create_agent: heterogeneous middleware list collapses inferred state to AgentState, rejecting middleware with richer state schemas"
+      },
+      {
+        "rank": 5,
+        "score": 0.51908373832703,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39052",
+        "title": "QdrantVectorStore.as_retriever(search_type=\"mmr\") inverts lambda_mult semantics"
+      },
+      {
+        "rank": 6,
+        "score": 0.5181896995419094,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#39074",
+        "title": "Langchain Docs - multi-agent/subagents-personal-assistant - Calendar Agent - Incorrect Date Reference"
+      },
+      {
+        "rank": 7,
+        "score": 0.513457357883457,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38203",
+        "title": "VectorStore.add_texts silently truncates texts when len(ids) < len(texts)"
+      },
+      {
+        "rank": 8,
+        "score": 0.508386523031386,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#38544",
+        "title": "`ProviderToolSearchMiddleware` defers tools as flat top-level functions instead of wrapping them in a `namespace` — no token savings"
+      },
+      {
+        "rank": 9,
+        "score": 0.507013082504276,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#37184",
+        "title": "create_agent with ProviderStrategy binds empty tools list and breaks OpenAI-compatible providers"
+      },
+      {
+        "rank": 10,
+        "score": 0.5062270466224588,
+        "source_type": "github",
+        "source_external_id": "langchain-ai/langchain#37584",
+        "title": "`tool_search_tool_result` content blocks retain stream-chunk index field, breaking multi-turn API calls"
+      }
+    ]
+  },
+  "hard-neg-database-02": {
+    "query": "Redis cluster failover takes over 30 seconds causing client connection timeouts during primary election",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.682167649269104,
+        "source_type": "github",
+        "source_external_id": "redis/redis#15181",
+        "title": "[BUG] Cluster bus outbound reconnect storm on connection failure (no backoff)"
+      },
+      {
+        "rank": 2,
+        "score": 0.6651755174889864,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14571",
+        "title": "[QUESTION]When one node in the cluster fails, the access latency sharply increases to the second level"
+      },
+      {
+        "rank": 3,
+        "score": 0.6546748876571655,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14422",
+        "title": "[BUG] One Sentinel Always in Sdown after Failover"
+      },
+      {
+        "rank": 4,
+        "score": 0.6284667474945349,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14212",
+        "title": "redis server  third handshake hang 1 min"
+      },
+      {
+        "rank": 5,
+        "score": 0.6274247765541077,
+        "source_type": "github",
+        "source_external_id": "redis/redis#5784",
+        "title": "Sentinel failover aborted - failover-abort-not-elected error"
+      },
+      {
+        "rank": 6,
+        "score": 0.6232433543656268,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14633",
+        "title": "[BUG] replica-to-primary connection issues when the IPs change"
+      },
+      {
+        "rank": 7,
+        "score": 0.6056442495796542,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14343",
+        "title": "[QUESTION] client connection to sentinels stuck after adding 2000 masters (7.0.11)"
+      },
+      {
+        "rank": 8,
+        "score": 0.6015359163284302,
+        "source_type": "github",
+        "source_external_id": "redis/redis#14100",
+        "title": "Lost connection with Replica."
+      },
+      {
+        "rank": 9,
+        "score": 0.6003443836960575,
+        "source_type": "github",
+        "source_external_id": "redis/redis#15472",
+        "title": "[BUG] Manual failover can permanently leave a sibling replica attached as a sub-replica (replica-of-replica)"
+      },
+      {
+        "rank": 10,
+        "score": 0.5942879319190979,
+        "source_type": "github",
+        "source_external_id": "redis/redis#10073",
+        "title": "[BUG] Redis nodes fail after: MASTER <-> REPLICA sync: Flushing old data"
+      }
+    ]
+  },
+  "hard-neg-api-02": {
+    "query": "TypeScript compiler emits incorrect type narrowing for a discriminated union inside a generic function",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.7795246374890438,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#18717",
+        "title": "Union type inference failure in generic function"
+      },
+      {
+        "rank": 2,
+        "score": 0.7772135734558105,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#47731",
+        "title": "Narrow subtype-reduction-prone unions to their narrowest constituent"
+      },
+      {
+        "rank": 3,
+        "score": 0.7269855737686157,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#29188",
+        "title": "Conditional type does not narrow union type"
+      },
+      {
+        "rank": 4,
+        "score": 0.6520805358886719,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#59729",
+        "title": "The order of values ​​in a union affects the correct type inference"
+      },
+      {
+        "rank": 5,
+        "score": 0.6386981010437012,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#42508",
+        "title": "Error when spreading a union of tuples in a call"
+      },
+      {
+        "rank": 6,
+        "score": 0.631190299987793,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#63708",
+        "title": "It is possible to violate generic constraints when distributing union types"
+      },
+      {
+        "rank": 7,
+        "score": 0.6256497129410687,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#63776",
+        "title": "Inconsistency involving discriminated union and flatMap"
+      },
+      {
+        "rank": 8,
+        "score": 0.6191344261169434,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#36772",
+        "title": "Type not narrowed by === when equivalent type guard works"
+      },
+      {
+        "rank": 9,
+        "score": 0.6071234941482544,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#27910",
+        "title": "TS2367: This condition will always return 'false' since the types 'Constructor<T>' and 'typeof Child' have no overlap."
+      },
+      {
+        "rank": 10,
+        "score": 0.6055261492729187,
+        "source_type": "github",
+        "source_external_id": "microsoft/TypeScript#42369",
+        "title": "Conditional type which checks nested intersect types evaluates inconsistently when outer type is also intersected and inner type intersects with any."
+      }
+    ]
+  },
+  "hard-neg-config-02": {
+    "query": "Terraform state lock is not released after a CI pipeline is cancelled mid-apply",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.7218390703201294,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#23655",
+        "title": "Terraform console creates a lock that does not go away before it's closed"
+      },
+      {
+        "rank": 2,
+        "score": 0.6807139706186086,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#18741",
+        "title": "Add retries for storing state and releasing locks"
+      },
+      {
+        "rank": 3,
+        "score": 0.6738637284121687,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#38340",
+        "title": "terraform force-unlock without having to specify lock ID"
+      },
+      {
+        "rank": 4,
+        "score": 0.6412696456152424,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#25818",
+        "title": "0.13.0 upgrade from 0.12.28 now seems to require some state locking parameters I can't find any information on."
+      },
+      {
+        "rank": 5,
+        "score": 0.634402871131897,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#25776",
+        "title": "Remove stale locks/Ability to add timeout to locks"
+      },
+      {
+        "rank": 6,
+        "score": 0.6305265646859082,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#37841",
+        "title": "\"terraform providers lock\" does not lock providers required by tests"
+      },
+      {
+        "rank": 7,
+        "score": 0.6018300889831739,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#37802",
+        "title": "Windows 11 - Terraform - Still creating loop - Root is waiting for Provider"
+      },
+      {
+        "rank": 8,
+        "score": 0.5988491773605347,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#31533",
+        "title": "Ability to disable lockfiles"
+      },
+      {
+        "rank": 9,
+        "score": 0.5956223011016846,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#37342",
+        "title": "Error in getting lock details on S3 Backend with lockfile and encryption enabled"
+      },
+      {
+        "rank": 10,
+        "score": 0.594419538974762,
+        "source_type": "github",
+        "source_external_id": "hashicorp/terraform#37575",
+        "title": "`lifecycle` meta-argument cannot be updated in state after the resource is created"
+      }
+    ]
+  },
+  "hard-neg-deployment-02": {
+    "query": "Airflow DAG scheduler silently skips a task instance after a timezone configuration change",
+    "results": [
+      {
+        "rank": 1,
+        "score": 0.5869187362838638,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#62050",
+        "title": "Scheduler bulk-fails all scheduled tasks when serialized DAG is transiently missing"
+      },
+      {
+        "rank": 2,
+        "score": 0.5815650820732158,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#68796",
+        "title": "AirflowRuntimeVaryingValueChecker misses runtime-varying values in tasks after nested non-DAG with-statements"
+      },
+      {
+        "rank": 3,
+        "score": 0.5804850209048413,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#10883",
+        "title": "Improve ExternalTaskSensor execution date pattern"
+      },
+      {
+        "rank": 4,
+        "score": 0.5762498722225362,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71234",
+        "title": "Calendar view computes planned runs for cron timetables in UTC, ignoring the DAG's configured timezone"
+      },
+      {
+        "rank": 5,
+        "score": 0.5621466971723267,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#70284",
+        "title": "DateTimeSensorAsync crashes Dag parsing with templated target_time + start_from_trigger=True"
+      },
+      {
+        "rank": 6,
+        "score": 0.5410089815264343,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#53741",
+        "title": "Add API Support for Filtering Unscheduled DAGs"
+      },
+      {
+        "rank": 7,
+        "score": 0.5287509279698696,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71381",
+        "title": "Pausing a DAG stalls already-running DagRuns instead of only blocking new ones"
+      },
+      {
+        "rank": 8,
+        "score": 0.5277839021553944,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#58056",
+        "title": "Add `AssetAndTimeSchedule` to schedule DAGs"
+      },
+      {
+        "rank": 9,
+        "score": 0.5263231992721595,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#69947",
+        "title": "[AIP-94] airflowctl tasks: add logs command"
+      },
+      {
+        "rank": 10,
+        "score": 0.5167132616043127,
+        "source_type": "github",
+        "source_external_id": "apache/airflow#71187",
+        "title": "A way to switch create_cron_data_interval=true back to 2.x run_id logic"
+      }
+    ]
+  }
+}

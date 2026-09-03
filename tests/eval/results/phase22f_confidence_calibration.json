@@ -1,0 +1,2099 @@
+{
+  "generated_at": "2026-09-01T19:12:01.453315+00:00",
+  "phase": "22F",
+  "protocol_note": "Same protocol as tests/eval/run_confidence_eval.py: dense-only IncidentSearchService.search(), no expansion/reranking. classify_confidence and its 0.40/0.55 thresholds are imported unmodified.",
+  "thresholds": {
+    "low_confidence_threshold": 0.4,
+    "high_confidence_threshold": 0.55
+  },
+  "group_statistics": {
+    "POSITIVE": {
+      "count": 28,
+      "min_top1": 0.3924174553974802,
+      "max_top1": 0.949601948261261,
+      "mean_top1": 0.7196543802852189,
+      "median_top1": 0.7389227605508126,
+      "level_counts": {
+        "HIGH": 24,
+        "MEDIUM": 3,
+        "LOW": 1
+      }
+    },
+    "EASY_NEGATIVE": {
+      "count": 8,
+      "min_top1": 0.26066812745712853,
+      "max_top1": 0.485208854520059,
+      "mean_top1": 0.3633377662432528,
+      "median_top1": 0.36830778790707897,
+      "level_counts": {
+        "LOW": 5,
+        "MEDIUM": 3
+      }
+    },
+    "HARD_NEGATIVE": {
+      "count": 20,
+      "min_top1": 0.31244697235682817,
+      "max_top1": 0.7795246374890438,
+      "mean_top1": 0.5680658643825978,
+      "median_top1": 0.5685577083610927,
+      "level_counts": {
+        "MEDIUM": 7,
+        "HIGH": 11,
+        "LOW": 2
+      }
+    }
+  },
+  "confusion_matrices": {
+    "combined_negatives (easy+hard)": [
+      {
+        "threshold": 0.3,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 25,
+        "tn": 3,
+        "fn": 0,
+        "precision": 0.5283018867924528,
+        "recall": 1.0,
+        "false_positive_rate": 0.8928571428571429,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "v2-neg-01",
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-06",
+          "v2-neg-07",
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-payment-02",
+          "hard-neg-auth-02",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.35,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 24,
+        "tn": 4,
+        "fn": 0,
+        "precision": 0.5384615384615384,
+        "recall": 1.0,
+        "false_positive_rate": 0.8571428571428571,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "v2-neg-01",
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-06",
+          "v2-neg-07",
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-payment-02",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.4,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 21,
+        "tn": 7,
+        "fn": 1,
+        "precision": 0.5625,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.75,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-07",
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.42,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 20,
+        "tn": 8,
+        "fn": 1,
+        "precision": 0.574468085106383,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.7142857142857143,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07",
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.45,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 17,
+        "tn": 11,
+        "fn": 2,
+        "precision": 0.6046511627906976,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.6071428571428571,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.48,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 15,
+        "tn": 13,
+        "fn": 2,
+        "precision": 0.6341463414634146,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.5357142857142857,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-database-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.5,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 12,
+        "tn": 16,
+        "fn": 2,
+        "precision": 0.6842105263157895,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.42857142857142855,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.55,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 24,
+        "fp": 11,
+        "tn": 17,
+        "fn": 4,
+        "precision": 0.6857142857142857,
+        "recall": 0.8571428571428571,
+        "false_positive_rate": 0.39285714285714285,
+        "false_negative_rate": 0.14285714285714285,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.6,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 22,
+        "fp": 9,
+        "tn": 19,
+        "fn": 6,
+        "precision": 0.7096774193548387,
+        "recall": 0.7857142857142857,
+        "false_positive_rate": 0.32142857142857145,
+        "false_negative_rate": 0.21428571428571427,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.65,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 20,
+        "fp": 7,
+        "tn": 21,
+        "fn": 8,
+        "precision": 0.7407407407407407,
+        "recall": 0.7142857142857143,
+        "false_positive_rate": 0.25,
+        "false_negative_rate": 0.2857142857142857,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-networking-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.7,
+        "negative_groups": [
+          "EASY_NEGATIVE",
+          "HARD_NEGATIVE"
+        ],
+        "tp": 17,
+        "fp": 4,
+        "tn": 24,
+        "fn": 11,
+        "precision": 0.8095238095238095,
+        "recall": 0.6071428571428571,
+        "false_positive_rate": 0.14285714285714285,
+        "false_negative_rate": 0.39285714285714285,
+        "false_positive_ids": [
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-05",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10",
+          "v2-multi-01",
+          "v2-multi-06"
+        ]
+      }
+    ],
+    "hard_negatives_only": [
+      {
+        "threshold": 0.3,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 20,
+        "tn": 0,
+        "fn": 0,
+        "precision": 0.5833333333333334,
+        "recall": 1.0,
+        "false_positive_rate": 1.0,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-payment-02",
+          "hard-neg-auth-02",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.35,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 19,
+        "tn": 1,
+        "fn": 0,
+        "precision": 0.5957446808510638,
+        "recall": 1.0,
+        "false_positive_rate": 0.95,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-payment-02",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.4,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 18,
+        "tn": 2,
+        "fn": 1,
+        "precision": 0.6,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.9,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.42,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 18,
+        "tn": 2,
+        "fn": 1,
+        "precision": 0.6,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.9,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "hard-neg-payment-01",
+          "hard-neg-auth-01",
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-api-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.45,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 15,
+        "tn": 5,
+        "fn": 2,
+        "precision": 0.6341463414634146,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.75,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "hard-neg-monitoring-01",
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-integrations-01",
+          "hard-neg-database-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.48,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 13,
+        "tn": 7,
+        "fn": 2,
+        "precision": 0.6666666666666666,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.65,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-database-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.5,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 12,
+        "tn": 8,
+        "fn": 2,
+        "precision": 0.6842105263157895,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.6,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "hard-neg-k8s-01",
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.55,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 24,
+        "fp": 11,
+        "tn": 9,
+        "fn": 4,
+        "precision": 0.6857142857142857,
+        "recall": 0.8571428571428571,
+        "false_positive_rate": 0.55,
+        "false_negative_rate": 0.14285714285714285,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-integrations-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02",
+          "hard-neg-deployment-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.6,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 22,
+        "fp": 9,
+        "tn": 11,
+        "fn": 6,
+        "precision": 0.7096774193548387,
+        "recall": 0.7857142857142857,
+        "false_positive_rate": 0.45,
+        "false_negative_rate": 0.21428571428571427,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-monitoring-02",
+          "hard-neg-k8s-02",
+          "hard-neg-networking-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.65,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 20,
+        "fp": 7,
+        "tn": 13,
+        "fn": 8,
+        "precision": 0.7407407407407407,
+        "recall": 0.7142857142857143,
+        "false_positive_rate": 0.35,
+        "false_negative_rate": 0.2857142857142857,
+        "false_positive_ids": [
+          "hard-neg-networking-01",
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-networking-02",
+          "hard-neg-database-02",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.7,
+        "negative_groups": [
+          "HARD_NEGATIVE"
+        ],
+        "tp": 17,
+        "fp": 4,
+        "tn": 16,
+        "fn": 11,
+        "precision": 0.8095238095238095,
+        "recall": 0.6071428571428571,
+        "false_positive_rate": 0.2,
+        "false_negative_rate": 0.39285714285714285,
+        "false_positive_ids": [
+          "hard-neg-config-01",
+          "hard-neg-deployment-01",
+          "hard-neg-api-02",
+          "hard-neg-config-02"
+        ],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-05",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10",
+          "v2-multi-01",
+          "v2-multi-06"
+        ]
+      }
+    ],
+    "easy_negatives_only": [
+      {
+        "threshold": 0.3,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 5,
+        "tn": 3,
+        "fn": 0,
+        "precision": 0.8484848484848485,
+        "recall": 1.0,
+        "false_positive_rate": 0.625,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "v2-neg-01",
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-06",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.35,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 28,
+        "fp": 5,
+        "tn": 3,
+        "fn": 0,
+        "precision": 0.8484848484848485,
+        "recall": 1.0,
+        "false_positive_rate": 0.625,
+        "false_negative_rate": 0.0,
+        "false_positive_ids": [
+          "v2-neg-01",
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-06",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": []
+      },
+      {
+        "threshold": 0.4,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 3,
+        "tn": 5,
+        "fn": 1,
+        "precision": 0.9,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.375,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "v2-neg-02",
+          "v2-neg-04",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.42,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 27,
+        "fp": 2,
+        "tn": 6,
+        "fn": 1,
+        "precision": 0.9310344827586207,
+        "recall": 0.9642857142857143,
+        "false_positive_rate": 0.25,
+        "false_negative_rate": 0.03571428571428571,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": [
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.45,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 2,
+        "tn": 6,
+        "fn": 2,
+        "precision": 0.9285714285714286,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.25,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.48,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 2,
+        "tn": 6,
+        "fn": 2,
+        "precision": 0.9285714285714286,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.25,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [
+          "v2-neg-04",
+          "v2-neg-07"
+        ],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.5,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 26,
+        "fp": 0,
+        "tn": 8,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.9285714285714286,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.07142857142857142,
+        "false_positive_ids": [],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.55,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 24,
+        "fp": 0,
+        "tn": 8,
+        "fn": 4,
+        "precision": 1.0,
+        "recall": 0.8571428571428571,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.14285714285714285,
+        "false_positive_ids": [],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09"
+        ]
+      },
+      {
+        "threshold": 0.6,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 22,
+        "fp": 0,
+        "tn": 8,
+        "fn": 6,
+        "precision": 1.0,
+        "recall": 0.7857142857142857,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.21428571428571427,
+        "false_positive_ids": [],
+        "false_negative_ids": [
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.65,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 20,
+        "fp": 0,
+        "tn": 8,
+        "fn": 8,
+        "precision": 1.0,
+        "recall": 0.7142857142857143,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.2857142857142857,
+        "false_positive_ids": [],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10"
+        ]
+      },
+      {
+        "threshold": 0.7,
+        "negative_groups": [
+          "EASY_NEGATIVE"
+        ],
+        "tp": 17,
+        "fp": 0,
+        "tn": 8,
+        "fn": 11,
+        "precision": 1.0,
+        "recall": 0.6071428571428571,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.39285714285714285,
+        "false_positive_ids": [],
+        "false_negative_ids": [
+          "v2-para-02",
+          "v2-para-03",
+          "v2-para-04",
+          "v2-para-05",
+          "v2-para-06",
+          "v2-para-07",
+          "v2-para-08",
+          "v2-para-09",
+          "v2-para-10",
+          "v2-multi-01",
+          "v2-multi-06"
+        ]
+      }
+    ]
+  },
+  "rows": [
+    {
+      "id": "v2-lex-01",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7198075819130206,
+        "top2": 0.5023311969839135,
+        "top1_minus_top2": 0.21747638492910715,
+        "topk_mean": 0.49557248876393634,
+        "topk_min": 0.45235389471054077,
+        "top1_minus_topk_min": 0.26745368720247986,
+        "num_results": 10,
+        "num_distinct_sources": 5
+      },
+      "is_match": true,
+      "top1_score": 0.7198075819130206
+    },
+    {
+      "id": "v2-lex-02",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.9301312607448559,
+        "top2": 0.7261969014288855,
+        "top1_minus_top2": 0.20393435931597037,
+        "topk_mean": 0.6281369099136722,
+        "topk_min": 0.5015293357933395,
+        "top1_minus_topk_min": 0.4286019249515164,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.9301312607448559
+    },
+    {
+      "id": "v2-lex-03",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7161071638933275,
+        "top2": 0.40610939264297485,
+        "top1_minus_top2": 0.30999777125035266,
+        "topk_mean": 0.4168353534238629,
+        "topk_min": 0.37209200859069824,
+        "top1_minus_topk_min": 0.34401515530262927,
+        "num_results": 10,
+        "num_distinct_sources": 8
+      },
+      "is_match": true,
+      "top1_score": 0.7161071638933275
+    },
+    {
+      "id": "v2-lex-04",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7580379391886045,
+        "top2": 0.5736952932244189,
+        "top1_minus_top2": 0.1843426459641856,
+        "topk_mean": 0.5295926104183055,
+        "topk_min": 0.48642438892882156,
+        "top1_minus_topk_min": 0.27161355025978295,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.7580379391886045
+    },
+    {
+      "id": "v2-lex-05",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.949601948261261,
+        "top2": 0.6282870769500732,
+        "top1_minus_top2": 0.32131487131118774,
+        "topk_mean": 0.6214903633415827,
+        "topk_min": 0.5741347670555115,
+        "top1_minus_topk_min": 0.3754671812057495,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.949601948261261
+    },
+    {
+      "id": "v2-lex-06",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8272152543067932,
+        "top2": 0.5166581869125366,
+        "top1_minus_top2": 0.3105570673942566,
+        "topk_mean": 0.4297349984226994,
+        "topk_min": 0.3417874872684479,
+        "top1_minus_topk_min": 0.48542776703834534,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.8272152543067932
+    },
+    {
+      "id": "v2-lex-07",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7941648960113525,
+        "top2": 0.5580189491499107,
+        "top1_minus_top2": 0.23614594686144186,
+        "topk_mean": 0.4800273351915799,
+        "topk_min": 0.3975415527820587,
+        "top1_minus_topk_min": 0.3966233432292938,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": true,
+      "top1_score": 0.7941648960113525
+    },
+    {
+      "id": "v2-lex-08",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8593055689748798,
+        "top2": 0.6866342612126922,
+        "top1_minus_top2": 0.17267130776218753,
+        "topk_mean": 0.6262337340045538,
+        "topk_min": 0.5521297721785453,
+        "top1_minus_topk_min": 0.30717579679633444,
+        "num_results": 10,
+        "num_distinct_sources": 10
+      },
+      "is_match": true,
+      "top1_score": 0.8593055689748798
+    },
+    {
+      "id": "v2-lex-09",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8695769906044006,
+        "top2": 0.5462570190429688,
+        "top1_minus_top2": 0.3233199715614319,
+        "topk_mean": 0.5228408132153367,
+        "topk_min": 0.44673120975494385,
+        "top1_minus_topk_min": 0.4228457808494568,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.8695769906044006
+    },
+    {
+      "id": "v2-lex-10",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7065178330828064,
+        "top2": 0.48759195282507317,
+        "top1_minus_top2": 0.21892588025773319,
+        "topk_mean": 0.4759985420557445,
+        "topk_min": 0.41735819474707947,
+        "top1_minus_topk_min": 0.2891596383357269,
+        "num_results": 10,
+        "num_distinct_sources": 4
+      },
+      "is_match": true,
+      "top1_score": 0.7065178330828064
+    },
+    {
+      "id": "v2-lex-11",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8640974245013356,
+        "top2": 0.7435589585567155,
+        "top1_minus_top2": 0.12053846594462014,
+        "topk_mean": 0.7080343198454957,
+        "topk_min": 0.6715979175807298,
+        "top1_minus_topk_min": 0.1924995069206058,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.8640974245013356
+    },
+    {
+      "id": "v2-lex-12",
+      "group": "POSITIVE",
+      "query_type": "lexical-overlap",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.760386370431971,
+        "top2": 0.5744907855987549,
+        "top1_minus_top2": 0.1858955848332161,
+        "topk_mean": 0.5290383077994795,
+        "topk_min": 0.4803180992603302,
+        "top1_minus_topk_min": 0.2800682711716408,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.760386370431971
+    },
+    {
+      "id": "v2-para-01",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8642030954360962,
+        "top2": 0.7435659919043798,
+        "top1_minus_top2": 0.12063710353171642,
+        "topk_mean": 0.6775114640003297,
+        "topk_min": 0.6137794256210327,
+        "top1_minus_topk_min": 0.2504236698150635,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.8642030954360962
+    },
+    {
+      "id": "v2-para-02",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.645987672092,
+        "top2": 0.6197773671415606,
+        "top1_minus_top2": 0.02621030495043941,
+        "topk_mean": 0.513997975455044,
+        "topk_min": 0.42899176901628033,
+        "top1_minus_topk_min": 0.2169959030757197,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": true,
+      "top1_score": 0.645987672092
+    },
+    {
+      "id": "v2-para-03",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4384362770991026,
+        "top2": 0.41036301851272583,
+        "top1_minus_top2": 0.02807325858637677,
+        "topk_mean": 0.368446909510612,
+        "topk_min": 0.33426360283711,
+        "top1_minus_topk_min": 0.10417267426199261,
+        "num_results": 10,
+        "num_distinct_sources": 7
+      },
+      "is_match": true,
+      "top1_score": 0.4384362770991026
+    },
+    {
+      "id": "v2-para-04",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.5893510755703176,
+        "top2": 0.5659992357492912,
+        "top1_minus_top2": 0.0233518398210264,
+        "topk_mean": 0.5176636170887384,
+        "topk_min": 0.4807453751564026,
+        "top1_minus_topk_min": 0.10860570041391504,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.5893510755703176
+    },
+    {
+      "id": "v2-para-05",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6555287837982178,
+        "top2": 0.6105939149856567,
+        "top1_minus_top2": 0.044934868812561035,
+        "topk_mean": 0.5904940487465802,
+        "topk_min": 0.560062050819397,
+        "top1_minus_topk_min": 0.0954667329788208,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": true,
+      "top1_score": 0.6555287837982178
+    },
+    {
+      "id": "v2-para-06",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.5148765155599434,
+        "top2": 0.4288105028158733,
+        "top1_minus_top2": 0.08606601274407011,
+        "topk_mean": 0.33575997239584576,
+        "topk_min": 0.24972176550160485,
+        "top1_minus_topk_min": 0.26515475005833855,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.5148765155599434
+    },
+    {
+      "id": "v2-para-07",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6458590030670166,
+        "top2": 0.6383030630169485,
+        "top1_minus_top2": 0.0075559400500680995,
+        "topk_mean": 0.5529115191370766,
+        "topk_min": 0.4998410940170288,
+        "top1_minus_topk_min": 0.1460179090499878,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": true,
+      "top1_score": 0.6458590030670166
+    },
+    {
+      "id": "v2-para-08",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.5052288168396012,
+        "top2": 0.5048517874148281,
+        "top1_minus_top2": 0.0003770294247731343,
+        "topk_mean": 0.45147094516438546,
+        "topk_min": 0.41214976761940203,
+        "top1_minus_topk_min": 0.09307904922019916,
+        "num_results": 10,
+        "num_distinct_sources": 5
+      },
+      "is_match": true,
+      "top1_score": 0.5052288168396012
+    },
+    {
+      "id": "v2-para-09",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.3924174553974802,
+        "top2": 0.39100594493764484,
+        "top1_minus_top2": 0.0014115104598353412,
+        "topk_mean": 0.35977787557109886,
+        "topk_min": 0.3320557972176148,
+        "top1_minus_topk_min": 0.060361658179865385,
+        "num_results": 10,
+        "num_distinct_sources": 4
+      },
+      "is_match": true,
+      "top1_score": 0.3924174553974802
+    },
+    {
+      "id": "v2-para-10",
+      "group": "POSITIVE",
+      "query_type": "paraphrase",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.5723669187803923,
+        "top2": 0.5650989672482639,
+        "top1_minus_top2": 0.007267951532128336,
+        "topk_mean": 0.5177739620624207,
+        "topk_min": 0.48144427052472494,
+        "top1_minus_topk_min": 0.09092264825566732,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": true,
+      "top1_score": 0.5723669187803923
+    },
+    {
+      "id": "v2-multi-01",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6926287595850981,
+        "top2": 0.6811474561691284,
+        "top1_minus_top2": 0.011481303415969646,
+        "topk_mean": 0.5942964782896681,
+        "topk_min": 0.5480402977442573,
+        "top1_minus_topk_min": 0.14458846184084073,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.6926287595850981
+    },
+    {
+      "id": "v2-multi-02",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7733926638002805,
+        "top2": 0.7209094000404729,
+        "top1_minus_top2": 0.05248326375980761,
+        "topk_mean": 0.6793176857681725,
+        "topk_min": 0.6514264345169114,
+        "top1_minus_topk_min": 0.12196622928336909,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.7733926638002805
+    },
+    {
+      "id": "v2-multi-03",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.851235049815768,
+        "top2": 0.8115273230357588,
+        "top1_minus_top2": 0.03970772678000922,
+        "topk_mean": 0.7084878246572001,
+        "topk_min": 0.6384085251798004,
+        "top1_minus_topk_min": 0.21282652463596763,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": true,
+      "top1_score": 0.851235049815768
+    },
+    {
+      "id": "v2-multi-04",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.8076848983764648,
+        "top2": 0.7910605669021606,
+        "top1_minus_top2": 0.0166243314743042,
+        "topk_mean": 0.6794345786933816,
+        "topk_min": 0.6202861893006462,
+        "top1_minus_topk_min": 0.18739870907581868,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.8076848983764648
+    },
+    {
+      "id": "v2-multi-05",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7638409874534032,
+        "top2": 0.7209863565588565,
+        "top1_minus_top2": 0.042854630894546775,
+        "topk_mean": 0.6491328464087877,
+        "topk_min": 0.6002746104866731,
+        "top1_minus_topk_min": 0.16356637696673015,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.7638409874534032
+    },
+    {
+      "id": "v2-multi-06",
+      "group": "POSITIVE",
+      "query_type": "multi-concept",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6823344434003369,
+        "top2": 0.6810276508331299,
+        "top1_minus_top2": 0.0013067925672070047,
+        "topk_mean": 0.5893436934953351,
+        "topk_min": 0.4695597607159765,
+        "top1_minus_topk_min": 0.2127746826843604,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": true,
+      "top1_score": 0.6823344434003369
+    },
+    {
+      "id": "v2-neg-01",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.36101406812667847,
+        "top2": 0.3603147864341736,
+        "top1_minus_top2": 0.0006992816925048828,
+        "topk_mean": 0.3483648850556263,
+        "topk_min": 0.33904021978378296,
+        "top1_minus_topk_min": 0.021973848342895508,
+        "num_results": 10,
+        "num_distinct_sources": 4
+      },
+      "is_match": false,
+      "top1_score": 0.36101406812667847
+    },
+    {
+      "id": "v2-neg-02",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4033634903051557,
+        "top2": 0.3314788539099016,
+        "top1_minus_top2": 0.07188463639525411,
+        "topk_mean": 0.3086787503415695,
+        "topk_min": 0.2812407184386687,
+        "top1_minus_topk_min": 0.12212277186648701,
+        "num_results": 10,
+        "num_distinct_sources": 9
+      },
+      "is_match": false,
+      "top1_score": 0.4033634903051557
+    },
+    {
+      "id": "v2-neg-03",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.26066812745712853,
+        "top2": 0.2596217548621751,
+        "top1_minus_top2": 0.0010463725949534375,
+        "topk_mean": 0.2523143392284698,
+        "topk_min": 0.2378145314565585,
+        "top1_minus_topk_min": 0.02285359600057002,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": false,
+      "top1_score": 0.26066812745712853
+    },
+    {
+      "id": "v2-neg-04",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.485208854520059,
+        "top2": 0.37364245574600874,
+        "top1_minus_top2": 0.11156639877405028,
+        "topk_mean": 0.3377511481789418,
+        "topk_min": 0.28677671293089757,
+        "top1_minus_topk_min": 0.19843214158916145,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.485208854520059
+    },
+    {
+      "id": "v2-neg-05",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.2606856356825292,
+        "top2": 0.2544001189231806,
+        "top1_minus_top2": 0.0062855167593486305,
+        "topk_mean": 0.24504235501787563,
+        "topk_min": 0.23400922214929964,
+        "top1_minus_topk_min": 0.02667641353322958,
+        "num_results": 10,
+        "num_distinct_sources": 7
+      },
+      "is_match": false,
+      "top1_score": 0.2606856356825292
+    },
+    {
+      "id": "v2-neg-06",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.37560150768747946,
+        "top2": 0.3525503155529123,
+        "top1_minus_top2": 0.02305119213456719,
+        "topk_mean": 0.3316415661082667,
+        "topk_min": 0.29854402568149163,
+        "top1_minus_topk_min": 0.07705748200598783,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": false,
+      "top1_score": 0.37560150768747946
+    },
+    {
+      "id": "v2-neg-07",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4848783612251282,
+        "top2": 0.44339895248413086,
+        "top1_minus_top2": 0.041479408740997314,
+        "topk_mean": 0.4035120437058311,
+        "topk_min": 0.373019136606507,
+        "top1_minus_topk_min": 0.11185922461862119,
+        "num_results": 10,
+        "num_distinct_sources": 9
+      },
+      "is_match": false,
+      "top1_score": 0.4848783612251282
+    },
+    {
+      "id": "v2-neg-08",
+      "group": "EASY_NEGATIVE",
+      "query_type": "no-match-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.275282084941864,
+        "top2": 0.27469040600600325,
+        "top1_minus_top2": 0.0005916789358607621,
+        "topk_mean": 0.2567152777044757,
+        "topk_min": 0.24367754199042713,
+        "top1_minus_topk_min": 0.03160454295143689,
+        "num_results": 10,
+        "num_distinct_sources": 9
+      },
+      "is_match": false,
+      "top1_score": 0.275282084941864
+    },
+    {
+      "id": "hard-neg-payment-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.422363017656624,
+        "top2": 0.3980591418672631,
+        "top1_minus_top2": 0.024303875789360885,
+        "topk_mean": 0.38192040877507516,
+        "topk_min": 0.3633651300233447,
+        "top1_minus_topk_min": 0.05899788763327929,
+        "num_results": 10,
+        "num_distinct_sources": 9
+      },
+      "is_match": false,
+      "top1_score": 0.422363017656624
+    },
+    {
+      "id": "hard-neg-auth-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.44866600938642054,
+        "top2": 0.43914226060257866,
+        "top1_minus_top2": 0.009523748783841879,
+        "topk_mean": 0.38014788605943933,
+        "topk_min": 0.3400170302380907,
+        "top1_minus_topk_min": 0.10864897914832983,
+        "num_results": 10,
+        "num_distinct_sources": 6
+      },
+      "is_match": false,
+      "top1_score": 0.44866600938642054
+    },
+    {
+      "id": "hard-neg-monitoring-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.45397305762928464,
+        "top2": 0.43491077423095703,
+        "top1_minus_top2": 0.019062283398327606,
+        "topk_mean": 0.3889259679959304,
+        "topk_min": 0.3496527671813965,
+        "top1_minus_topk_min": 0.10432029044788815,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": false,
+      "top1_score": 0.45397305762928464
+    },
+    {
+      "id": "hard-neg-k8s-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.5264449276460688,
+        "top2": 0.5209915172167314,
+        "top1_minus_top2": 0.005453410429337335,
+        "topk_mean": 0.49727897624709383,
+        "topk_min": 0.4815747881404995,
+        "top1_minus_topk_min": 0.044870139505569284,
+        "num_results": 10,
+        "num_distinct_sources": 4
+      },
+      "is_match": false,
+      "top1_score": 0.5264449276460688
+    },
+    {
+      "id": "hard-neg-networking-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6885890139831288,
+        "top2": 0.6311925273422891,
+        "top1_minus_top2": 0.05739648664083963,
+        "topk_mean": 0.5787084187818178,
+        "topk_min": 0.5233775945451743,
+        "top1_minus_topk_min": 0.16521141943795448,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": false,
+      "top1_score": 0.6885890139831288
+    },
+    {
+      "id": "hard-neg-integrations-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4796719849109683,
+        "top2": 0.4166081001396187,
+        "top1_minus_top2": 0.06306388477134961,
+        "topk_mean": 0.399779526948111,
+        "topk_min": 0.372047297480542,
+        "top1_minus_topk_min": 0.1076246874304263,
+        "num_results": 10,
+        "num_distinct_sources": 3
+      },
+      "is_match": false,
+      "top1_score": 0.4796719849109683
+    },
+    {
+      "id": "hard-neg-database-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4974793495250145,
+        "top2": 0.49667882919311523,
+        "top1_minus_top2": 0.0008005203318992571,
+        "topk_mean": 0.46443300385004616,
+        "topk_min": 0.4445424708996739,
+        "top1_minus_topk_min": 0.05293687862534058,
+        "num_results": 10,
+        "num_distinct_sources": 10
+      },
+      "is_match": false,
+      "top1_score": 0.4974793495250145
+    },
+    {
+      "id": "hard-neg-api-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "MEDIUM",
+      "signals": {
+        "top1": 0.4327628692671217,
+        "top2": 0.4280553801026721,
+        "top1_minus_top2": 0.00470748916444963,
+        "topk_mean": 0.40814591256857574,
+        "topk_min": 0.38123811707042254,
+        "top1_minus_topk_min": 0.051524752196699164,
+        "num_results": 10,
+        "num_distinct_sources": 10
+      },
+      "is_match": false,
+      "top1_score": 0.4327628692671217
+    },
+    {
+      "id": "hard-neg-config-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7563474178314209,
+        "top2": 0.7257926680383885,
+        "top1_minus_top2": 0.03055474979303241,
+        "topk_mean": 0.6872132659481729,
+        "topk_min": 0.6602392601681685,
+        "top1_minus_topk_min": 0.09610815766325242,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.7563474178314209
+    },
+    {
+      "id": "hard-neg-deployment-01",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7462057622548497,
+        "top2": 0.6306950294142927,
+        "top1_minus_top2": 0.11551073284055702,
+        "topk_mean": 0.6055699263669541,
+        "topk_min": 0.5671597381138967,
+        "top1_minus_topk_min": 0.17904602414095294,
+        "num_results": 10,
+        "num_distinct_sources": 2
+      },
+      "is_match": false,
+      "top1_score": 0.7462057622548497
+    },
+    {
+      "id": "hard-neg-payment-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.36023492454082295,
+        "top2": 0.33021338817913914,
+        "top1_minus_top2": 0.03002153636168381,
+        "topk_mean": 0.30717511579772705,
+        "topk_min": 0.27703486221820994,
+        "top1_minus_topk_min": 0.08320006232261301,
+        "num_results": 10,
+        "num_distinct_sources": 9
+      },
+      "is_match": false,
+      "top1_score": 0.36023492454082295
+    },
+    {
+      "id": "hard-neg-auth-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "LOW",
+      "signals": {
+        "top1": 0.31244697235682817,
+        "top2": 0.30981711686747626,
+        "top1_minus_top2": 0.0026298554893519066,
+        "topk_mean": 0.2948122099531261,
+        "topk_min": 0.2739587858939899,
+        "top1_minus_topk_min": 0.03848818646283825,
+        "num_results": 10,
+        "num_distinct_sources": 7
+      },
+      "is_match": false,
+      "top1_score": 0.31244697235682817
+    },
+    {
+      "id": "hard-neg-monitoring-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6382877826690674,
+        "top2": 0.6174864172935486,
+        "top1_minus_top2": 0.0208013653755188,
+        "topk_mean": 0.6011453920878093,
+        "topk_min": 0.5786191397493824,
+        "top1_minus_topk_min": 0.05966864291968499,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.6382877826690674
+    },
+    {
+      "id": "hard-neg-k8s-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6147389641559753,
+        "top2": 0.5636807680130005,
+        "top1_minus_top2": 0.0510581961429748,
+        "topk_mean": 0.5358272441724391,
+        "topk_min": 0.5023146271705627,
+        "top1_minus_topk_min": 0.11242433698541254,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.6147389641559753
+    },
+    {
+      "id": "hard-neg-networking-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.6624584600378965,
+        "top2": 0.6415852949168762,
+        "top1_minus_top2": 0.02087316512102033,
+        "topk_mean": 0.6074800604730339,
+        "topk_min": 0.5832142730695917,
+        "top1_minus_topk_min": 0.07924418696830482,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.6624584600378965
+    },
+    {
+      "id": "hard-neg-integrations-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.5501966804383216,
+        "top2": 0.5451280799584446,
+        "top1_minus_top2": 0.005068600479877006,
+        "topk_mean": 0.5213402192225951,
+        "topk_min": 0.5062270466224588,
+        "top1_minus_topk_min": 0.04396963381586283,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.5501966804383216
+    },
+    {
+      "id": "hard-neg-database-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.682167649269104,
+        "top2": 0.6651755174889864,
+        "top1_minus_top2": 0.016992131780117603,
+        "topk_mean": 0.6282965414352765,
+        "topk_min": 0.5942879319190979,
+        "top1_minus_topk_min": 0.0878797173500061,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.682167649269104
+    },
+    {
+      "id": "hard-neg-api-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7795246374890438,
+        "top2": 0.7772135734558105,
+        "top1_minus_top2": 0.0023110640332332233,
+        "topk_mean": 0.6663126504112822,
+        "topk_min": 0.6055261492729187,
+        "top1_minus_topk_min": 0.17399848821612507,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.7795246374890438
+    },
+    {
+      "id": "hard-neg-config-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.7218390703201294,
+        "top2": 0.6807139706186086,
+        "top1_minus_top2": 0.041125099701520784,
+        "topk_mean": 0.637333695720411,
+        "topk_min": 0.594419538974762,
+        "top1_minus_topk_min": 0.12741953134536743,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.7218390703201294
+    },
+    {
+      "id": "hard-neg-deployment-02",
+      "group": "HARD_NEGATIVE",
+      "query_type": "hard-negative-expected",
+      "confidence_level": "HIGH",
+      "signals": {
+        "top1": 0.5869187362838638,
+        "top2": 0.5815650820732158,
+        "top1_minus_top2": 0.00535365421064804,
+        "topk_mean": 0.5527945681184955,
+        "topk_min": 0.5167132616043127,
+        "top1_minus_topk_min": 0.07020547467955107,
+        "num_results": 10,
+        "num_distinct_sources": 1
+      },
+      "is_match": false,
+      "top1_score": 0.5869187362838638
+    }
+  ]
+}

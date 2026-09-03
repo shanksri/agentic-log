@@ -22,8 +22,9 @@ grounding metrics. The interesting results are the negative ones:
   floor; hybrid now strictly dominates dense on the benchmark.
 - The confidence signal used for abstention **does not reliably separate** a genuine match from a
   topically-adjacent wrong one. Measured against 20 purpose-built hard negatives, then re-measured
-  against the full investigation path. **Left unresolved rather than papered over** — see
-  [Evaluation findings](#evaluation-findings).
+  against the full investigation path, which narrowed the gap to one specific band. A candidate fix
+  (a targeted LLM relevance check) measures well but **is not shipped**, because one promising run
+  isn't a validated signal — see [Evaluation findings](#evaluation-findings).
 
 24 phases of incremental, tested development (1,375 tests), plus two production-hardening passes.
 See [Project status](#project-status) for what's done, what's open, and what's deliberately not
@@ -457,6 +458,23 @@ in the response distinguishes a real answer from a plausible wrong one. On the o
 6 verified positives (both paraphrase-style, where keyword validation fails) were wrongly abstained.
 Probe script: `scripts/probe_orchestrator_hard_negatives.py`; per-query results:
 `.benchmarks/orchestrator_hard_negative_probe.json`.
+
+**A candidate second signal looks promising, and is not yet shipped.** Since the gap is bounded to
+the HIGH band, the natural experiment is a targeted one: a single cheap LLM call asking whether the
+top-1 retrieved incident describes the *same underlying problem* as the query — aimed at exactly
+what embeddings cannot see (same topic, different problem). Measured on all 35 HIGH-band queries
+(11 hard negatives, 24 genuine matches): **11/11 hard negatives correctly rejected** (against a
+baseline of 0/11 — today every one gets a confident answer) and **20/21 genuine matches correctly
+kept**, where "genuine match" means retrieval actually surfaced the expected incident. Precision
+1.00, recall 0.95, at roughly one second and one cheap LLM call per query.
+
+That is a real result, and it is deliberately **not wired in yet**, because it isn't yet a validated
+one: n=35 is small, it's a single run at non-zero temperature with repeated-run variance unmeasured
+(this project has evaluator-stability tooling precisely for that, and it hasn't been pointed at this
+question), and the hard negatives were authored by the same person now measuring against them, which
+is exactly the kind of setup that flatters a result. The honest status is "promising candidate,
+pending the same scrutiny everything else here got." Probe:
+`scripts/probe_llm_relevance_gate.py`; results: `.benchmarks/llm_relevance_gate_probe.json`.
 
 This does not mean confidence scoring is broken or unused — it's real, computed, and already
 threaded through the investigation agents and (as of Phase 22D) gates the generation step against

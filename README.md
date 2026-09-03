@@ -1,19 +1,33 @@
 # Enterprise Incident Intelligence Platform
 
-A production-oriented **multi-agent, retrieval-augmented** platform for software incident
-investigation: it ingests real incidents from GitHub Issues and Jira, retrieves similar past
-incidents via hybrid semantic + lexical search, runs a four-agent (planner → hypothesis generation
-→ critic → orchestrator) investigation loop to propose grounded root causes, and — unusually for a
-project this size — ships its own rigorous evaluation platform (retrieval metrics, reasoning
-accuracy, LLM-as-judge, RAGAS-style grounding metrics, diagnostics/health dashboards) to measure
-whether any of that actually works.
+An agentic RAG system for software incident investigation, built together with the evaluation
+platform needed to find out whether it actually works — and then measured hard enough to establish
+where it doesn't.
 
-This is not a toy RAG demo. It's 24 phases of incremental, tested development: real ingestion
-pipelines, hybrid retrieval with adaptive routing, a genuine multi-agent orchestrator (not a single
-prompt), a purpose-built evaluation harness, and two hardening passes (input validation, graceful
-degradation, load/performance testing, security review, environment-aware configuration, and
-failure-handling audits) aimed at production readiness. See
-[Project status](#project-status) for exactly what's done and what's next.
+**What it does:** ingests real incidents from GitHub Issues and Jira, retrieves similar past ones
+via hybrid semantic + lexical search, and runs a four-agent (planner → hypothesis generation →
+critic → orchestrator) loop that surfaces the most relevant prior incidents, the evidence linking
+them, and what resolved them — abstaining rather than answering when retrieval evidence is weak.
+
+**What makes it worth reading:** most agentic-RAG projects stop at a working demo. Here the
+evaluation platform is 36 of the ~89 Python modules — roughly 40% of the codebase — covering
+versioned gold datasets, retrieval metrics, LLM-as-judge with judge *validation*, and RAGAS-style
+grounding metrics. The interesting results are the negative ones:
+
+- The system **fabricated** a confident root cause for a query with nothing matching it in the
+  corpus. Faithfulness scored it 0.0 after the fact; the system itself never noticed. Fixed with a
+  pre-LLM confidence gate.
+- Hybrid retrieval's rank-fusion **silently dropped a correct result** that dense search had ranked
+  8th, because the fusion rewards documents both retrievers weakly agree on. Fixed with a dense
+  floor; hybrid now strictly dominates dense on the benchmark.
+- The confidence signal used for abstention **does not reliably separate** a genuine match from a
+  topically-adjacent wrong one. Measured against 20 purpose-built hard negatives, then re-measured
+  against the full investigation path. **Left unresolved rather than papered over** — see
+  [Evaluation findings](#evaluation-findings).
+
+24 phases of incremental, tested development (1,375 tests), plus two production-hardening passes.
+See [Project status](#project-status) for what's done, what's open, and what's deliberately not
+claimed.
 
 ## What it does, end to end
 
@@ -28,7 +42,9 @@ Jira            ├─▶ Ingestion ─▶ Normalize ─▶ Deduplicate ─▶ E
    Multi-Agent Investigation:  Planner → Hypothesis Generation → Critic → Orchestrator
                 │                (iterative: critic can send it back for more evidence)
                 ▼
-        Grounded root-cause report (confidence, evidence, rejected hypotheses)
+     Evidence-backed report — relevant prior incidents, supporting/contradicting
+     evidence, rejected hypotheses — or an explicit "insufficient evidence"
+     abstention when no hypothesis clears the confidence floor
 
                                     ▲
                                     │  measured by
@@ -38,30 +54,45 @@ Jira            ├─▶ Ingestion ─▶ Normalize ─▶ Deduplicate ─▶ E
    evaluator-stability tracking · cost/skip diagnostics · health dashboards · trends
 ```
 
-## Why this is more than "agentic RAG"
+## Measurement first
 
-Most "agentic RAG" projects are one LLM call deciding when to retrieve. This platform has:
+The organizing principle: **retrieval and reasoning quality are measured, not asserted.** That
+wasn't a philosophical choice — it was forced. An early retrieval baseline was invalidated when the
+corpus grew from ~400 to ~8,000 incidents and the numbers stopped being comparable, and the first
+gold set rotted entirely because it keyed on database UUIDs that re-ingestion regenerates. So the
+roadmap deliberately put the measurement platform *before* the next retrieval algorithm.
 
-- **A real multi-agent loop**, not a single prompt — a `PlannerAgent` sets investigation strategy, a
-  hypothesis-generation step proposes and evidence-checks root causes, a `CriticAgent` reviews the
-  result and can force another iteration, and an orchestrator coordinates all of it with a bounded
-  stopping condition. See [`docs/architecture/19`](docs/architecture/19_multi_agent_investigation.md).
-- **Adaptive retrieval routing** — a rule-based policy picks Dense, BM25, or Hybrid (Reciprocal Rank
-  Fusion) per query based on query shape (stack traces and exact error codes route to BM25; long
-  multi-concept queries route to Hybrid), with strategy-aware confidence calibration. See
-  [`docs/architecture/18`](docs/architecture/18_adaptive_routing_and_hybrid_confidence.md).
-- **A real evaluation platform**, not just "looks good in a demo" — versioned gold datasets with
-  corpus fingerprinting, Recall@K/MRR/NDCG, an LLM-as-judge framework with calibration/validation,
-  BERTScore + RAGAS-style grounding metrics (Faithfulness, Answer Relevancy, Context Precision/
-  Recall/Entity Recall) with configurable cost tiers and evaluator-stability (repeated-run variance)
-  tracking, and a diagnostics layer that surfaces outliers, cost, and skip reasons without
-  recomputing anything. See [`docs/architecture/15`](docs/architecture/15_evaluation_framework.md),
+- **A real evaluation platform** — versioned gold datasets with corpus fingerprinting (a run records
+  what data it ran against), Recall@K/MRR/NDCG, an LLM-as-judge framework that also **validates the
+  judge** (inter-judge agreement, calibration, a trustworthiness verdict — an unvalidated judge is
+  just another opinion), BERTScore + RAGAS-style grounding metrics (Faithfulness, Answer Relevancy,
+  Context Precision/Recall/Entity Recall) with cost tiers and repeated-run variance tracking, and a
+  diagnostics layer surfacing outliers, cost, and skip reasons.
+  See [`15`](docs/architecture/15_evaluation_framework.md),
   [`20`](docs/architecture/20_reasoning_evaluation_and_judges.md),
   [`21`](docs/architecture/21_evaluation_platform_productionization.md).
-- **A production-hardening pass** — input validation (UUID/length/format bounds on every endpoint),
-  graceful degradation (typed errors instead of raw tracebacks when the DB/LLM/embedding backend is
-  down), path-traversal and injection testing, load testing at 10/50/100 concurrent users, and
-  performance profiling — see [Production hardening](#production-hardening-phase-23) below.
+- **Changes ship only when measured, and stay off when unproven** — adaptive Dense/BM25/Hybrid
+  routing is fully built, benchmarked, and wired into production, but ships **disabled by default**
+  because its thresholds were never tuned against real traffic. Reranking is opt-in for the same
+  reason: measurement showed it near-neutral and occasionally harmful. Hypothesis generation was cut
+  from 5 candidates to 2 (escalating to 4 only on weak confidence) because the data showed ranks 3
+  and 5 added zero recall at real cost.
+  See [`18`](docs/architecture/18_adaptive_routing_and_hybrid_confidence.md).
+- **A real multi-agent loop**, not a single prompt — `PlannerAgent` sets strategy, hypothesis
+  generation proposes and evidence-checks root causes, `CriticAgent` reviews and can force another
+  iteration, an orchestrator coordinates with bounded stopping conditions. Notably the planner and
+  critic make **zero LLM calls** — they're rule-based, so they're deterministic, cheap, and testable
+  without an API key. See [`19`](docs/architecture/19_multi_agent_investigation.md).
+- **Two production-hardening passes** — input validation, graceful degradation (typed errors, never
+  raw tracebacks or leaked secrets), injection/path-traversal testing, load testing, environment-aware
+  configuration with fail-fast production validation, and a failure-handling audit.
+  See [Phase 23](#production-hardening-phase-23) and [Phase 24](#production-hardening-phase-24).
+
+**Scope honesty:** the corpus is public open-source bug trackers, not production incident data from
+a running system — structurally similar (title, description, discussion thread, resolution) and rich
+in the hard cases that matter here (vocabulary mismatch, near-duplicates, topical neighbors), but not
+the same thing. The ingestion layer is source-agnostic by design, so adding postmortems or an
+incident-management export is a new collector and normalizer with nothing downstream changing.
 
 ## Tech stack
 
@@ -89,7 +120,7 @@ app/
   db/                SQLAlchemy models + session management
   ingestion/         Source collectors (GitHub, Jira) and normalization
   services/          Embedding, LLM, retrieval (dense/BM25/hybrid/routed), the 4 investigation agents
-  evaluation/        Gold datasets, harnesses, metrics, judges, experiment tracking, diagnostics — 37 modules
+  evaluation/        Gold datasets, harnesses, metrics, judges, experiment tracking, diagnostics — 36 modules
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
 docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py

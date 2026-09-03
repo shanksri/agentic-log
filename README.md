@@ -414,6 +414,19 @@ showed. One genuine, verified positive match in the current corpus scores *below
 boundary, which is the concrete shape of the precision/recall tension: raising the threshold to
 catch more hard negatives would also start rejecting real matches.
 
+**The production investigation path narrows this gap but does not close it.** Running the full
+`/agent/investigate` orchestrator against the same 20 hard negatives — with the 8 easy negatives and
+6 verified genuine matches as controls — it abstains (`is_uncertain: true`, no root cause) on every
+query whose top-1 retrieval lands in the MEDIUM or LOW band: 9 of 20 hard negatives and 8 of 8 easy
+negatives. That's the composite-confidence floor working as designed: when the per-hypothesis
+evidence search finds nothing, every hypothesis is rejected. But all 11 hard negatives in the HIGH
+band (top-1 ≥ 0.55) came back with a confident root cause (mean confidence 0.80), and the rule-based
+critic approved 9 of them — the same confidence and verdict the genuine matches received, so nothing
+in the response distinguishes a real answer from a plausible wrong one. On the other side, 2 of the
+6 verified positives (both paraphrase-style, where keyword validation fails) were wrongly abstained.
+Probe script: `scripts/probe_orchestrator_hard_negatives.py`; per-query results:
+`.benchmarks/orchestrator_hard_negative_probe.json`.
+
 This does not mean confidence scoring is broken or unused — it's real, computed, and already
 threaded through the investigation agents and (as of Phase 22D) gates the generation step against
 the clearest failures (very low similarity). What it means is narrower and more honest: **top-1
@@ -422,7 +435,8 @@ unsure" mechanism.** It catches the easy case reliably; it does not reliably cat
 adjacent but substantively different incident. Whether a second signal (a cheap LLM relevance check,
 score-distribution shape, corpus-relative ranking) closes this gap is an open, explicitly
 unresolved question — two candidate signals (rank-1-to-rank-2 gap, source diversity) were tested and
-did not cleanly separate the two classes either. See
+did not cleanly separate the two classes either. The orchestrator probe above does narrow where such
+a signal is needed: only the HIGH band, since the composite floor already handles MEDIUM and LOW. See
 `docs/architecture/14_confidence_calibration.md` for the original calibration this finding builds
 on; the hard-negative dataset is `tests/eval/gold_queries_hard_negatives_v1.json` (each entry
 records the nearest real incident it was probed against and why it isn't a genuine match), the

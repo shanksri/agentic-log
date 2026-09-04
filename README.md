@@ -26,7 +26,7 @@ grounding metrics. The interesting results are the negative ones:
   (a targeted LLM relevance check) measures well but **is not shipped**, because one promising run
   isn't a validated signal — see [Evaluation findings](#evaluation-findings).
 
-24 phases of incremental, tested development (1,490 tests), plus two production-hardening passes.
+24 phases of incremental, tested development (1,508 tests), plus two production-hardening passes.
 See [Project status](#project-status) for what's done, what's open, and what's deliberately not
 claimed.
 
@@ -87,8 +87,10 @@ roadmap deliberately put the measurement platform *before* the next retrieval al
   calls**: query expansion and reranking once each during retrieval, plus one per iteration
   (`DEFAULT_MAX_ITERATIONS = 3`). Calling this "multi-agent" is a claim about component structure —
   separable roles behind swappable interfaces — not about multiple models reasoning independently.
-  A rule-based critic also cannot tell a wrong answer from a right one, which
-  [Evaluation findings](#evaluation-findings) covers in detail.
+  Opt-in via `LLM_CRITIC_ENABLED`, the critic becomes a second reasoning model on a *different
+  vendor* (`GEMINI_MODEL`), so the model proposing root causes is not the one grading them — the
+  proposer/challenger split that makes "multi-agent" mean something here.
+  See [Evaluation findings](#evaluation-findings).
   See [`19`](docs/architecture/19_multi_agent_investigation.md).
 - **Two production-hardening passes** — input validation, graceful degradation (typed errors, never
   raw tracebacks or leaked secrets), injection/path-traversal testing, load testing, environment-aware
@@ -104,7 +106,7 @@ incident-management export is a new collector and normalizer with nothing downst
 ## Tech stack
 
 FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL + pgvector + `pg_trgm` · SentenceTransformers ·
-OpenAI API · Docker / docker-compose · pytest (1,490 tests) · Python 3.12
+OpenAI API · Docker / docker-compose · pytest (1,508 tests) · Python 3.12
 
 ## Documentation map
 
@@ -131,7 +133,7 @@ app/
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
 docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py
-tests/               1,490 tests: tests/unit, tests/api, tests/eval
+tests/               1,508 tests: tests/unit, tests/api, tests/eval
 Dockerfile, docker-compose.yml   Multi-stage build, non-root user, healthcheck (Phase 23)
 ```
 
@@ -180,6 +182,7 @@ All settings are read from environment variables (or a `.env` file) via `app/cor
 | `ANTHROPIC_MODEL` | `claude-haiku-4-5` | |
 | `GEMINI_API_KEY` | — | Optional alternative to `ANTHROPIC_API_KEY` for the same purpose. Free tier is 20 requests/day **per model**, which is below one full 56-query gold-set pass |
 | `GEMINI_MODEL` | `gemini-3.1-flash-lite` | |
+| `LLM_CRITIC_ENABLED` | `false` | Opt-in. Replaces the arithmetic critic with a reasoning one on a different model family, so the proposer isn't grading its own work. One extra LLM call per iteration; falls back to the heuristic critic on any failure and labels the verdict when it does |
 | `API_KEY` | — | **Required.** Shared secret for Bearer auth (Phase 23B) — see [Authentication](#authentication) |
 | `RATE_LIMIT_ENABLED` | `true` | Global kill switch for rate limiting (Phase 23C) — see [Rate limiting](#rate-limiting) |
 | `RATE_LIMIT_SEARCH_PER_MINUTE` | `100` | `/search/incidents`, `/search/debug` |
@@ -334,7 +337,7 @@ only genuine duplication.
 ## Running tests
 
 ```bash
-python -m pytest              # full suite — 1,490 tests
+python -m pytest              # full suite — 1,508 tests
 python -m pytest tests/unit    # unit tests only (no HTTP layer)
 python -m pytest tests/api     # FastAPI route tests (TestClient, no real DB/LLM)
 python -m ruff check .         # lint
@@ -345,7 +348,7 @@ Postgres or OpenAI credentials are needed. Two settings must be *present* though
 `LLMService` and Bearer auth both fail closed at construction on an empty value; CI supplies dummy
 values for `OPENAI_API_KEY` and `API_KEY`, and a local `.env` covers it otherwise.
 
-**Latest verified result: 1,490 passed, 0 failures.**
+**Latest verified result: 1,508 passed, 0 failures.**
 
 The long-standing failure in
 `tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` is fixed.
@@ -447,7 +450,7 @@ transient LLM failures (a single rate-limit or timeout fails the whole call). Bo
 scoped, and left for a future phase rather than bundled in here.
 
 72 new tests cover both sub-phases (48 for 24A's configuration validation, 24 for 24B's failure
-paths); combined with everything before it, the full suite is 1,490 tests (see
+paths); combined with everything before it, the full suite is 1,508 tests (see
 [Running tests](#running-tests)).
 
 ## Evaluation findings
@@ -573,6 +576,32 @@ held-out split, and it rests on one corpus, one run, and 20 hard negatives. And 
 the system answering questions the corpus cannot answer — it does nothing about answering the wrong
 way a question the corpus *can* answer, which `v2-lex-08` still demonstrates.
 
+**A second reasoning model catches what arithmetic cannot.** The rule-based critic decides by
+contradiction ratio, and since evidence is retrieved using each hypothesis's own keywords that ratio
+is pinned near zero — which is why it has never once rejected anything. `LLMCriticAgent`
+(`LLM_CRITIC_ENABLED`, **off by default**) replaces that arithmetic with one call to a different
+model family, asking the question no rule can: *does this root cause actually address the problem as
+stated?* On the exact case that motivated this work — the Zookeeper resource-leak query the
+heuristic critic approved at confidence 0.8:
+
+| critic | verdict | reason |
+| --- | --- | --- |
+| Heuristic (arithmetic) | `approved`, 0.8 | contradiction ratio 0.00, below the 0.50 threshold |
+| Gemini (reasoning) | `alternative_hypothesis_plausible`, 0.8 | "addresses network latency, while the problem statement describes a resource management/lifecycle issue" |
+
+That the proposer (`OPENAI_MODEL`) and the challenger (`GEMINI_MODEL`) are different vendors is the
+design, not a detail: a model grading its own output tells you it is self-consistent, not that it is
+right. The critic's prompt is also told explicitly that supporting evidence was gathered using the
+hypothesis's own keywords, so apparent agreement is weak by construction.
+
+It ships off for two reasons. It costs one extra LLM call per iteration, and Gemini's free tier
+allows 20 requests per day *per model*, so quota exhaustion is routine rather than exceptional.
+Every failure path — missing key, quota, overload, unparseable response — falls back to the
+heuristic critic and records that it did so in the returned `findings`, so a reader can always tell
+which critic produced a verdict. An abstained decision spends no call at all, since there is no root
+cause to challenge. This has been demonstrated on one case, not measured across the gold set; that
+run is still pending.
+
 **Applying the same scorer to the evidence split measures the drift rather than fixing it.**
 Re-scoring supporting/contradicting against the *problem* instead of the hypothesis's keywords
 inverts the counts almost exactly — 78/2 becomes 2/78, and critic approvals drop from 16 to 0. That
@@ -647,7 +676,7 @@ caveat (answers written and graded by the same model family) remains open in pra
 retrieval with adaptive routing, the four-agent investigation loop, the evaluation platform
 (retrieval/reasoning/generation/grounding metrics, LLM-as-judge, diagnostics), and two hardening
 passes (Phase 23's input validation/graceful-degradation/load-testing, Phase 24's environment
-configuration and failure-handling audit) are all implemented and covered by the current 1,490-test
+configuration and failure-handling audit) are all implemented and covered by the current 1,508-test
 suite (all passing — see [Running tests](#running-tests)).
 
 Since that checkpoint, a diagnostic pass found and fixed a planner bug that made the pipeline
@@ -659,10 +688,11 @@ held-out validation split.
 
 What's genuinely open, not glossed over: the confidence-calibration gap above is narrowed but not
 closed, and the measured gate is unshipped rather than solved; evidence evaluation still cannot find
-contradicting evidence by construction, so the rule-based critic has never once returned `rejected`;
-two failure-handling gaps in the investigation orchestrator (noted above) were identified and
-deliberately deferred rather than fixed; the LLM-as-judge circularity caveat is unresolved because no
-evaluation run constructs the second-model judge clients that now exist; and the platform has not
+contradicting evidence by construction, so the rule-based critic has never once returned `rejected`
+and the LLM critic that catches this is demonstrated on a single case rather than measured across the
+gold set; two failure-handling gaps in the investigation orchestrator (noted above) were identified
+and deliberately deferred rather than fixed; the LLM-as-judge circularity caveat is unresolved because
+no evaluation run constructs the second-model judge clients that now exist; and the platform has not
 been deployed anywhere beyond local Docker Compose — no staging/production environment, no CI
 live deployment verification. CI now runs the full suite on every push and pull request
 (`.github/workflows/ci.yml`); linting runs alongside it but is deliberately advisory rather than

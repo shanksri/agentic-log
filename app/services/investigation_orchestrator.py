@@ -302,6 +302,7 @@ from app.services.hypothesis_investigation import (
     make_investigation_decision,
     score_hypothesis,
 )
+from app.core.config import settings
 from app.services.llm_service import LLMService
 from app.services.relevance_scorer import (
     RetrievalGateDecision,
@@ -318,6 +319,17 @@ from app.services.search import IncidentSearchService
 from app.services.search_factory import build_routed_search_service
 
 logger = logging.getLogger(__name__)
+
+
+def _default_critic() -> CriticAgent:
+    """Pick the critic from settings. The LLM critic is opt-in and carries its
+    own fallback, so this never leaves the pipeline without a critic.
+    """
+    if settings.llm_critic_enabled:
+        from app.services.llm_critic_agent import LLMCriticAgent
+
+        return LLMCriticAgent()
+    return HeuristicCriticAgent()
 
 # Bounds the per-investigation LLM-call budget (one HypothesisGenerator
 # call per iteration) to a small, fixed number, in the same spirit as
@@ -487,7 +499,7 @@ class MultiAgentInvestigationOrchestrator:
             db, llm_service=self.llm_service
         )
         self._planner = planner or RuleBasedPlanner()
-        self._critic = critic or HeuristicCriticAgent()
+        self._critic = critic or _default_critic()
         self._generator = HypothesisGenerator(self.llm_service)
         self._evaluator = HypothesisEvaluator(self.search_service)
 

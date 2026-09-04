@@ -92,6 +92,19 @@ class Settings(BaseSettings):
         ),
     )
     gemini_model: str = "gemini-3.1-flash-lite"
+    llm_critic_enabled: bool = Field(
+        default=False,
+        description=(
+            "Use the LLM-backed CriticAgent (GEMINI_MODEL) instead of the "
+            "arithmetic HeuristicCriticAgent. This makes the pipeline "
+            "genuinely two-model: OPENAI_MODEL proposes root causes, a "
+            "different family challenges them, so the critic is not grading "
+            "its own work. Costs one extra LLM call per iteration and falls "
+            "back to the heuristic critic on any failure, which the free "
+            "tier's 20-requests/day/model quota makes routine. Off by "
+            "default."
+        ),
+    )
     log_level: str = "INFO"
     api_key: str | None = Field(
         default=None,

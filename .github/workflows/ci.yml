@@ -1,0 +1,84 @@
+name: CI
+
+# Runs the full test suite on every push and pull request. The suite uses
+# fakes for the database, LLM, and embedding backends, so there is no service
+# container here and no real credentials: a dummy OPENAI_API_KEY is supplied
+# only because LLMService raises at construction when the setting is empty,
+# and a dummy API_KEY because Bearer auth is fail-closed by design.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # A newer push to the same branch makes an in-flight run obsolete.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    env:
+      # Not real credentials and never used to make a call -- every test runs
+      # against fakes. Present only to satisfy settings validation.
+      OPENAI_API_KEY: ci-dummy-not-used
+      API_KEY: ci-dummy-secret
+      ENVIRONMENT: development
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        # -p no:randomly is a no-op today (pytest-randomly is not a
+        # dependency) but is kept so ordering stays deterministic if anyone
+        # adds it later; a CI failure must be reproducible locally from this
+        # exact command.
+        run: python -m pytest tests/ -q -p no:randomly
+
+  lint:
+    name: Lint (advisory)
+    runs-on: ubuntu-latest
+    # Deliberately NOT gating. The codebase currently has ~418 ruff findings,
+    # overwhelmingly line-length in docstrings plus import ordering, none of
+    # them behavioural. Gating on that today would mean a permanently red
+    # build, which trains everyone to ignore CI. This surfaces the signal so
+    # the count can be driven down deliberately; flip continue-on-error off
+    # once it reaches zero.
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run ruff
+        run: python -m ruff check . --output-format=github

@@ -26,7 +26,7 @@ grounding metrics. The interesting results are the negative ones:
   (a targeted LLM relevance check) measures well but **is not shipped**, because one promising run
   isn't a validated signal — see [Evaluation findings](#evaluation-findings).
 
-24 phases of incremental, tested development (1,450 tests), plus two production-hardening passes.
+24 phases of incremental, tested development (1,490 tests), plus two production-hardening passes.
 See [Project status](#project-status) for what's done, what's open, and what's deliberately not
 claimed.
 
@@ -104,7 +104,7 @@ incident-management export is a new collector and normalizer with nothing downst
 ## Tech stack
 
 FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL + pgvector + `pg_trgm` · SentenceTransformers ·
-OpenAI API · Docker / docker-compose · pytest (1,450 tests) · Python 3.12
+OpenAI API · Docker / docker-compose · pytest (1,490 tests) · Python 3.12
 
 ## Documentation map
 
@@ -131,7 +131,7 @@ app/
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
 docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py
-tests/               1,450 tests: tests/unit, tests/api, tests/eval
+tests/               1,490 tests: tests/unit, tests/api, tests/eval
 Dockerfile, docker-compose.yml   Multi-stage build, non-root user, healthcheck (Phase 23)
 ```
 
@@ -334,21 +334,29 @@ only genuine duplication.
 ## Running tests
 
 ```bash
-python -m pytest              # full suite — 1,450 tests
+python -m pytest              # full suite — 1,490 tests
 python -m pytest tests/unit    # unit tests only (no HTTP layer)
 python -m pytest tests/api     # FastAPI route tests (TestClient, no real DB/LLM)
 python -m ruff check .         # lint
 ```
 
 Every test runs against fakes/mocks for the database, LLM, and embedding backends — no live
-Postgres or OpenAI credentials are needed to run the suite.
+Postgres or OpenAI credentials are needed. Two settings must be *present* though not valid, because
+`LLMService` and Bearer auth both fail closed at construction on an empty value; CI supplies dummy
+values for `OPENAI_API_KEY` and `API_KEY`, and a local `.env` covers it otherwise.
 
-**Latest verified result: 1,449 passed, 1 known pre-existing failure** —
-`tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` fails in a
-fresh checkout because it depends on `.evaluation_runs/history/metadata.json`, a local file this
-environment's history doesn't have (unrelated to application code — every other test in that file,
-and everything else in the suite, passes). Not yet fixed; tracked as a known issue rather than
-worked around.
+**Latest verified result: 1,490 passed, 0 failures.**
+
+The long-standing failure in
+`tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` is fixed.
+It had been recorded here as an environment artifact — "depends on a local file this environment's
+history doesn't have" — and that diagnosis was wrong. `validate_safe_identifier`'s allow-list
+permits `.` and `-`, so `..`, `...`, `....`, `.` and `-` all passed validation, and
+`history_root / ".."` resolves one directory *above* the intended root. The 500 was the visible
+symptom; where the target file happens to exist, the endpoint would have served data from outside
+the run directory instead of erroring. The validator now additionally requires at least one letter
+or digit, which rejects every all-punctuation identifier at once. Regression tests:
+`tests/unit/test_api_validation.py`.
 
 ## Load testing and performance profiling
 
@@ -439,7 +447,7 @@ transient LLM failures (a single rate-limit or timeout fails the whole call). Bo
 scoped, and left for a future phase rather than bundled in here.
 
 72 new tests cover both sub-phases (48 for 24A's configuration validation, 24 for 24B's failure
-paths); combined with everything before it, the full suite is 1,450 tests (see
+paths); combined with everything before it, the full suite is 1,490 tests (see
 [Running tests](#running-tests)).
 
 ## Evaluation findings
@@ -616,7 +624,8 @@ See [`docs/architecture/16`](docs/architecture/16_current_limitations.md) for th
 [`docs/architecture/17`](docs/architecture/17_future_roadmap.md) for the prioritized roadmap. Notable
 ones: BM25/Hybrid retrieval requires a process restart to see newly-ingested incidents (the index is
 built once and cached, not incrementally updated); the evaluation platform is reachable via its REST
-API and CLI scripts but not wired into automatic CI; rate limiting (Phase 23C, see
+API and CLI scripts but not run automatically by CI (CI runs the unit/API suite, not evaluation
+runs, which need a live corpus and API credentials); rate limiting (Phase 23C, see
 [Rate limiting](#rate-limiting)) is in-memory and process-local, correct only as long as the
 deployment stays single-process (the current `Dockerfile`/`docker-compose.yml` already do); top-1
 dense-similarity confidence does not reliably separate genuine matches from topically-adjacent hard
@@ -638,8 +647,8 @@ caveat (answers written and graded by the same model family) remains open in pra
 retrieval with adaptive routing, the four-agent investigation loop, the evaluation platform
 (retrieval/reasoning/generation/grounding metrics, LLM-as-judge, diagnostics), and two hardening
 passes (Phase 23's input validation/graceful-degradation/load-testing, Phase 24's environment
-configuration and failure-handling audit) are all implemented and covered by the current 1,450-test
-suite (1,449 passing — see [Running tests](#running-tests)).
+configuration and failure-handling audit) are all implemented and covered by the current 1,490-test
+suite (all passing — see [Running tests](#running-tests)).
 
 Since that checkpoint, a diagnostic pass found and fixed a planner bug that made the pipeline
 confidently wrong even on perfect retrieval, and established that a local cross-encoder separates
@@ -655,7 +664,10 @@ two failure-handling gaps in the investigation orchestrator (noted above) were i
 deliberately deferred rather than fixed; the LLM-as-judge circularity caveat is unresolved because no
 evaluation run constructs the second-model judge clients that now exist; and the platform has not
 been deployed anywhere beyond local Docker Compose — no staging/production environment, no CI
-pipeline running the suite automatically, no live deployment verification.
+live deployment verification. CI now runs the full suite on every push and pull request
+(`.github/workflows/ci.yml`); linting runs alongside it but is deliberately advisory rather than
+gating, because the codebase has ~418 ruff findings (mostly docstring line-length and import
+ordering, none behavioural) and a permanently red build trains people to ignore CI.
 
 The work is intentionally paused here, before deployment, specifically to keep an accurate and
 honest snapshot in place first.

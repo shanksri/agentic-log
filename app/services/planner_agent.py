@@ -76,14 +76,17 @@ PlannerAgent.plan(problem, *, retrieved_incidents=(), routing_observation=None)
      first, if a routing_observation was supplied — an unambiguous, already-
      computed signal (Phase 18A) that overrides keyword matching entirely
      (see "Strategy selection methodology")
-  2. else: match problem text + retrieved incidents' titles/symptoms against
-     each strategy's keyword set, in a fixed, documented priority order —
-     first match wins, exactly Phase 18A's "first matching rule wins"
-     philosophy
-  3. no match at all -> PlanningStrategy.UNKNOWN
-  4. look up that strategy's deterministic plan template (objective,
+  2. else: match the PROBLEM TEXT ALONE against each strategy's keyword set,
+     in a fixed, documented priority order — first match wins, exactly
+     Phase 18A's "first matching rule wins" philosophy
+  3. only if the problem text matched nothing: retry the same matching
+     against the retrieved incidents' titles/symptoms. Problem and evidence
+     are deliberately NOT concatenated — see "Risks discovered" below for
+     the bug that caused.
+  4. no match in either -> PlanningStrategy.UNKNOWN
+  5. look up that strategy's deterministic plan template (objective,
      priority_list, evidence_priorities, assumptions, expected_difficulty)
-  5. -> InvestigationPlan(problem=, strategy=, ..., strategy_rationale=
+  6. -> InvestigationPlan(problem=, strategy=, ..., strategy_rationale=
      <which signal/keyword matched, in plain text>)
 ```
 
@@ -188,6 +191,18 @@ Phase 18A.
   production today — the stack-trace override exists but will rarely
   fire until a future phase wires routing observability into the
   investigation pipeline.
+- **Evidence dilution (found and fixed).** The problem text and every
+  retrieved incident were originally concatenated into one haystack. A
+  ~10-word problem then made up well under 1% of the text being matched,
+  so with NETWORK second in the priority order holding generic keywords
+  ("timeout", "latency", "socket", "proxy"), almost any real result set
+  pulled the plan to NETWORK. Because the plan steers hypothesis
+  generation, infrastructure problems produced network root causes that
+  the evidence stage then "confirmed" — the pipeline was confidently
+  wrong on queries where retrieval was perfect. Fixed by matching the
+  problem alone first and falling back to evidence only when the problem
+  names nothing. The fallback still carries the original dilution risk
+  for problems with no keyword at all.
 - **`expected_difficulty` is a static per-strategy label, not computed
   from anything about the specific problem.** Two very different
   AUTHENTICATION problems get the same difficulty label today.
@@ -447,10 +462,26 @@ class RuleBasedPlanner(PlannerAgent):
             strategy = PlanningStrategy.APPLICATION_FAILURE
             rationale = "routing observation reported has_stack_trace=True"
         else:
-            haystack = " ".join(
-                [problem] + [_incident_text(result) for result in retrieved_incidents]
-            ).lower()
-            strategy, rationale = self._match_keywords(haystack)
+            # The problem statement is matched ALONE first; retrieved evidence
+            # is only consulted if the problem itself names no strategy.
+            #
+            # Previously both were concatenated into one flat haystack, which
+            # meant a ~10-word problem competed against ~10 full incidents of
+            # text -- roughly 0.3% of the input. Since NETWORK sits second in
+            # the priority order with generic keywords ("timeout", "latency",
+            # "socket", "proxy"), and any ten infrastructure incidents mention
+            # one of those somewhere, NETWORK won on first-match for problems
+            # that had nothing to do with networking. The wrong plan then
+            # steered hypothesis generation, so a cgroup/memory problem
+            # produced network hypotheses that downstream stages dutifully
+            # "validated". Evidence still contributes -- it just no longer
+            # outvotes the thing actually being investigated.
+            strategy, rationale = self._match_keywords(problem.lower(), source="problem text")
+            if strategy is PlanningStrategy.UNKNOWN and retrieved_incidents:
+                evidence = " ".join(
+                    _incident_text(result) for result in retrieved_incidents
+                ).lower()
+                strategy, rationale = self._match_keywords(evidence, source="retrieved evidence")
 
         template = _TEMPLATES[strategy]
         return InvestigationPlan(
@@ -464,13 +495,26 @@ class RuleBasedPlanner(PlannerAgent):
             strategy_rationale=rationale,
         )
 
-    def _match_keywords(self, haystack: str) -> tuple[PlanningStrategy, str]:
+    def _match_keywords(
+        self, haystack: str, *, source: str
+    ) -> tuple[PlanningStrategy, str]:
+        """First matching strategy in priority order wins. ``source`` names
+        where the haystack came from so the rationale is honest about it --
+        it previously always claimed "in problem text" even when the match
+        came from retrieved evidence, which is what kept the dilution bug
+        above invisible.
+
+        An optional trailing "s" is allowed so a keyword matches its plural
+        ("pods" -> "pod", "credentials" -> "credential"). Leading ``\\b`` is
+        unchanged, so bare substrings still do not match ("room" is not
+        "oom").
+        """
         for strategy in _KEYWORD_PRIORITY_ORDER:
             for keyword in _KEYWORDS[strategy]:
-                if re.search(rf"\b{re.escape(keyword)}\b", haystack):
+                if re.search(rf"\b{re.escape(keyword)}s?\b", haystack):
                     return (
                         strategy,
-                        f"matched {strategy.value} keyword {keyword!r} in problem text",
+                        f"matched {strategy.value} keyword {keyword!r} in {source}",
                     )
         return PlanningStrategy.UNKNOWN, "no strategy keyword matched the problem text or evidence"
 
@@ -564,7 +608,8 @@ class PlannedInvestigationAgent:
             return plan, build_investigation_report(problem, decision, {})
 
         evaluations = {
-            hypothesis.id: self._evaluator.evaluate(hypothesis) for hypothesis in hypotheses
+            hypothesis.id: self._evaluator.evaluate(hypothesis, problem=problem)
+                for hypothesis in hypotheses
         }
         scored = [
             (

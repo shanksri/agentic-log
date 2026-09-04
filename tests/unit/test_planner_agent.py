@@ -133,6 +133,56 @@ def test_retrieved_incidents_contribute_to_keyword_matching() -> None:
     assert plan.strategy == PlanningStrategy.INFRASTRUCTURE_FAILURE
 
 
+# ── Regression: retrieved evidence must not outvote the problem statement ───────
+#
+# The planner used to concatenate the problem with every retrieved incident into
+# one flat haystack. A ~10-word problem then competed against ~10 full incidents,
+# and because NETWORK sits second in the priority order with generic keywords
+# ("timeout", "latency", "socket", "proxy"), almost any real result set dragged
+# the plan to NETWORK. The wrong plan steered hypothesis generation, so
+# infrastructure problems produced network root causes that later stages
+# "validated". These tests pin the ordering that fixes it.
+
+
+def test_problem_statement_wins_over_contradicting_retrieved_evidence() -> None:
+    # The problem is unambiguously infrastructure; the evidence is full of
+    # generic network vocabulary. The problem must decide the strategy.
+    incidents = [
+        _result(
+            "Request timeout talking to the upstream proxy",
+            symptoms=("socket latency spike", "network path degraded"),
+        )
+        for _ in range(10)
+    ]
+    plan = planner.plan(
+        "MemoryQoS does not set memory.high for BestEffort pods on cgroup v2",
+        retrieved_incidents=incidents,
+    )
+    assert plan.strategy == PlanningStrategy.INFRASTRUCTURE_FAILURE
+    assert "problem text" in plan.strategy_rationale
+
+
+def test_evidence_is_only_consulted_when_the_problem_matches_nothing() -> None:
+    incidents = [_result("Pod evicted due to OOM", symptoms=("kubelet restarted",))]
+    plan = planner.plan("something is wrong", retrieved_incidents=incidents)
+    assert plan.strategy == PlanningStrategy.INFRASTRUCTURE_FAILURE
+    # The rationale must say where the match actually came from; it previously
+    # always claimed "problem text", which is what hid the bug.
+    assert "retrieved evidence" in plan.strategy_rationale
+
+
+def test_keywords_match_their_plural_form() -> None:
+    # "pods" must match the "pod" keyword. It previously did not, so a
+    # genuinely infrastructure problem fell through to a broader category.
+    plan = planner.plan("BestEffort pods are being evicted")
+    assert plan.strategy == PlanningStrategy.INFRASTRUCTURE_FAILURE
+
+
+def test_plural_matching_does_not_relax_the_leading_word_boundary() -> None:
+    # Guards the plural change against re-introducing bare-substring matches.
+    assert planner.plan("the break rooms are noisy").strategy == PlanningStrategy.UNKNOWN
+
+
 # ── InvestigationPlan content ────────────────────────────────────────────────────
 
 

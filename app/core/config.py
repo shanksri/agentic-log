@@ -71,6 +71,27 @@ class Settings(BaseSettings):
     )
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
+    anthropic_api_key: str | None = Field(
+        default=None,
+        description=(
+            "Anthropic API credits, billed separately from a Claude Pro "
+            "subscription -- Pro does not grant API access. Used only by the "
+            "evaluation judge, so that answers written by OPENAI_MODEL are "
+            "not also graded by it. Unset means the Anthropic judge cannot "
+            "be constructed; nothing else in the app requires it."
+        ),
+    )
+    anthropic_model: str = "claude-haiku-4-5"
+    gemini_api_key: str | None = Field(
+        default=None,
+        description=(
+            "Google Gemini key for the evaluation judge, an alternative to "
+            "ANTHROPIC_API_KEY. Either satisfies the requirement that answers "
+            "written by OPENAI_MODEL are not also graded by the same model "
+            "family. Optional; nothing outside evaluation reads it."
+        ),
+    )
+    gemini_model: str = "gemini-3.1-flash-lite"
     log_level: str = "INFO"
     api_key: str | None = Field(
         default=None,

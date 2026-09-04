@@ -28,6 +28,47 @@ class Settings(BaseSettings):
     github_token: str | None = None
     embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
     embedding_dimensions: int = Field(default=384, gt=0)
+    relevance_model_name: str = "cross-encoder/ms-marco-MiniLM-L6-v2"
+    evidence_relevance_enabled: bool = Field(
+        default=False,
+        description=(
+            "Score evidence with the cross-encoder relevance model against the "
+            "ORIGINAL PROBLEM instead of thresholding cosine similarity to the "
+            "hypothesis's own keywords. Off by default so the change is A/B "
+            "measurable against the existing probe baseline before it becomes "
+            "the default (same rollout posture as SEARCH_ROUTING_ENABLED)."
+        ),
+    )
+    retrieval_gate_enabled: bool = Field(
+        default=False,
+        description=(
+            "Reject an investigation up front when no retrieved incident is "
+            "genuinely relevant to the query, scored by the cross-encoder "
+            "rather than by top-1 cosine. Measured on 56 gold queries this "
+            "cuts the hard-negative false-accept rate from 0.900 to 0.150 "
+            "while keeping recall at 0.885. Off by default pending a "
+            "held-out validation split."
+        ),
+    )
+    retrieval_gate_threshold: float = Field(
+        default=2.0,
+        description=(
+            "Cross-encoder logit at or above which retrieval is considered to "
+            "have found something relevant. 2.0 is the knee of the measured "
+            "recall/FPR curve, read off that curve rather than fitted on a "
+            "held-out split. Raw logits, NOT the 0.40 cosine scale."
+        ),
+    )
+    relevance_threshold: float = Field(
+        default=0.0,
+        description=(
+            "Cross-encoder logit at or above which evidence counts as "
+            "supporting. These are raw logits (~-11..+11), NOT probabilities "
+            "and NOT comparable to LOW_CONFIDENCE_THRESHOLD's 0.40 cosine "
+            "scale. 0.0 is the model's own natural boundary, not a value "
+            "calibrated against any gold dataset."
+        ),
+    )
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
     log_level: str = "INFO"

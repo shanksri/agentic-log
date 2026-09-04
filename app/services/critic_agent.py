@@ -580,7 +580,8 @@ class CriticReviewedInvestigationAgent:
             return plan, CritiquedInvestigationReport(investigation=report, critique=critique)
 
         evaluations = {
-            hypothesis.id: self._evaluator.evaluate(hypothesis) for hypothesis in hypotheses
+            hypothesis.id: self._evaluator.evaluate(hypothesis, problem=problem)
+                for hypothesis in hypotheses
         }
         scored = [
             (

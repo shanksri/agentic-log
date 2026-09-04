@@ -267,11 +267,13 @@ into another stage's internals.
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.services.confidence import (
     CONFIDENCE_LOW,
     LOW_CONFIDENCE_THRESHOLD,
@@ -279,11 +281,28 @@ from app.services.confidence import (
     composite_hypothesis_confidence,
 )
 from app.services.llm_service import LLMService
+from app.services.relevance_scorer import (
+    RelevanceScorer,
+    RelevanceScorerError,
+    get_relevance_scorer,
+)
 from app.services.routed_search import RoutedSearchService
 from app.services.search import IncidentSearchResult, IncidentSearchService
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_HYPOTHESIS_COUNT = 3
 ACCEPTANCE_COMPOSITE_FLOOR = 0.60
+
+
+def _incident_passage(result: IncidentSearchResult) -> str:
+    """The text a relevance model sees for one retrieved incident. Title plus
+    symptoms, matching what ``planner_agent._incident_text`` uses, so both
+    rule-based and model-based stages judge the same surface.
+    """
+    incident = result.incident
+    symptoms = " ".join(symptom.text for symptom in incident.symptoms)
+    return f"{incident.title} {symptoms}".strip()
 
 
 # ── Core data model ──────────────────────────────────────────────────────────────
@@ -435,12 +454,31 @@ class HypothesisEvaluator:
     routing automatically when the latter is used.
     """
 
-    def __init__(self, search_service: IncidentSearchService | RoutedSearchService) -> None:
+    def __init__(
+        self,
+        search_service: IncidentSearchService | RoutedSearchService,
+        *,
+        relevance_scorer: RelevanceScorer | None = None,
+    ) -> None:
         self._search_service = search_service
+        self._relevance_scorer = relevance_scorer
 
     def evaluate(
-        self, hypothesis: InvestigationHypothesis, *, limit: int = 5
+        self,
+        hypothesis: InvestigationHypothesis,
+        *,
+        limit: int = 5,
+        problem: str | None = None,
     ) -> EvidenceEvaluation:
+        """``problem`` is the ORIGINAL problem statement. When it is supplied
+        and ``settings.evidence_relevance_enabled`` is on, the support/
+        contradiction split is decided by scoring each retrieved incident
+        against that problem with a cross-encoder, instead of thresholding
+        its cosine similarity to the hypothesis's own keywords. Both
+        arguments are optional so every existing caller keeps working
+        unchanged and the new path is opt-in -- see
+        ``app.services.relevance_scorer`` for why the old split was wrong.
+        """
         query = " ".join(hypothesis.validation_keywords) or hypothesis.root_cause
         results: list[IncidentSearchResult] = (
             self._search_service.search(
@@ -449,18 +487,35 @@ class HypothesisEvaluator:
             if query
             else []
         )
+        # Deliberately still derived from cosine: this pass changes ONLY the
+        # support/contradiction split, so the composite-score inputs stay
+        # fixed and the A/B measures one variable rather than two.
         top1_score, confidence_level = IncidentSearchService.confidence_for(results)
 
-        supporting = tuple(
-            self._describe(result)
-            for result in results
-            if result.similarity_score >= LOW_CONFIDENCE_THRESHOLD
-        )
-        contradicting = tuple(
-            self._describe(result)
-            for result in results
-            if result.similarity_score < LOW_CONFIDENCE_THRESHOLD
-        )
+        relevance = self._relevance_scores(problem, results)
+        if relevance is None:
+            supporting = tuple(
+                self._describe(result)
+                for result in results
+                if result.similarity_score >= LOW_CONFIDENCE_THRESHOLD
+            )
+            contradicting = tuple(
+                self._describe(result)
+                for result in results
+                if result.similarity_score < LOW_CONFIDENCE_THRESHOLD
+            )
+        else:
+            threshold = settings.relevance_threshold
+            supporting = tuple(
+                self._describe(result, relevance=score)
+                for result, score in zip(results, relevance)
+                if score >= threshold
+            )
+            contradicting = tuple(
+                self._describe(result, relevance=score)
+                for result, score in zip(results, relevance)
+                if score < threshold
+            )
         missing = () if results else (f"no incidents found for validation query {query!r}",)
 
         return EvidenceEvaluation(
@@ -473,8 +528,35 @@ class HypothesisEvaluator:
             evidence_top1_score=top1_score,
         )
 
-    def _describe(self, result: IncidentSearchResult) -> str:
-        return f"{result.incident.title} (similarity={result.similarity_score:.3f})"
+    def _relevance_scores(
+        self, problem: str | None, results: Sequence[IncidentSearchResult]
+    ) -> list[float] | None:
+        """Return one relevance logit per result, or ``None`` to mean "use
+        the legacy cosine split". Returns ``None`` when the feature is off,
+        when no problem statement was supplied, or when there is nothing to
+        score. A scorer failure is logged and also falls back rather than
+        failing the investigation -- evidence evaluation degrading to the
+        old behavior is strictly better than an exception reaching the API.
+        """
+        if not settings.evidence_relevance_enabled or not problem or not results:
+            return None
+        scorer = self._relevance_scorer or get_relevance_scorer()
+        passages = [_incident_passage(result) for result in results]
+        try:
+            return scorer.score(problem, passages)
+        except RelevanceScorerError:
+            logger.warning(
+                "hypothesis_investigation.relevance_scoring_failed",
+                exc_info=True,
+                extra={"n_passages": len(passages)},
+            )
+            return None
+
+    def _describe(self, result: IncidentSearchResult, *, relevance: float | None = None) -> str:
+        base = f"{result.incident.title} (similarity={result.similarity_score:.3f}"
+        if relevance is None:
+            return base + ")"
+        return base + f", relevance={relevance:.2f})"
 
 
 # ── Scoring ────────────────────────────────────────────────────────────────────
@@ -641,7 +723,8 @@ class HypothesisDrivenInvestigationAgent:
             return build_investigation_report(problem, decision, {})
 
         evaluations = {
-            hypothesis.id: self._evaluator.evaluate(hypothesis) for hypothesis in hypotheses
+            hypothesis.id: self._evaluator.evaluate(hypothesis, problem=problem)
+                for hypothesis in hypotheses
         }
         scored = [
             (

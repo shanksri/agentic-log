@@ -276,6 +276,7 @@ upstream in 19A/19B/19C.
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
@@ -296,11 +297,16 @@ from app.services.hypothesis_investigation import (
     HypothesisGenerator,
     InvestigationDecision,
     InvestigationHypothesis,
+    _incident_passage,
     build_investigation_report,
     make_investigation_decision,
     score_hypothesis,
 )
 from app.services.llm_service import LLMService
+from app.services.relevance_scorer import (
+    RetrievalGateDecision,
+    evaluate_retrieval_gate,
+)
 from app.services.planner_agent import (
     InvestigationPlan,
     PlannerAgent,
@@ -310,6 +316,8 @@ from app.services.planner_agent import (
 from app.services.routed_search import RoutedSearchService
 from app.services.search import IncidentSearchService
 from app.services.search_factory import build_routed_search_service
+
+logger = logging.getLogger(__name__)
 
 # Bounds the per-investigation LLM-call budget (one HypothesisGenerator
 # call per iteration) to a small, fixed number, in the same spirit as
@@ -330,6 +338,7 @@ class StoppingReason(str, Enum):
     MAX_ITERATIONS = "max_iterations"
     NO_PROGRESS = "no_progress"
     NO_NEW_HYPOTHESES = "no_new_hypotheses"
+    RETRIEVAL_GATE_REJECTED = "retrieval_gate_rejected"
 
 
 @dataclass(frozen=True)
@@ -496,6 +505,20 @@ class MultiAgentInvestigationOrchestrator:
         _, retrieval_confidence_level = IncidentSearchService.confidence_for(initial_results)
         retrieval_context = f"Retrieval confidence: {retrieval_confidence_level}"
 
+        # Gate BEFORE any LLM call: if nothing retrieved is genuinely relevant
+        # to the problem, generating hypotheses about it can only fabricate.
+        # Off by default; fails open. See `evaluate_retrieval_gate` for the
+        # measured recall/FPR curve this threshold comes from.
+        gate = evaluate_retrieval_gate(
+            problem, [_incident_passage(result) for result in initial_results]
+        )
+        if not gate.accepted:
+            logger.info(
+                "investigation_orchestrator.retrieval_gate_rejected",
+                extra={"score": gate.score, "threshold": gate.threshold},
+            )
+            return self._gate_rejected_session(problem, gate)
+
         iterations: list[InvestigationIteration] = []
         seen_root_causes: set[str] = set()
         stopping_reason: StoppingReason
@@ -523,7 +546,8 @@ class MultiAgentInvestigationOrchestrator:
 
             seen_root_causes.update(new_root_causes)
             evaluations = {
-                hypothesis.id: self._evaluator.evaluate(hypothesis) for hypothesis in hypotheses
+                hypothesis.id: self._evaluator.evaluate(hypothesis, problem=problem)
+                for hypothesis in hypotheses
             }
             scored = [
                 (
@@ -599,4 +623,42 @@ class MultiAgentInvestigationOrchestrator:
             stopping_reason=stopping_reason,
             total_iterations=len(iterations),
             stop_explanation=stop_explanation,
+        )
+
+    @staticmethod
+    def _gate_rejected_session(
+        problem: str, gate: RetrievalGateDecision
+    ) -> InvestigationSession:
+        """An abstaining session with zero iterations, used when the retrieval
+        gate rejects. Reuses the existing empty-decision report path so the
+        response shape is identical to any other abstention -- callers see
+        ``is_uncertain`` and a ``None`` selected hypothesis, not a new
+        error type.
+        """
+        explanation = (
+            f"retrieval gate rejected the query before any hypothesis was "
+            f"generated: {gate.reason}"
+        )
+        critique = CritiqueResult(
+            verdict=CritiqueVerdict.INCONCLUSIVE,
+            confidence=0.0,
+            findings=(explanation,),
+            unresolved_questions=("Is this problem represented in the corpus at all?",),
+            missing_evidence=("no retrieved incident was relevant to the problem",),
+            recommended_actions=(
+                "Rephrase the problem, or confirm the corpus covers this system.",
+            ),
+            explanation=explanation,
+        )
+        return InvestigationSession(
+            final_report=CritiquedInvestigationReport(
+                investigation=build_investigation_report(
+                    problem, make_investigation_decision(()), {}
+                ),
+                critique=critique,
+            ),
+            iterations=(),
+            stopping_reason=StoppingReason.RETRIEVAL_GATE_REJECTED,
+            total_iterations=0,
+            stop_explanation=explanation,
         )

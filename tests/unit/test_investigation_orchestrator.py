@@ -456,6 +456,7 @@ def test_all_stopping_reasons_are_distinct_enum_members() -> None:
         StoppingReason.MAX_ITERATIONS,
         StoppingReason.NO_PROGRESS,
         StoppingReason.NO_NEW_HYPOTHESES,
+        StoppingReason.RETRIEVAL_GATE_REJECTED,
     } == set(StoppingReason)
 
 
@@ -644,3 +645,79 @@ def test_routing_enabled_executes_bm25_for_initial_retrieval_and_evidence_search
     assert routed.last_observation.routing_enabled is True
     assert session.final_report.investigation.selected_hypothesis is not None
     assert session.final_report.investigation.selected_hypothesis.root_cause == "db pool exhausted"
+
+
+# ── Retrieval gate (Phase 25) ───────────────────────────────────────────────────
+#
+# The gate runs BEFORE any LLM call. When it rejects, the orchestrator must
+# abstain through the ordinary abstention shape rather than raising or
+# inventing a new response type, and must not have spent an LLM call.
+
+
+def _gate_settings(monkeypatch, *, enabled: bool, threshold: float = 2.0) -> None:
+    monkeypatch.setattr(
+        "app.services.relevance_scorer.settings",
+        SimpleNamespace(retrieval_gate_enabled=enabled, retrieval_gate_threshold=threshold),
+    )
+
+
+class _StubScorer:
+    def __init__(self, score: float) -> None:
+        self._score = score
+
+    def score(self, query, passages):
+        return [self._score for _ in passages]
+
+
+def test_retrieval_gate_rejection_abstains_without_calling_the_llm(monkeypatch) -> None:
+    _gate_settings(monkeypatch, enabled=True)
+    monkeypatch.setattr(
+        "app.services.investigation_orchestrator.get_relevance_scorer",
+        lambda: _StubScorer(-9.0),
+        raising=False,
+    )
+    monkeypatch.setattr(
+        "app.services.relevance_scorer.get_relevance_scorer", lambda: _StubScorer(-9.0)
+    )
+    llm = FakeLLMService([[{"root_cause": "rc", "rationale": "r",
+                            "validation_keywords": ["k"], "confidence_score": 0.9}]])
+    search = FakeSearchService(retrieve_response=[_result("some incident", 0.3)])
+    session = _make_orchestrator(llm, search).investigate("a problem not in the corpus")
+
+    assert session.stopping_reason == StoppingReason.RETRIEVAL_GATE_REJECTED
+    assert session.total_iterations == 0
+    assert session.iterations == ()
+    assert llm.calls == [], "the gate must run before any hypothesis is generated"
+
+    investigation = session.final_report.investigation
+    assert investigation.is_uncertain is True
+    assert investigation.selected_hypothesis is None
+    assert session.final_report.critique.verdict == CritiqueVerdict.INCONCLUSIVE
+
+
+def test_retrieval_gate_acceptance_runs_the_normal_pipeline(monkeypatch) -> None:
+    _gate_settings(monkeypatch, enabled=True)
+    monkeypatch.setattr(
+        "app.services.relevance_scorer.get_relevance_scorer", lambda: _StubScorer(9.0)
+    )
+    llm = FakeLLMService([[{"root_cause": "rc", "rationale": "r",
+                            "validation_keywords": ["k"], "confidence_score": 0.9}]])
+    search = FakeSearchService(retrieve_response=[_result("some incident", 0.3)])
+    session = _make_orchestrator(llm, search).investigate("a real problem")
+
+    assert session.stopping_reason != StoppingReason.RETRIEVAL_GATE_REJECTED
+    assert session.total_iterations >= 1
+    assert llm.calls, "an accepted query must reach hypothesis generation"
+
+
+def test_retrieval_gate_disabled_never_rejects(monkeypatch) -> None:
+    _gate_settings(monkeypatch, enabled=False)
+    monkeypatch.setattr(
+        "app.services.relevance_scorer.get_relevance_scorer", lambda: _StubScorer(-99.0)
+    )
+    llm = FakeLLMService([[{"root_cause": "rc", "rationale": "r",
+                            "validation_keywords": ["k"], "confidence_score": 0.9}]])
+    search = FakeSearchService(retrieve_response=[_result("some incident", 0.3)])
+    session = _make_orchestrator(llm, search).investigate("a problem")
+    assert session.stopping_reason != StoppingReason.RETRIEVAL_GATE_REJECTED
+    assert llm.calls

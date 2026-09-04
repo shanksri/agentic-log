@@ -12,12 +12,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 18.1
+    "seconds": 15.4
   },
   {
     "group": "HARD_NEGATIVE",
@@ -32,12 +32,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 10.9
+    "seconds": 4.1
   },
   {
     "group": "HARD_NEGATIVE",
@@ -52,12 +52,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 12.1
+    "seconds": 3.2
   },
   {
     "group": "HARD_NEGATIVE",
@@ -72,12 +72,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 10.7
+    "seconds": 5.2
   },
   {
     "group": "HARD_NEGATIVE",
@@ -97,7 +97,7 @@
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 4.9
+    "seconds": 6.0
   },
   {
     "group": "HARD_NEGATIVE",
@@ -112,12 +112,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 9.7
+    "seconds": 3.8
   },
   {
     "group": "HARD_NEGATIVE",
@@ -132,12 +132,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.8
+    "seconds": 3.2
   },
   {
     "group": "HARD_NEGATIVE",
@@ -152,12 +152,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.4
+    "seconds": 3.9
   },
   {
     "group": "HARD_NEGATIVE",
@@ -169,15 +169,15 @@
     "is_uncertain": false,
     "confidence": 0.8,
     "confidence_level": "HIGH",
-    "selected_root_cause": "Multiple values files with the same key were not merged correctly, leading to silent overrides.",
+    "selected_root_cause": "Inconsistent handling of default values in Helm charts.",
     "critic_verdict": "approved",
     "critic_confidence": 0.8,
     "stopping_reason": "critic_approved",
-    "total_iterations": 1,
+    "total_iterations": 2,
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.5
+    "seconds": 8.0
   },
   {
     "group": "HARD_NEGATIVE",
@@ -189,7 +189,7 @@
     "is_uncertain": false,
     "confidence": 0.9,
     "confidence_level": "HIGH",
-    "selected_root_cause": "API version deprecation in the admission webhook causing authentication failures",
+    "selected_root_cause": "API version deprecation in the custom admission webhook due to the Kubernetes upgrade",
     "critic_verdict": "approved",
     "critic_confidence": 0.9,
     "stopping_reason": "critic_approved",
@@ -197,7 +197,7 @@
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.4
+    "seconds": 6.3
   },
   {
     "group": "HARD_NEGATIVE",
@@ -212,12 +212,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.9
+    "seconds": 3.2
   },
   {
     "group": "HARD_NEGATIVE",
@@ -232,12 +232,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.9
+    "seconds": 3.3
   },
   {
     "group": "HARD_NEGATIVE",
@@ -246,18 +246,18 @@
     "top1_score": 0.6382877826690674,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.8,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Network connectivity issues between Grafana and Prometheus after migration",
-    "critic_verdict": "approved",
-    "critic_confidence": 0.8,
-    "stopping_reason": "critic_approved",
-    "total_iterations": 1,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.1
+    "seconds": 3.6
   },
   {
     "group": "HARD_NEGATIVE",
@@ -266,18 +266,18 @@
     "top1_score": 0.6147389641559753,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.8,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Token validation failure due to incorrect audience claim",
-    "critic_verdict": "need_more_evidence",
-    "critic_confidence": 0.8,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 2,
-    "num_supporting": 1,
-    "num_contradicting": 4,
-    "seconds": 11.4
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
+    "num_contradicting": 0,
+    "seconds": 3.3
   },
   {
     "group": "HARD_NEGATIVE",
@@ -286,18 +286,18 @@
     "top1_score": 0.6624584600378965,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.7,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Conflicting security context settings in the PodSecurityPolicy",
-    "critic_verdict": "alternative_hypothesis_plausible",
-    "critic_confidence": 0.5,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 11.1
+    "seconds": 3.7
   },
   {
     "group": "HARD_NEGATIVE",
@@ -306,18 +306,18 @@
     "top1_score": 0.5501966804383216,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.8,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Network latency due to high traffic",
-    "critic_verdict": "approved",
-    "critic_confidence": 0.8,
-    "stopping_reason": "critic_approved",
-    "total_iterations": 1,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 6.4
+    "seconds": 3.9
   },
   {
     "group": "HARD_NEGATIVE",
@@ -326,18 +326,18 @@
     "top1_score": 0.682167649269104,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.8,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Network latency due to high traffic load",
-    "critic_verdict": "approved",
-    "critic_confidence": 0.8,
-    "stopping_reason": "critic_approved",
-    "total_iterations": 1,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 6.9
+    "seconds": 3.6
   },
   {
     "group": "HARD_NEGATIVE",
@@ -346,18 +346,18 @@
     "top1_score": 0.7795246374890438,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.85,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Incorrect type inference in the TypeScript compiler for generic functions with discriminated unions.",
-    "critic_verdict": "approved",
-    "critic_confidence": 0.85,
-    "stopping_reason": "critic_approved",
-    "total_iterations": 1,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 5.7
+    "seconds": 3.6
   },
   {
     "group": "HARD_NEGATIVE",
@@ -366,18 +366,18 @@
     "top1_score": 0.7218390703201294,
     "top1_level": "HIGH",
     "error": null,
-    "is_uncertain": false,
-    "confidence": 0.8,
-    "confidence_level": "HIGH",
-    "selected_root_cause": "Network timeout during CI pipeline execution",
-    "critic_verdict": "approved",
-    "critic_confidence": 0.8,
-    "stopping_reason": "critic_approved",
-    "total_iterations": 1,
-    "num_rejected": 2,
-    "num_supporting": 5,
+    "is_uncertain": true,
+    "confidence": 0.0,
+    "confidence_level": "LOW",
+    "selected_root_cause": null,
+    "critic_verdict": "inconclusive",
+    "critic_confidence": 0.0,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
+    "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 5.0
+    "seconds": 3.1
   },
   {
     "group": "HARD_NEGATIVE",
@@ -397,7 +397,7 @@
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.7
+    "seconds": 5.6
   },
   {
     "group": "EASY_NEGATIVE",
@@ -412,12 +412,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 11.2
+    "seconds": 3.3
   },
   {
     "group": "EASY_NEGATIVE",
@@ -432,12 +432,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.7
+    "seconds": 2.8
   },
   {
     "group": "EASY_NEGATIVE",
@@ -452,12 +452,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.5
+    "seconds": 8.9
   },
   {
     "group": "EASY_NEGATIVE",
@@ -472,12 +472,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 11.5
+    "seconds": 3.7
   },
   {
     "group": "EASY_NEGATIVE",
@@ -492,12 +492,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.9
+    "seconds": 3.5
   },
   {
     "group": "EASY_NEGATIVE",
@@ -512,12 +512,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.4
+    "seconds": 3.8
   },
   {
     "group": "EASY_NEGATIVE",
@@ -532,12 +532,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "max_iterations",
-    "total_iterations": 3,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 12.3
+    "seconds": 3.2
   },
   {
     "group": "EASY_NEGATIVE",
@@ -552,12 +552,12 @@
     "selected_root_cause": null,
     "critic_verdict": "inconclusive",
     "critic_confidence": 0.0,
-    "stopping_reason": "no_progress",
-    "total_iterations": 2,
-    "num_rejected": 3,
+    "stopping_reason": "retrieval_gate_rejected",
+    "total_iterations": 0,
+    "num_rejected": 0,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 6.7
+    "seconds": 3.2
   },
   {
     "group": "POSITIVE",
@@ -577,7 +577,7 @@
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.4
+    "seconds": 7.3
   },
   {
     "group": "POSITIVE",
@@ -589,7 +589,7 @@
     "is_uncertain": false,
     "confidence": 0.8,
     "confidence_level": "HIGH",
-    "selected_root_cause": "High network latency affecting communication between Zookeeper and SimpleConsumer.",
+    "selected_root_cause": "Network timeout due to high latency",
     "critic_verdict": "approved",
     "critic_confidence": 0.8,
     "stopping_reason": "critic_approved",
@@ -597,7 +597,7 @@
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.1
+    "seconds": 4.9
   },
   {
     "group": "POSITIVE",
@@ -617,7 +617,7 @@
     "num_rejected": 3,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 9.9
+    "seconds": 11.4
   },
   {
     "group": "POSITIVE",
@@ -637,7 +637,7 @@
     "num_rejected": 3,
     "num_supporting": 0,
     "num_contradicting": 0,
-    "seconds": 7.1
+    "seconds": 8.8
   },
   {
     "group": "POSITIVE",
@@ -647,17 +647,17 @@
     "top1_level": "HIGH",
     "error": null,
     "is_uncertain": false,
-    "confidence": 0.7,
+    "confidence": 0.8,
     "confidence_level": "HIGH",
-    "selected_root_cause": "DNS resolution issues causing delays in service discovery",
+    "selected_root_cause": "Insufficient memory allocation for BestEffort pods due to misconfiguration of MemoryQoS settings.",
     "critic_verdict": "approved",
-    "critic_confidence": 0.7,
+    "critic_confidence": 0.8,
     "stopping_reason": "critic_approved",
     "total_iterations": 1,
     "num_rejected": 2,
     "num_supporting": 5,
     "num_contradicting": 0,
-    "seconds": 5.9
+    "seconds": 6.0
   },
   {
     "group": "POSITIVE",
@@ -667,16 +667,16 @@
     "top1_level": "HIGH",
     "error": null,
     "is_uncertain": false,
-    "confidence": 0.8,
+    "confidence": 0.85,
     "confidence_level": "HIGH",
-    "selected_root_cause": "Misconfigured OAuth scopes for the integration",
+    "selected_root_cause": "Incorrect handling of relative paths in stack trace resolution",
     "critic_verdict": "approved",
-    "critic_confidence": 0.8,
+    "critic_confidence": 0.85,
     "stopping_reason": "critic_approved",
-    "total_iterations": 2,
+    "total_iterations": 1,
     "num_rejected": 2,
-    "num_supporting": 4,
-    "num_contradicting": 1,
-    "seconds": 10.1
+    "num_supporting": 5,
+    "num_contradicting": 0,
+    "seconds": 6.5
   }
 ]

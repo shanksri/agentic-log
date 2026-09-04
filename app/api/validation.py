@@ -22,6 +22,13 @@ from fastapi import HTTPException
 # path separators or ".." segments. This allow-list also bounds length,
 # which doubles as oversized-payload protection for these fields.
 _SAFE_ID_PATTERN = re.compile(r"^[A-Za-z0-9._-]+$")
+# The allow-list above permits "." and "-", which on its own is NOT enough:
+# "..", "....", "." and "-" all match it, and `history_root / ".."` resolves
+# one directory ABOVE the intended root. Requiring at least one alphanumeric
+# character rejects every all-punctuation identifier at once, including the
+# Windows case where trailing dots are stripped from a path segment so
+# "...." silently collapses onto the root directory itself.
+_HAS_ALPHANUMERIC = re.compile(r"[A-Za-z0-9]")
 _MAX_ID_LENGTH = 200
 
 
@@ -32,6 +39,12 @@ def validate_safe_identifier(value: str, *, field_name: str) -> str:
     ``ExperimentRepository``'s ``{base_dir}/history/{run_id}``) so a
     request can never walk outside the intended directory regardless of
     what the underlying repository does with the value.
+
+    Rejects, in order: empty/whitespace, oversized, characters outside the
+    allow-list, and all-punctuation values such as ``".."`` or ``"...."``.
+    That last rule is the one that actually stops traversal -- the
+    allow-list permits "." and "-", so without it ``".."`` passes and
+    ``history_root / ".."`` resolves above the intended root.
     """
     if not value or not value.strip():
         raise HTTPException(status_code=422, detail=f"{field_name} must not be empty.")
@@ -47,6 +60,11 @@ def validate_safe_identifier(value: str, *, field_name: str) -> str:
                 f"{field_name} may only contain letters, digits, '.', '_', "
                 "and '-'."
             ),
+        )
+    if not _HAS_ALPHANUMERIC.search(value):
+        raise HTTPException(
+            status_code=422,
+            detail=f"{field_name} must contain at least one letter or digit.",
         )
     return value
 

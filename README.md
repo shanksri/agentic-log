@@ -26,7 +26,7 @@ grounding metrics. The interesting results are the negative ones:
   (a targeted LLM relevance check) measures well but **is not shipped**, because one promising run
   isn't a validated signal — see [Evaluation findings](#evaluation-findings).
 
-24 phases of incremental, tested development (1,382 tests), plus two production-hardening passes.
+24 phases of incremental, tested development (1,450 tests), plus two production-hardening passes.
 See [Project status](#project-status) for what's done, what's open, and what's deliberately not
 claimed.
 
@@ -79,11 +79,17 @@ roadmap deliberately put the measurement platform *before* the next retrieval al
   from 5 candidates to 2 (escalating to 4 only on weak confidence) because the data showed ranks 3
   and 5 added zero recall at real cost.
   See [`18`](docs/architecture/18_adaptive_routing_and_hybrid_confidence.md).
-- **A real multi-agent loop**, not a single prompt — `PlannerAgent` sets strategy, hypothesis
+- **A staged investigation loop**, not a single prompt — `PlannerAgent` sets strategy, hypothesis
   generation proposes and evidence-checks root causes, `CriticAgent` reviews and can force another
-  iteration, an orchestrator coordinates with bounded stopping conditions. Notably the planner and
-  critic make **zero LLM calls** — they're rule-based, so they're deterministic, cheap, and testable
-  without an API key. See [`19`](docs/architecture/19_multi_agent_investigation.md).
+  iteration, an orchestrator coordinates with bounded stopping conditions. Only hypothesis
+  generation calls an LLM; the planner, evidence evaluator, critic and orchestrator are rule-based,
+  so they're deterministic, cheap, and testable without an API key. An investigation costs **3-5 LLM
+  calls**: query expansion and reranking once each during retrieval, plus one per iteration
+  (`DEFAULT_MAX_ITERATIONS = 3`). Calling this "multi-agent" is a claim about component structure —
+  separable roles behind swappable interfaces — not about multiple models reasoning independently.
+  A rule-based critic also cannot tell a wrong answer from a right one, which
+  [Evaluation findings](#evaluation-findings) covers in detail.
+  See [`19`](docs/architecture/19_multi_agent_investigation.md).
 - **Two production-hardening passes** — input validation, graceful degradation (typed errors, never
   raw tracebacks or leaked secrets), injection/path-traversal testing, load testing, environment-aware
   configuration with fail-fast production validation, and a failure-handling audit.
@@ -98,7 +104,7 @@ incident-management export is a new collector and normalizer with nothing downst
 ## Tech stack
 
 FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL + pgvector + `pg_trgm` · SentenceTransformers ·
-OpenAI API · Docker / docker-compose · pytest (1,382 tests) · Python 3.12
+OpenAI API · Docker / docker-compose · pytest (1,450 tests) · Python 3.12
 
 ## Documentation map
 
@@ -120,12 +126,12 @@ app/
   core/              Settings (pydantic-settings) and logging configuration
   db/                SQLAlchemy models + session management
   ingestion/         Source collectors (GitHub, Jira) and normalization
-  services/          Embedding, LLM, retrieval (dense/BM25/hybrid/routed), the 4 investigation agents
-  evaluation/        Gold datasets, harnesses, metrics, judges, experiment tracking, diagnostics — 36 modules
+  services/          Embedding, LLM, relevance scoring, retrieval (dense/BM25/hybrid/routed), the 4 investigation agents
+  evaluation/        Gold datasets, harnesses, metrics, judges, experiment tracking, diagnostics, judge backends — 39 modules
 alembic/             Database migrations (creates the `vector` and `pg_trgm` extensions)
 docs/                Full architecture documentation (23 numbered docs + index)
 scripts/             Benchmark/evaluation CLI scripts, load_test.py, profile_performance.py
-tests/               1,382 tests: tests/unit, tests/api, tests/eval
+tests/               1,450 tests: tests/unit, tests/api, tests/eval
 Dockerfile, docker-compose.yml   Multi-stage build, non-root user, healthcheck (Phase 23)
 ```
 
@@ -165,6 +171,15 @@ All settings are read from environment variables (or a `.env` file) via `app/cor
 | `EMBEDDING_DIMENSIONS` | `384` | Matches the current migration's `VECTOR(384)` column |
 | `LOG_LEVEL` | `INFO` | |
 | `SEARCH_ROUTING_ENABLED` | `false` | Opt-in for adaptive Dense/BM25/Hybrid routing; `false` preserves dense-only behavior |
+| `RELEVANCE_MODEL_NAME` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Local cross-encoder; runs beside the embedding model, no API key |
+| `RETRIEVAL_GATE_ENABLED` | `false` | Opt-in. Abstains before any LLM call when nothing retrieved is relevant to the query — see [Evaluation findings](#evaluation-findings). Fails open if the scorer errors |
+| `RETRIEVAL_GATE_THRESHOLD` | `2.0` | Cross-encoder **logit** (~-11..+11), not the 0.40 cosine scale. Knee of the measured recall/FPR curve |
+| `EVIDENCE_RELEVANCE_ENABLED` | `false` | Opt-in. Splits supporting/contradicting evidence by relevance to the problem rather than cosine to the hypothesis's own keywords. Ships off: as built it measures evidence drift rather than fixing it |
+| `RELEVANCE_THRESHOLD` | `0.0` | Logit boundary for that split. Not calibrated against any dataset, unlike `RETRIEVAL_GATE_THRESHOLD` |
+| `ANTHROPIC_API_KEY` | — | Optional. Only the evaluation judge reads it, so answers written by `OPENAI_MODEL` aren't graded by the same model family. Billed separately from a Claude Pro subscription |
+| `ANTHROPIC_MODEL` | `claude-haiku-4-5` | |
+| `GEMINI_API_KEY` | — | Optional alternative to `ANTHROPIC_API_KEY` for the same purpose. Free tier is 20 requests/day **per model**, which is below one full 56-query gold-set pass |
+| `GEMINI_MODEL` | `gemini-3.1-flash-lite` | |
 | `API_KEY` | — | **Required.** Shared secret for Bearer auth (Phase 23B) — see [Authentication](#authentication) |
 | `RATE_LIMIT_ENABLED` | `true` | Global kill switch for rate limiting (Phase 23C) — see [Rate limiting](#rate-limiting) |
 | `RATE_LIMIT_SEARCH_PER_MINUTE` | `100` | `/search/incidents`, `/search/debug` |
@@ -319,7 +334,7 @@ only genuine duplication.
 ## Running tests
 
 ```bash
-python -m pytest              # full suite — 1,382 tests
+python -m pytest              # full suite — 1,450 tests
 python -m pytest tests/unit    # unit tests only (no HTTP layer)
 python -m pytest tests/api     # FastAPI route tests (TestClient, no real DB/LLM)
 python -m ruff check .         # lint
@@ -328,7 +343,7 @@ python -m ruff check .         # lint
 Every test runs against fakes/mocks for the database, LLM, and embedding backends — no live
 Postgres or OpenAI credentials are needed to run the suite.
 
-**Latest verified result: 1,381 passed, 1 known pre-existing failure** —
+**Latest verified result: 1,449 passed, 1 known pre-existing failure** —
 `tests/api/test_production_hardening.py::test_evaluation_run_id_with_dots_only_rejected` fails in a
 fresh checkout because it depends on `.evaluation_runs/history/metadata.json`, a local file this
 environment's history doesn't have (unrelated to application code — every other test in that file,
@@ -424,7 +439,7 @@ transient LLM failures (a single rate-limit or timeout fails the whole call). Bo
 scoped, and left for a future phase rather than bundled in here.
 
 72 new tests cover both sub-phases (48 for 24A's configuration validation, 24 for 24B's failure
-paths); combined with everything before it, the full suite is 1,382 tests (see
+paths); combined with everything before it, the full suite is 1,450 tests (see
 [Running tests](#running-tests)).
 
 ## Evaluation findings
@@ -494,6 +509,70 @@ gate's criterion. Probes: `scripts/probe_llm_relevance_gate.py`,
 `scripts/probe_llm_relevance_gate_stability.py`; results:
 `.benchmarks/llm_relevance_gate_probe.json`, `.benchmarks/llm_relevance_gate_stability.json`.
 
+**The pipeline could be confidently wrong even when retrieval was perfect, and the cause was a
+planner bug.** Tracing a single investigation end to end (`scripts/trace_investigation.py`) against
+a query that was the exact title of a real incident — retrieved at rank 1, top-1 0.9301, HIGH
+confidence — returned the root cause *"Network latency due to misconfigured routing paths"* at
+confidence 0.80, critic APPROVED. `RuleBasedPlanner` was concatenating the problem statement with
+all ten retrieved incidents into one keyword-matching haystack, so a ~10-word problem made up well
+under 1% of the matched text. With NETWORK second in the priority order holding generic keywords
+(`timeout`, `latency`, `socket`, `proxy`), almost any real result set dragged the plan to NETWORK,
+and since the plan steers hypothesis generation the whole investigation followed it. Fixed by
+matching the problem alone first and consulting evidence only when the problem names no strategy;
+keyword matching also now accepts plurals (`pods` → `pod`), which had been dropping genuine
+infrastructure matches. On the probe's positive controls two answers went from wrong to correct
+(`v2-multi-03` "DNS resolution issues" → "Insufficient memory allocation for BestEffort pods";
+`v2-multi-06` "Misconfigured OAuth scopes" → "Incorrect handling of relative paths in stack trace
+resolution"). One case is deliberately unfixed: `v2-lex-08`'s problem text matches no keyword at all,
+so it still falls back to evidence and still lands on NETWORK.
+
+**Evidence evaluation was structurally incapable of finding contradiction.** `HypothesisEvaluator`
+searched using the *hypothesis's own* validation keywords and then labelled results by cosine
+similarity to that same query — at or above 0.40 "supporting", below it "contradicting". A
+hypothesis therefore always found agreement with itself, and a low-similarity result is irrelevant
+rather than contradicting. Across the 34-investigation probe this produced **78 supporting evidence
+items against 2**, only 1 of 34 investigations found any contradicting evidence at all, and the
+critic's `rejected` verdict — which fires on a contradiction ratio ≥ 0.5 — **never fired once**. The
+critic is arithmetic over these counts, so its rejection path was effectively dead code.
+
+**A local cross-encoder separates genuine matches from topical neighbours where cosine cannot.**
+Phase 22F's finding was that top-1 similarity cannot make this distinction. Scoring the (query,
+incident) pair jointly with `cross-encoder/ms-marco-MiniLM-L6-v2` — which runs locally beside the
+existing SentenceTransformer, needs no API key, and is deterministic — can. Calibrated on 56 gold
+queries (28 positives, 8 easy negatives, 20 hard negatives) via the production
+`retrieve(expand=True, rerank=True)` path, counting a positive only when retrieval actually
+surfaced its expected incident:
+
+| gate | recall | FPR (hard negatives) | precision |
+| --- | --- | --- | --- |
+| cosine ≥ 0.40 (current default) | 1.000 | 0.900 | 0.553 |
+| cosine ≥ 0.60 | 0.846 | 0.450 | 0.710 |
+| cosine ≥ 0.70 | 0.654 | 0.200 | 0.810 |
+| **cross-encoder ≥ 2.0** | **0.885** | **0.150** | **0.885** |
+
+It dominates rather than trades: at higher recall than cosine at 0.60 it has a third of the
+false-accept rate, and cosine only reaches a comparable FPR by collapsing recall to 0.654. Wired as
+a pre-generation gate in the orchestrator (`RETRIEVAL_GATE_ENABLED`, **off by default**), the
+end-to-end probe moved hard-negative abstention from 8/20 to 16/20 while rejecting **zero** of the
+six positive controls — the two that still abstain do so through `max_iterations`/`no_progress`,
+exactly as before. Four of 28 negatives still slip through, a 0.143 false-accept rate matching the
+offline calibration's prediction. Because the gate runs before hypothesis generation, 24 of 34 probe
+queries cost **zero LLM calls** instead of 3-5. Calibration runner:
+`scripts/calibrate_retrieval_gate.py`; results: `.benchmarks/retrieval_gate_calibration.json`.
+
+Two limits are load-bearing here. The threshold was read off this curve rather than fitted on a
+held-out split, and it rests on one corpus, one run, and 20 hard negatives. And the gate only stops
+the system answering questions the corpus cannot answer — it does nothing about answering the wrong
+way a question the corpus *can* answer, which `v2-lex-08` still demonstrates.
+
+**Applying the same scorer to the evidence split measures the drift rather than fixing it.**
+Re-scoring supporting/contradicting against the *problem* instead of the hypothesis's keywords
+inverts the counts almost exactly — 78/2 becomes 2/78, and critic approvals drop from 16 to 0. That
+is not the threshold being harsh: it says that when a hypothesis searches for confirmation of
+itself, what it finds has almost nothing to do with the question actually asked. Fixing it requires
+changing the retrieval query, not just the scoring, so `EVIDENCE_RELEVANCE_ENABLED` ships **off** and
+the flaw is documented rather than half-patched.
+
 This does not mean confidence scoring is broken or unused — it's real, computed, and already
 threaded through the investigation agents and (as of Phase 22D) gates the generation step against
 the clearest failures (very low similarity). What it means is narrower and more honest: **top-1
@@ -545,7 +624,13 @@ negatives and should not be treated as a validated abstention mechanism (see
 [Evaluation findings](#evaluation-findings)); the multi-agent investigation orchestrator has no
 fault isolation between hypotheses/iterations and there is no retry/backoff for transient LLM
 failures (both identified in the Phase 24B audit, deliberately not fixed in that pass — see
-[Production hardening (Phase 24)](#production-hardening-phase-24)).
+[Production hardening (Phase 24)](#production-hardening-phase-24)); evidence evaluation retrieves
+using each hypothesis's own keywords, so it cannot surface evidence *against* a hypothesis and the
+`contradicting_evidence` field is a misnomer (see [Evaluation findings](#evaluation-findings)); the
+cross-encoder retrieval gate is measured but ships disabled, with a threshold read off its own
+calibration curve rather than fitted on a held-out split; and the Anthropic/Gemini judge clients are
+implemented and tested but not constructed by any evaluation run, so the LLM-as-judge circularity
+caveat (answers written and graded by the same model family) remains open in practice.
 
 ## Project status
 
@@ -553,14 +638,24 @@ failures (both identified in the Phase 24B audit, deliberately not fixed in that
 retrieval with adaptive routing, the four-agent investigation loop, the evaluation platform
 (retrieval/reasoning/generation/grounding metrics, LLM-as-judge, diagnostics), and two hardening
 passes (Phase 23's input validation/graceful-degradation/load-testing, Phase 24's environment
-configuration and failure-handling audit) are all implemented and covered by the current 1,382-test
-suite (1,381 passing — see [Running tests](#running-tests)).
+configuration and failure-handling audit) are all implemented and covered by the current 1,450-test
+suite (1,449 passing — see [Running tests](#running-tests)).
 
-What's genuinely open, not glossed over: the confidence-calibration gap above is real and
-unresolved, not a solved problem being undersold; two failure-handling gaps in the investigation
-orchestrator (noted above) were identified and deliberately deferred rather than fixed; and the
-platform has not yet been deployed anywhere beyond local Docker Compose — no staging/production
-environment, no CI pipeline running the suite automatically, no live deployment verification.
+Since that checkpoint, a diagnostic pass found and fixed a planner bug that made the pipeline
+confidently wrong even on perfect retrieval, and established that a local cross-encoder separates
+genuine matches from hard negatives where top-1 cosine cannot — cutting the hard-negative
+false-accept rate from 0.900 to 0.150 at 0.885 recall, for no API cost. Both the retrieval gate and
+the cross-encoder evidence split are implemented, measured, and **shipped disabled**, pending a
+held-out validation split.
 
-The current checkpoint (`Complete production hardening Phase 24`) is intentionally paused here,
-before that next phase, specifically to get an accurate, honest snapshot in place first.
+What's genuinely open, not glossed over: the confidence-calibration gap above is narrowed but not
+closed, and the measured gate is unshipped rather than solved; evidence evaluation still cannot find
+contradicting evidence by construction, so the rule-based critic has never once returned `rejected`;
+two failure-handling gaps in the investigation orchestrator (noted above) were identified and
+deliberately deferred rather than fixed; the LLM-as-judge circularity caveat is unresolved because no
+evaluation run constructs the second-model judge clients that now exist; and the platform has not
+been deployed anywhere beyond local Docker Compose — no staging/production environment, no CI
+pipeline running the suite automatically, no live deployment verification.
+
+The work is intentionally paused here, before deployment, specifically to keep an accurate and
+honest snapshot in place first.
